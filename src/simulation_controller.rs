@@ -24,16 +24,16 @@ use wg_2024::packet::Packet;
 pub struct NodeChannels {
     pub send_packet_channel: Sender<Packet>,
     pub send_command_channel: Sender<SimControllerCommand>,
-    receive_response_channel: Receiver<SimControllerResponseWrapper>,
+    pub receive_response_channel: Receiver<SimControllerResponseWrapper>,
 }
 
 pub struct DroneChannels {
-    send_command_channel: Sender<DroneCommand>,
-    receive_command_channel: Receiver<DroneCommand>,
+    pub send_command_channel: Sender<DroneCommand>,
+    pub receive_command_channel: Receiver<DroneCommand>,
     pub send_packet_channel: Sender<Packet>,
     pub receive_packet_channel: Receiver<Packet>,
-    receive_event_channel: Receiver<DroneEvent>,
-    send_event_channel: Sender<DroneEvent>,
+    pub receive_event_channel: Receiver<DroneEvent>,
+    pub send_event_channel: Sender<DroneEvent>,
 }
 
 type DroneFactory = fn(
