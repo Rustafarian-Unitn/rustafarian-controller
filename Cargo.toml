@@ -7,7 +7,7 @@ edition = "2021"
 wg_2024 = { git = "https://github.com/WGL-2024/WGL_repo_2024.git", features = ["serialize"] }
 rustafarian-drone = { git = "https://github.com/Rustafarian-Unitn/rustafarian-drone.git" }
 rustafarian-shared = { git = "https://github.com/Rustafarian-Unitn/rustafarian-shared.git", branch = "main" }
-rustafarian-client = { git = "https://github.com/Rustafarian-Unitn/rustafarian-client.git", branch = "bug/change-name-package"}
+rustafarian-client = { git = "https://github.com/Rustafarian-Unitn/rustafarian-client.git", branch = "main"}
 rustafarian-project = { git = "https://github.com/Rustafarian-Unitn/rustafarian-project/", branch = "project-fair" }
 crossbeam = "0.8"
 toml = "0.8"
