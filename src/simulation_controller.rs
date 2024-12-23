@@ -7,10 +7,10 @@ use crate::runnable::Runnable;
 use crate::server::Server;
 use rustafarian_client::chat_client::ChatClient;
 use rustafarian_client::client::Client;
-use rustafarian_shared::messages::commander_messages::{
-    SimControllerCommand, SimControllerEvent, SimControllerResponseWrapper
-};
 use rustafarian_shared::messages::commander_messages::SimControllerEvent::PacketForwarded;
+use rustafarian_shared::messages::commander_messages::{
+    SimControllerCommand, SimControllerEvent, SimControllerResponseWrapper,
+};
 use rustafarian_shared::topology::Topology;
 use std::collections::HashMap;
 use std::thread::JoinHandle;
@@ -118,8 +118,6 @@ impl SimulationController {
         drone_channels: &mut HashMap<NodeId, DroneChannels>,
         topology: &mut Topology,
     ) {
-        let mut drones = Vec::<Box<dyn Runnable>>::new();
-
         for drone_config in drones_config.iter() {
             // Generate the channels for drone communication with sc
             let (send_command_channel, receive_command_channel) = unbounded::<DroneCommand>();
@@ -309,14 +307,12 @@ impl SimulationController {
             == Ok(())
         {
             match packet_type {
-                PacketType::MsgFragment(fragment) => {
-                    Ok(PacketForwarded {
-                        session_id,
-                        packet_type: fragment.to_string(),
-                        source,
-                        destination,
-                    })
-                }
+                PacketType::MsgFragment(fragment) => Ok(PacketForwarded {
+                    session_id,
+                    packet_type: fragment.to_string(),
+                    source,
+                    destination,
+                }),
                 PacketType::Ack(ack) => Ok(PacketForwarded {
                     session_id,
                     packet_type: ack.to_string(),
@@ -348,23 +344,25 @@ impl SimulationController {
     }
 }
 
-
-
-
-
-
-
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////// --TESTS -- ///////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::drone_functions::rustafarian_drone;
-    use rustafarian_shared::topology::Topology;
-    use wg_2024::{drone::Drone, network::SourceRoutingHeader, packet::{Fragment, Packet, PacketType}};
-    use std::collections::HashMap;
     use crossbeam_channel::unbounded;
     use rustafarian_drone::RustafarianDrone;
+    use rustafarian_shared::topology::Topology;
+    use std::collections::HashMap;
+    use wg_2024::{
+        drone::Drone,
+        network::SourceRoutingHeader,
+        packet::{Fragment, Packet, PacketType},
+    };
 
     #[test]
     fn test_simulation_controller_new() {
@@ -474,51 +472,118 @@ mod tests {
 
     #[test]
     fn test_message_from_client_to_server() {
+        let mut nodes_channels = HashMap::new();
+        let mut drone_channels = HashMap::new();
         let mut drone_neighbors = HashMap::new();
         let mut client_neighbors = HashMap::new();
         let mut server_neighbors = HashMap::new();
 
+        // Drone channels
         let drone_packet_channels = unbounded::<Packet>();
         let drone_event_channels = unbounded::<DroneEvent>();
         let drone_command_channels = unbounded::<DroneCommand>();
 
+        drone_channels.insert(
+            1,
+            DroneChannels {
+                send_command_channel: drone_command_channels.0,
+                receive_command_channel: drone_command_channels.1.clone(),
+                send_packet_channel: drone_packet_channels.0.clone(),
+                receive_packet_channel: drone_packet_channels.1.clone(),
+                send_event_channel: drone_event_channels.0.clone(),
+                receive_event_channel: drone_event_channels.1.clone(),
+            },
+        );
+
+        let mut drone = RustafarianDrone::new(
+            1,
+            drone_event_channels.0,
+            drone_command_channels.1,
+            drone_packet_channels.1,
+            drone_neighbors,
+            0.0,
+        );
+
+        // Client channels
         let client_packet_channels = unbounded::<Packet>();
         let client_command_channels = unbounded::<SimControllerCommand>();
         let client_response_channels = unbounded::<SimControllerResponseWrapper>();
         
-        client_neighbors.insert(2, drone_packet_channels.0);
-        let client = ChatClient::new(1, client_neighbors, client_packet_channels.1, client_command_channels.1, client_response_channels.0);
-
-        let server_packet_channels = unbounded::<Packet>();
-        server_neighbors.insert(2, drone_packet_channels.0);
-        let server = Server::new(2, server_packet_channels.1, neighbors);
-
-        let drone = RustafarianDrone::new(1, drone_event_channels.0, drone_command_channels.1, drone_packet_channels.0, drone_packet_channels.1, 0);
-
-        let controller = SimulationController::new(nodes_channels, drone_channels, handles, topology);
-
-        // Create a packet to send from client to server
-        let packet = Packet {
-            pack_type: PacketType::MsgFragment(Fragment { fragment_index: 0, total_n_fragments: 1, length: 3, data: [0; 128] }),
-            session_id: 1,
-            routing_header: SourceRoutingHeader {
-                hops: vec![1, 2, 3],
-                hop_index: 1, // Client -> Controller -> Server
+        nodes_channels.insert(
+            1,
+            NodeChannels {
+                send_packet_channel: client_packet_channels.0,
+                send_command_channel: client_command_channels.0,
+                receive_response_channel: client_response_channels.1,
             },
-        };
+        );
 
-        // Simulate sending the packet from client to server
-        let result = controller.handle_controller_shortcut(packet);
+        client_neighbors.insert(2, drone_packet_channels.0.clone());
+        
+        let mut client = ChatClient::new(
+            1,
+            client_neighbors,
+            client_packet_channels.1,
+            client_command_channels.1.clone(),
+            client_response_channels.0,
+        );
+        
+        client.topology().add_node(1);
+        client.topology().add_node(2);
+        client.topology().add_node(3);
+        client.topology().add_node(4);
+        client.topology().add_edge(1, 2);
+        client.topology().add_edge(2, 3);
+        client.topology().add_edge(2, 4);
+        
+        println!("topology {:?}",rustafarian_shared::topology::compute_route(&client.topology(), 1, 3));
+        // Server channels
+        let server_packet_channels = unbounded::<Packet>();
 
-        // Check if the packet was forwarded successfully
-        assert!(result.is_ok());
-        let packet_forwarded = result.unwrap();
-        assert_eq!(packet_forwarded.session_id, 1);
-        assert_eq!(packet_forwarded.packet_type, "MsgFragment");
-        assert_eq!(packet_forwarded.source, 1);
-        assert_eq!(packet_forwarded.destination, 3);
+        server_neighbors.insert(2, drone_packet_channels.0);
+        
+        
+        let controller =
+            SimulationController::new(nodes_channels, drone_channels, Vec::new(), Topology::new());
+
+        thread::spawn(move || {
+            wg_2024::drone::Drone::run(&mut drone);
+        });
+
+        thread::spawn(move || {
+            rustafarian_client::chat_client::ChatClient::run(&mut client);
+        });
+
+        // Instruct client to send message to server
+        controller
+            .nodes_channels
+            .get(&1)
+            .unwrap()
+            .send_command_channel
+            .send(SimControllerCommand::SendMessage(
+                "Hello world".to_string(),
+                3,
+                3,
+            ))
+            .unwrap();
+
+        // Listen for ack from drone
+        let ack = drone_event_channels.1.recv().unwrap();
+        assert!(matches!(
+            ack,
+            DroneEvent::PacketSent(Packet {
+                pack_type: PacketType::Ack(_),
+                ..
+            })
+        ));
+
+        // Server listen for message from client
+        let message = server_packet_channels.1.recv().unwrap();
+        assert!(matches!(
+            message.pack_type,
+            PacketType::MsgFragment(Fragment { data, .. }) if data == "Hello world".as_bytes()
+        ));
     }
-
 
     #[test]
     fn test_simulation_controller_build_complex_topology() {
@@ -569,13 +634,20 @@ mod tests {
         let handles = Vec::new();
         let topology = Topology::new();
 
-        let controller = SimulationController::new(nodes_channels, drone_channels, handles, topology);
+        let controller =
+            SimulationController::new(nodes_channels, drone_channels, handles, topology);
 
         let packet = Packet {
-            pack_type: PacketType::MsgFragment(Fragment { fragment_index: 0, total_n_fragments: 2, length: 3, data: [0; 128] }),
+            pack_type: PacketType::MsgFragment(Fragment {
+                fragment_index: 0,
+                total_n_fragments: 2,
+                length: 3,
+                data: [0; 128],
+            }),
             session_id: 1,
-            routing_header: RoutingHeader {
+            routing_header: SourceRoutingHeader {
                 hops: vec![1, 2],
+                hop_index: 1,
             },
         };
 
@@ -583,10 +655,22 @@ mod tests {
 
         assert!(result.is_ok());
         let packet_forwarded = result.unwrap();
-        assert_eq!(packet_forwarded.session_id, 1);
-        assert_eq!(packet_forwarded.packet_type, "MsgFragment");
-        assert_eq!(packet_forwarded.source, 1);
-        assert_eq!(packet_forwarded.destination, 2);
+        assert!(matches!(packet_forwarded, PacketForwarded { .. }));
+
+        if let PacketForwarded {
+            session_id,
+            packet_type,
+            source,
+            destination,
+        } = packet_forwarded
+        {
+            assert_eq!(session_id, 1);
+            assert_eq!(packet_type, "MsgFragment");
+            assert_eq!(source, 1);
+            assert_eq!(destination, 2);
+        } else {
+            panic!("PacketForwarded expected");
+        }        
     }
 
     #[test]
@@ -596,13 +680,20 @@ mod tests {
         let handles = Vec::new();
         let topology = Topology::new();
 
-        let controller = SimulationController::new(nodes_channels, drone_channels, handles, topology);
+        let controller =
+            SimulationController::new(nodes_channels, drone_channels, handles, topology);
 
         let packet = Packet {
-            pack_type: PacketType::MsgFragment(Fragment  { fragment_index: 0, total_n_fragments: 2, length: 3, data: [0; 128] }),
+            pack_type: PacketType::MsgFragment(Fragment {
+                fragment_index: 0,
+                total_n_fragments: 2,
+                length: 3,
+                data: [0; 128],
+            }),
             session_id: 1,
-            routing_header: RoutingHeader {
+            routing_header: SourceRoutingHeader {
                 hops: vec![1, 3],
+                hop_index: 1,
             },
         };
 
@@ -628,6 +719,4 @@ mod tests {
 
         assert!(result.is_err());
     }
-
-    
 }
