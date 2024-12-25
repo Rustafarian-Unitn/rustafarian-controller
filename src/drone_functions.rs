@@ -1,12 +1,12 @@
+use crate::runnable::Runnable;
+use crate::server::Server;
 use crossbeam_channel::{Receiver, Sender};
 use rustafarian_drone::RustafarianDrone;
-use crate::server::Server;
 use std::collections::HashMap;
 use std::thread::JoinHandle;
 use wg_2024::controller::{DroneCommand, DroneEvent};
-use wg_2024::packet::Packet;
-use crate::runnable::Runnable;
 use wg_2024::drone::Drone;
+use wg_2024::packet::Packet;
 
 pub fn rustafarian_drone(
     id: u8,
