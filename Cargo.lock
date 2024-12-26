@@ -182,6 +182,8 @@ dependencies = [
 name = "rustafarian-client"
 version = "0.2.0"
 source = "git+https://github.com/Rustafarian-Unitn/rustafarian-client.git?branch=main#4e2f8322676953f07b414fe5239d9819c61533e2"
+version = "0.1.0"
+source = "git+https://github.com/Rustafarian-Unitn/rustafarian-client.git?branch=main#0dae0b25de39d1dcf280dd83d6f3d3f10aac87ca"
 dependencies = [
  "crossbeam",
  "crossbeam-channel",
@@ -248,7 +250,7 @@ dependencies = [
 [[package]]
 name = "rustafarian-shared"
 version = "0.1.1"
-source = "git+https://github.com/Rustafarian-Unitn/rustafarian-shared.git?branch=main#efc93014873d026dff01e22b73b03f5cba5bf0ca"
+source = "git+https://github.com/Rustafarian-Unitn/rustafarian-shared.git?branch=main#6be8fdad90c2ad83289c41f310651a430a9f7667"
 dependencies = [
  "serde",
  "serde_json",

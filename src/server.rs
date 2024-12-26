@@ -1,23 +1,31 @@
 use crossbeam_channel::{select, Receiver, Sender};
 use std::collections::HashMap;
 use std::thread;
-use wg_2024::network::{SourceRoutingHeader};
+use wg_2024::network::SourceRoutingHeader;
 use wg_2024::packet::{FloodResponse, Fragment, NodeType, Packet, PacketType};
 
 const FRAGMENT_DSIZE: usize = 128;
 
-pub struct Server{
-    server_id: u8, receiver: Receiver<Packet>, senders: HashMap<u8, Sender<Packet>>
+pub struct Server {
+    server_id: u8,
+    receiver: Receiver<Packet>,
+    senders: HashMap<u8, Sender<Packet>>,
 }
 
 impl Server {
-    pub fn new(server_id: u8, receiver: Receiver<Packet>, senders: HashMap<u8, Sender<Packet>>) -> Self {
-        Server{
-            server_id, receiver, senders
+    pub fn new(
+        server_id: u8,
+        receiver: Receiver<Packet>,
+        senders: HashMap<u8, Sender<Packet>>,
+    ) -> Self {
+        Server {
+            server_id,
+            receiver,
+            senders,
         }
     }
 
-    pub fn run (&mut self) {
+    pub fn run(&mut self) {
         println!("Created server {:?}", self.server_id);
 
         loop {
@@ -33,14 +41,14 @@ impl Server {
                                     //create flood response
                                     flood_request.path_trace.push((self.server_id,NodeType::Server));
                                     let path_trace_reverse = flood_request.path_trace.into_iter().rev().collect::<Vec<_>>();
-    
+
                                     let flood_response = FloodResponse {
                                         flood_id: flood_request.flood_id,
                                         path_trace: path_trace_reverse.clone(),
                                     };
-    
+
                                     let hops: Vec<u8> = path_trace_reverse.iter().map(|(node_id, _)| *node_id).collect();
-    
+
                                     // create response packet
                                     let response_packet = Packet {
                                         routing_header: SourceRoutingHeader {
@@ -50,9 +58,9 @@ impl Server {
                                         session_id: packet.session_id,
                                         pack_type: PacketType::FloodResponse(flood_response),
                                     };
-    
+
                                     println!("Packet response created {:?}", response_packet);
-    
+
                                     // send flood response
                                     if let Some(sender) = self.senders.get(&response_packet.routing_header.hops[1]) {
                                         if let Err(err) = sender.send(response_packet.clone()) {
@@ -64,7 +72,7 @@ impl Server {
                                         eprintln!("Sender didn't found node {}", &response_packet.routing_header.hops[1]);
                                     }
                                 }
-                                
+
                                 PacketType::MsgFragment(packet) => {
                                     println!("Received chat request");
                                 }
@@ -79,7 +87,6 @@ impl Server {
             }
         }
     }
-
 
     pub fn run2(&mut self) {
         println!("Created server {:?}", self.server_id);
@@ -136,9 +143,6 @@ impl Server {
                     }
                 }
             }
-
         }
     }
-
-
 }
