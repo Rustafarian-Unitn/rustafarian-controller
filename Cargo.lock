@@ -181,14 +181,12 @@ dependencies = [
 [[package]]
 name = "rustafarian-client"
 version = "0.2.0"
-source = "git+https://github.com/Rustafarian-Unitn/rustafarian-client.git?branch=main#4e2f8322676953f07b414fe5239d9819c61533e2"
-version = "0.1.0"
-source = "git+https://github.com/Rustafarian-Unitn/rustafarian-client.git?branch=main#0dae0b25de39d1dcf280dd83d6f3d3f10aac87ca"
+source = "git+https://github.com/Rustafarian-Unitn/rustafarian-client.git#ec2f313b87ad2f520b480012869fb2610d4801d6"
 dependencies = [
  "crossbeam",
  "crossbeam-channel",
  "rand",
- "rustafarian-shared 0.1.1 (git+https://github.com/Rustafarian-Unitn/rustafarian-shared)",
+ "rustafarian-shared",
  "serde",
  "serde_json",
  "wg_2024",
@@ -204,7 +202,7 @@ dependencies = [
  "rustafarian-client",
  "rustafarian-drone 1.0.0",
  "rustafarian-project",
- "rustafarian-shared 0.1.1 (git+https://github.com/Rustafarian-Unitn/rustafarian-shared.git?branch=main)",
+ "rustafarian-shared",
  "serde_json",
  "toml",
  "wg_2024",
@@ -250,17 +248,7 @@ dependencies = [
 [[package]]
 name = "rustafarian-shared"
 version = "0.1.1"
-source = "git+https://github.com/Rustafarian-Unitn/rustafarian-shared.git?branch=main#6be8fdad90c2ad83289c41f310651a430a9f7667"
-dependencies = [
- "serde",
- "serde_json",
- "wg_2024",
-]
-
-[[package]]
-name = "rustafarian-shared"
-version = "0.1.1"
-source = "git+https://github.com/Rustafarian-Unitn/rustafarian-shared#efc93014873d026dff01e22b73b03f5cba5bf0ca"
+source = "git+https://github.com/Rustafarian-Unitn/rustafarian-shared.git#77381d0b1618c3af54e8e82c05ad5d9522bebb0a"
 dependencies = [
  "serde",
  "serde_json",
@@ -316,9 +304,9 @@ dependencies = [
 
 [[package]]
 name = "syn"
-version = "2.0.91"
+version = "2.0.92"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d53cbcb5a243bd33b7858b1d7f4aca2153490815872d86d955d6ea29f743c035"
+checksum = "70ae51629bf965c5c098cc9e87908a3df5301051a9e087d6f9bef5c9771ed126"
 dependencies = [
  "proc-macro2",
  "quote",
