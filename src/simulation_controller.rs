@@ -21,6 +21,7 @@ use wg_2024::network::NodeId;
 use wg_2024::packet::{Packet, PacketType};
 
 pub const TICKS: u64 = 100;
+#[derive(Debug)]
 
 pub struct NodeChannels {
     pub send_packet_channel: Sender<Packet>,
@@ -29,7 +30,7 @@ pub struct NodeChannels {
     pub receive_response_channel: Receiver<SimControllerResponseWrapper>,
     pub send_response_channel: Sender<SimControllerResponseWrapper>,
 }
-
+#[derive(Debug)]
 pub struct DroneChannels {
     pub send_command_channel: Sender<DroneCommand>,
     pub receive_command_channel: Receiver<DroneCommand>,
@@ -48,6 +49,7 @@ type DroneFactory = fn(
     pdr: f32,
 ) -> (Box<dyn Runnable>, String);
 
+#[derive(Debug)]
 pub struct SimulationController {
     pub topology: Topology,
     pub nodes_channels: HashMap<NodeId, NodeChannels>,
