@@ -4,6 +4,7 @@ use crate::runnable::Runnable;
 use crate::server::Server;
 use crossbeam_channel::{unbounded, Receiver, Sender};
 use rand::Error;
+use rustafarian_client::browser_client::BrowserClient;
 use rustafarian_client::chat_client::ChatClient;
 use rustafarian_client::client::Client;
 use rustafarian_shared::messages::commander_messages::SimControllerEvent::PacketForwarded;
@@ -12,11 +13,9 @@ use rustafarian_shared::messages::commander_messages::{
 };
 use rustafarian_shared::topology::Topology;
 use std::collections::HashMap;
+use std::thread;
 use std::thread::JoinHandle;
-use std::{fs, thread};
-use wg_2024::config::{
-    Client as ClientConfig, Config, Drone as DroneConfig, Server as ServerConfig,
-};
+use wg_2024::config::{Client as ClientConfig, Drone as DroneConfig, Server as ServerConfig};
 use wg_2024::controller::{DroneCommand, DroneEvent};
 use wg_2024::network::NodeId;
 use wg_2024::packet::{Packet, PacketType};
@@ -47,7 +46,7 @@ type DroneFactory = fn(
     packet_recv: Receiver<Packet>,
     packet_send: HashMap<NodeId, Sender<Packet>>,
     pdr: f32,
-) -> Box<dyn Runnable>;
+) -> (Box<dyn Runnable>, String);
 
 pub struct SimulationController {
     pub topology: Topology,
@@ -144,8 +143,9 @@ impl SimulationController {
 
             topology.add_node(drone_config.id);
             drone_config.connected_node_ids.iter().for_each(|node_id| {
-                topology.add_edge(drone_config.id, *node_id);
-            });
+                topology.add_edge(drone_config.id, *node_id); });
+
+            topology.set_node_type(drone_config.id, "Drone".to_string());
         }
 
         // For each drone config pick the next factory in a circular fashion to generate a drone instance
@@ -156,13 +156,13 @@ impl SimulationController {
             // Neighbouring nodes
             let neighbor_channels: HashMap<NodeId, Sender<Packet>> = drone_channels
                 .iter()
-                .filter(|(k, v)| drone_config.connected_node_ids.contains(k))
+                .filter(|(k, _)| drone_config.connected_node_ids.contains(k))
                 .map(|(k, v)| (*k, v.send_packet_channel.clone()))
                 .collect();
 
             let drone_channels = drone_channels.get(&drone_config.id).unwrap();
 
-            let mut drone: Box<dyn Runnable> = factory(
+            let (mut drone, name) = factory(
                 drone_config.id,
                 drone_channels.send_event_channel.clone(),
                 drone_channels.receive_command_channel.clone(),
@@ -170,6 +170,7 @@ impl SimulationController {
                 neighbor_channels,
                 drone_config.pdr,
             );
+            topology.set_label(drone_config.id, name);
 
             handles.push(thread::spawn(move || drone.run()));
         }
@@ -182,8 +183,9 @@ impl SimulationController {
         drone_channels: &mut HashMap<NodeId, DroneChannels>,
         topology: &mut Topology,
     ) {
+        let mut counter = 0;
         for client_config in clients_config {
-            // Generate the channels for client communication with sc
+            counter += 1;
 
             // Simulation controller keeps send command channel, client keeps receive command channel
             let (send_command_channel, receive_command_channel) =
@@ -217,6 +219,14 @@ impl SimulationController {
 
             // Register the client's node in the topology
             topology.add_node(client_config.id);
+            if counter % 2 == 0 {
+                topology.set_label(client_config.id, "Chat client".to_string());
+                topology.set_node_type(client_config.id, "chat_client".to_string());
+            } else {
+                topology.set_label(client_config.id, "Browser client".to_string());
+                topology.set_node_type(client_config.id, "browser_client".to_string());
+            }
+
             client_config
                 .connected_drone_ids
                 .iter()
@@ -226,14 +236,25 @@ impl SimulationController {
 
             // Start off the client
             handles.push(thread::spawn(move || {
-                let mut client = ChatClient::new(
-                    client_config.id,
-                    neighbour_drones,
-                    receive_packet_channel,
-                    receive_command_channel,
-                    send_response_channel,
-                );
-                client.run(TICKS)
+                if counter % 2 == 0 {
+                    let mut client = ChatClient::new(
+                        client_config.id,
+                        neighbour_drones,
+                        receive_packet_channel,
+                        receive_command_channel,
+                        send_response_channel,
+                    );
+                    client.run(TICKS)
+                } else {
+                    let mut client = BrowserClient::new(
+                        client_config.id,
+                        neighbour_drones,
+                        receive_packet_channel,
+                        receive_command_channel,
+                        send_response_channel,
+                    );
+                    client.run(TICKS)
+                }
             }));
         }
     }
@@ -245,10 +266,11 @@ impl SimulationController {
         drone_channels: &mut HashMap<NodeId, DroneChannels>,
         topology: &mut Topology,
     ) {
+        let mut counter = 0;
         // For each drone config pick the next factory in a circular fashion to generate a drone instance
         for server_config in servers_config {
-            let (send_command_channel, receive_command_channel) =
-                unbounded::<SimControllerCommand>();
+            counter += 1;
+            let (send_command_channel, _) = unbounded::<SimControllerCommand>();
 
             let (send_response_channel, receive_response_channel) =
                 unbounded::<SimControllerResponseWrapper>();
@@ -270,7 +292,7 @@ impl SimulationController {
 
             let drones = drone_channels
                 .iter()
-                .filter(|(k, v)| server_config.connected_drone_ids.contains(k))
+                .filter(|(k, _)| server_config.connected_drone_ids.contains(k))
                 .map(|(k, v)| (*k, v.send_packet_channel.clone()))
                 .collect();
 
@@ -283,10 +305,29 @@ impl SimulationController {
                     topology.add_edge(server_config.id, *node_id);
                 });
 
+            if counter % 3 == 0 {
+                topology.set_label(server_config.id, "Chat server".to_string());
+                topology.set_node_type(server_config.id, "chat_server".to_string());
+            } else if counter % 3 == 1 {
+                topology.set_label(server_config.id, "Media server".to_string());
+                topology.set_node_type(server_config.id, "media_server".to_string());
+            } else {
+                topology.set_label(server_config.id, "Text server".to_string());
+                topology.set_node_type(server_config.id, "text_server".to_string());
+            }
+
             // Start off the server
             handles.push(thread::spawn(move || {
-                let mut server = Server::new(server_config.id, receive_packet_channel, drones);
-                server.run()
+                if counter % 3 == 0 {
+                    let mut server = Server::new(server_config.id, receive_packet_channel, drones);
+                    server.run()
+                } else if counter % 3 == 1 {
+                    let mut server = Server::new(server_config.id, receive_packet_channel, drones);
+                    server.run()
+                } else {
+                    let mut server = Server::new(server_config.id, receive_packet_channel, drones);
+                    server.run()
+                }
             }));
         }
     }
@@ -352,17 +393,13 @@ impl SimulationController {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::drone_functions::rustafarian_drone;
     use crate::tests::setup;
-    use crate::{drone_functions::rustafarian_drone, server, simulation_controller};
-    use crossbeam_channel::unbounded;
-    use rustafarian_client::chat_client;
-    use rustafarian_drone::RustafarianDrone;
     use rustafarian_shared::topology::Topology;
     use std::collections::HashMap;
     use wg_2024::{
-        drone::{self, Drone},
         network::SourceRoutingHeader,
-        packet::{self, Fragment, Packet, PacketType},
+        packet::{Fragment, Packet, PacketType},
     };
 
     #[test]
@@ -497,13 +534,6 @@ mod tests {
     #[test]
     fn test_handle_controller_shortcut_failure() {
         let (_, _, controller) = setup::setup();
-
-        let server_receive_packet_channel = controller
-            .nodes_channels
-            .get(&3)
-            .unwrap()
-            .receive_packet_channel
-            .clone();
 
         let packet = Packet {
             pack_type: PacketType::MsgFragment(Fragment {
