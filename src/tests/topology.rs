@@ -1,3 +1,5 @@
+
+#[cfg(test)]
 use crate::simulation_controller::SimulationController;
 
 #[test]

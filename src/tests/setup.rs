@@ -64,7 +64,7 @@ pub fn setup() -> (ChatClient, RustafarianDrone, SimulationController) {
         receive_event_channel: drone_event_channels.1.clone(),
     };
 
-    let mut drone = RustafarianDrone::new(
+    let drone = RustafarianDrone::new(
         2,
         drone_event_channels.0,
         drone_command_channels.1,
