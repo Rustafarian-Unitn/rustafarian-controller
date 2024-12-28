@@ -21,5 +21,5 @@ pub fn rustafarian_drone(
         packet_recv,
         packet_send,
         pdr,
-    )), format!("Rustafarian Drone {}", id))
+    )), format!("Rustafarian drone"))
 }
