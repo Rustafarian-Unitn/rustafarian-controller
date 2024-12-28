@@ -147,7 +147,7 @@ impl SimulationController {
             drone_config.connected_node_ids.iter().for_each(|node_id| {
                 topology.add_edge(drone_config.id, *node_id); });
 
-            topology.set_node_type(drone_config.id, "Drone".to_string());
+            topology.set_node_type(drone_config.id, "drone".to_string());
         }
 
         // For each drone config pick the next factory in a circular fashion to generate a drone instance
