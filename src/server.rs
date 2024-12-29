@@ -1,6 +1,5 @@
 use crossbeam_channel::{select, Receiver, Sender};
 use std::collections::HashMap;
-use std::thread;
 use wg_2024::network::SourceRoutingHeader;
 use wg_2024::packet::{FloodResponse, Fragment, NodeType, Packet, PacketType};
 
@@ -29,8 +28,10 @@ impl Server {
         println!("Created server {:?}", self.server_id);
 
         loop {
+            println!("Server {} waiting for packet", self.server_id);
             select! {
                 recv(self.receiver) -> packet => {
+                    println!("Received packet {:?}", packet);
                     match packet {
                         Ok(packet) => {
                             // check if flood request
@@ -73,7 +74,7 @@ impl Server {
                                     }
                                 }
 
-                                PacketType::MsgFragment(packet) => {
+                                PacketType::MsgFragment(_) => {
                                     println!("Received chat request");
                                 }
 
@@ -81,7 +82,9 @@ impl Server {
                             }
                         }
 
-                        Err(_) => {}
+                        Err(_) => {
+                            println!("Error in receiving packet");
+                        }
                     }
                 }
             }
@@ -96,7 +99,7 @@ impl Server {
                 recv(self.receiver) -> packet => {
                     match packet {
                         Ok(packet) => {
-                            if let PacketType::MsgFragment(mut fragments) = packet.pack_type {
+                            if let PacketType::MsgFragment(_) = packet.pack_type {
                             let content = format!("Messaggio dal server {}", self.server_id).into_bytes();
                             //response fragment
                             let fragment = Fragment {
