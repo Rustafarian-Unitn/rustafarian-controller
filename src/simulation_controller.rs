@@ -145,7 +145,8 @@ impl SimulationController {
 
             topology.add_node(drone_config.id);
             drone_config.connected_node_ids.iter().for_each(|node_id| {
-                topology.add_edge(drone_config.id, *node_id); });
+                topology.add_edge(drone_config.id, *node_id);
+            });
 
             topology.set_node_type(drone_config.id, "drone".to_string());
         }
@@ -501,7 +502,7 @@ mod tests {
 
     #[test]
     fn test_handle_controller_shortcut_success() {
-        let (_, _, controller) = setup::setup();
+        let (_, _, _, controller) = setup::setup();
 
         let server_receive_packet_channel = controller
             .nodes_channels
@@ -535,7 +536,7 @@ mod tests {
 
     #[test]
     fn test_handle_controller_shortcut_failure() {
-        let (_, _, controller) = setup::setup();
+        let (_, _, _, controller) = setup::setup();
 
         let packet = Packet {
             pack_type: PacketType::MsgFragment(Fragment {

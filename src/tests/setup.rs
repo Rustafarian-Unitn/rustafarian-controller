@@ -12,13 +12,15 @@ use wg_2024::{
     packet::Packet,
 };
 
+use crate::server::Server;
 use crate::simulation_controller::DroneChannels;
 use crate::simulation_controller::NodeChannels;
 use crate::simulation_controller::SimulationController;
 
-pub fn setup() -> (ChatClient, RustafarianDrone, SimulationController) {
+pub fn setup() -> (ChatClient, Server, RustafarianDrone, SimulationController) {
     let mut drone_neighbors = HashMap::new();
     let mut client_neighbors = HashMap::new();
+    let mut server_neighbors = HashMap::new();
 
     // Drone channels
     let drone_packet_channels = unbounded::<Packet>();
@@ -64,6 +66,9 @@ pub fn setup() -> (ChatClient, RustafarianDrone, SimulationController) {
         receive_event_channel: drone_event_channels.1.clone(),
     };
 
+    client_neighbors.insert(2, drone_packet_channels.0.clone());
+    server_neighbors.insert(2, drone_packet_channels.0.clone());
+    
     let drone = RustafarianDrone::new(
         2,
         drone_event_channels.0,
@@ -73,7 +78,7 @@ pub fn setup() -> (ChatClient, RustafarianDrone, SimulationController) {
         0.0,
     );
 
-    client_neighbors.insert(2, drone_packet_channels.0.clone());
+    let server = Server::new(3, server_packet_channels.1, server_neighbors);
 
     let mut client = ChatClient::new(
         1,
@@ -89,6 +94,7 @@ pub fn setup() -> (ChatClient, RustafarianDrone, SimulationController) {
     client.topology().add_edge(1, 2);
     client.topology().add_edge(2, 3);
 
+
     let mut drones_channels = HashMap::new();
     drones_channels.insert(2, drone_channels);
 
@@ -103,5 +109,5 @@ pub fn setup() -> (ChatClient, RustafarianDrone, SimulationController) {
         client.topology().clone(),
     );
 
-    (client, drone, simulation_controller)
+    (client, server, drone, simulation_controller)
 }
