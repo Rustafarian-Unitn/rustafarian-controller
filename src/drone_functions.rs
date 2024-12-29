@@ -14,12 +14,15 @@ pub fn rustafarian_drone(
     packet_send: HashMap<u8, Sender<Packet>>,
     pdr: f32,
 ) -> (Box<dyn Runnable>, String) {
-    (Box::new(RustafarianDrone::new(
-        id,
-        controller_send,
-        controller_recv,
-        packet_recv,
-        packet_send,
-        pdr,
-    )), format!("Rustafarian drone"))
+    (
+        Box::new(RustafarianDrone::new(
+            id,
+            controller_send,
+            controller_recv,
+            packet_recv,
+            packet_send,
+            pdr,
+        )),
+        "Rustafarian drone".to_string(),
+    )
 }
