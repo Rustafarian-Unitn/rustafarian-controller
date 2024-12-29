@@ -1,7 +1,6 @@
 use crate::config_parser;
 use crate::drone_functions::rustafarian_drone;
 use crate::runnable::Runnable;
-use crate::server::Server;
 use crossbeam_channel::{unbounded, Receiver, Sender};
 use rand::Error;
 use rustafarian_client::browser_client::BrowserClient;
@@ -11,6 +10,7 @@ use rustafarian_shared::messages::commander_messages::SimControllerEvent::Packet
 use rustafarian_shared::messages::commander_messages::{
     SimControllerCommand, SimControllerEvent, SimControllerResponseWrapper,
 };
+use rustafarian_shared::messages::general_messages::ServerType;
 use rustafarian_shared::topology::Topology;
 use std::collections::HashMap;
 use std::thread;
@@ -19,10 +19,12 @@ use wg_2024::config::{Client as ClientConfig, Drone as DroneConfig, Server as Se
 use wg_2024::controller::{DroneCommand, DroneEvent};
 use wg_2024::network::NodeId;
 use wg_2024::packet::{Packet, PacketType};
+use rustafarian_content_server::content_server::ContentServer as Server;
 
 pub const TICKS: u64 = 100;
+pub const FILE_FOLDER: &str = "files";
+pub const MEDIA_FOLDER: &str = "media";
 #[derive(Debug)]
-
 pub struct NodeChannels {
     pub send_packet_channel: Sender<Packet>,
     pub receive_packet_channel: Receiver<Packet>,
@@ -216,7 +218,7 @@ impl SimulationController {
             // Register assigned neighbouring drones
             let neighbour_drones = drone_channels
                 .iter()
-                .filter(|(k, v)| client_config.connected_drone_ids.contains(k))
+                .filter(|(k, _)| client_config.connected_drone_ids.contains(k))
                 .map(|(k, v)| (*k, v.send_packet_channel.clone()))
                 .collect();
 
@@ -273,7 +275,7 @@ impl SimulationController {
         // For each drone config pick the next factory in a circular fashion to generate a drone instance
         for server_config in servers_config {
             counter += 1;
-            let (send_command_channel, _) = unbounded::<SimControllerCommand>();
+            let (send_command_channel, receive_command_channel) = unbounded::<SimControllerCommand>();
 
             let (send_response_channel, receive_response_channel) =
                 unbounded::<SimControllerResponseWrapper>();
@@ -281,7 +283,7 @@ impl SimulationController {
             // Generate the channels for inter-drone communication
             let (send_packet_channel, receive_packet_channel) = unbounded::<Packet>();
 
-            // Save the client's channel counterparts for later use
+            // Save the server's channel counterparts for later use
             node_channels.insert(
                 server_config.id,
                 NodeChannels {
@@ -322,13 +324,13 @@ impl SimulationController {
             // Start off the server
             handles.push(thread::spawn(move || {
                 if counter % 3 == 0 {
-                    let mut server = Server::new(server_config.id, receive_packet_channel, drones);
+                    let mut server = Server::new(server_config.id, drones, receive_packet_channel, receive_command_channel, send_response_channel, FILE_FOLDER, MEDIA_FOLDER, ServerType::Media);
                     server.run()
                 } else if counter % 3 == 1 {
-                    let mut server = Server::new(server_config.id, receive_packet_channel, drones);
+                    let mut server = Server::new(server_config.id, drones, receive_packet_channel, receive_command_channel, send_response_channel, FILE_FOLDER, MEDIA_FOLDER, ServerType::Text);
                     server.run()
                 } else {
-                    let mut server = Server::new(server_config.id, receive_packet_channel, drones);
+                    let mut server = Server::new(server_config.id, drones, receive_packet_channel, receive_command_channel, send_response_channel, FILE_FOLDER, MEDIA_FOLDER, ServerType::Chat);
                     server.run()
                 }
             }));

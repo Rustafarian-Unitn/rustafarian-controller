@@ -8,6 +8,7 @@ wg_2024 = { git = "https://github.com/WGL-2024/WGL_repo_2024.git", features = ["
 rustafarian-drone = { git = "https://github.com/Rustafarian-Unitn/rustafarian-drone.git" }
 rustafarian-shared = { git = "https://github.com/Rustafarian-Unitn/rustafarian-shared.git" }
 rustafarian-client = { git = "https://github.com/Rustafarian-Unitn/rustafarian-client.git"}
+rustafarian-content-server = { git = "https://github.com/Rustafarian-Unitn/rustafarian-content_server.git"}
 crossbeam = "0.8"
 toml = "0.8"
 crossbeam-channel = "0.5"

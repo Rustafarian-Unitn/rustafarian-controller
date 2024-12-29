@@ -186,7 +186,22 @@ dependencies = [
  "crossbeam",
  "crossbeam-channel",
  "rand",
- "rustafarian-shared",
+ "rustafarian-shared 0.1.1 (git+https://github.com/Rustafarian-Unitn/rustafarian-shared.git)",
+ "serde",
+ "serde_json",
+ "wg_2024",
+]
+
+[[package]]
+name = "rustafarian-content-server"
+version = "0.1.0"
+source = "git+https://github.com/Rustafarian-Unitn/rustafarian-content_server.git#d4363958d7e7a03cd65412a457701da188700d21"
+dependencies = [
+ "crossbeam",
+ "crossbeam-channel",
+ "rand",
+ "rustafarian-project",
+ "rustafarian-shared 0.1.1 (git+https://github.com/Rustafarian-Unitn/rustafarian-shared?branch=main)",
  "serde",
  "serde_json",
  "wg_2024",
@@ -200,9 +215,22 @@ dependencies = [
  "crossbeam-channel",
  "rand",
  "rustafarian-client",
- "rustafarian-drone",
- "rustafarian-shared",
+ "rustafarian-content-server",
+ "rustafarian-drone 1.0.0",
+ "rustafarian-shared 0.1.1 (git+https://github.com/Rustafarian-Unitn/rustafarian-shared.git)",
  "serde_json",
+ "toml",
+ "wg_2024",
+]
+
+[[package]]
+name = "rustafarian-drone"
+version = "0.1.0"
+source = "git+https://github.com/Rustafarian-Unitn/rustafarian-drone?branch=development#e33c9766af2b8455a363661c261be4fe414325df"
+dependencies = [
+ "crossbeam",
+ "crossbeam-channel",
+ "rand",
  "toml",
  "wg_2024",
 ]
@@ -216,6 +244,29 @@ dependencies = [
  "crossbeam-channel",
  "rand",
  "toml",
+ "wg_2024",
+]
+
+[[package]]
+name = "rustafarian-project"
+version = "0.1.0"
+source = "git+https://github.com/Rustafarian-Unitn/rustafarian-project/?branch=project-fair#8e9db7f26e8715abddc53192be374291ab369acc"
+dependencies = [
+ "crossbeam",
+ "crossbeam-channel",
+ "rand",
+ "rustafarian-drone 0.1.0",
+ "toml",
+ "wg_2024",
+]
+
+[[package]]
+name = "rustafarian-shared"
+version = "0.1.1"
+source = "git+https://github.com/Rustafarian-Unitn/rustafarian-shared?branch=main#c136b65dafc9436e9ee77486e06b36b4ff778b7a"
+dependencies = [
+ "serde",
+ "serde_json",
  "wg_2024",
 ]
 
