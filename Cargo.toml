@@ -6,9 +6,10 @@ edition = "2021"
 [dependencies]
 wg_2024 = { git = "https://github.com/WGL-2024/WGL_repo_2024.git", features = ["serialize"] }
 rustafarian-drone = { git = "https://github.com/Rustafarian-Unitn/rustafarian-drone.git" }
-rustafarian-shared = { git = "https://github.com/Rustafarian-Unitn/rustafarian-shared.git" }
-rustafarian-client = { git = "https://github.com/Rustafarian-Unitn/rustafarian-client.git"}
-rustafarian-content-server = { git = "https://github.com/Rustafarian-Unitn/rustafarian-content_server.git", branch="change-request/crate-naming"}
+rustafarian-shared = { git = "https://github.com/Rustafarian-Unitn/rustafarian-shared.git",  branch="feature/addSender" }
+rustafarian-client = { git = "https://github.com/Rustafarian-Unitn/rustafarian-client" }
+rustafarian-content-server = { git = "https://github.com/Rustafarian-Unitn/rustafarian-content_server.git", branch="feature/allignment-with-client"}
+rustafarian-chat-server = { git = "https://github.com/Rustafarian-Unitn/rustafarian-chat-server.git", branch="feature/allignment-with-client" }
 crossbeam = "0.8"
 toml = "0.8"
 crossbeam-channel = "0.5"

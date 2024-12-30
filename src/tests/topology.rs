@@ -4,7 +4,7 @@ use std::thread;
 use crate::simulation_controller::SimulationController;
 use rustafarian_client::client::Client;
 use rustafarian_shared::messages::commander_messages::{
-    SimControllerCommand, SimControllerMessage, SimControllerResponseWrapper
+    SimControllerCommand, SimControllerMessage, SimControllerResponseWrapper,
 };
 
 #[test]
@@ -53,7 +53,7 @@ fn test_simulation_controller_build_complex_topology() {
 fn test_client_topology() {
     use super::setup;
 
-    let (mut chat_client, _,_, controller) = setup::setup();
+    let ((mut chat_client, _), _, _, _, controller) = setup::setup();
     let client_id = chat_client.client_id();
     let client_channels = controller.nodes_channels.get(&client_id).unwrap();
     let client_send_command_channel = &client_channels.send_command_channel;
@@ -73,11 +73,10 @@ fn test_client_topology() {
     ));
 
     // Check the client topology: 3 nodes (1,2,3) and 2 edges (1-2, 2-3)
-    if let SimControllerResponseWrapper::Message(SimControllerMessage::TopologyResponse(topology)) = response {
+    if let SimControllerResponseWrapper::Message(SimControllerMessage::TopologyResponse(topology)) =
+        response
+    {
         assert_eq!(topology.nodes().len(), 3);
         assert_eq!(topology.edges().len(), 3);
     }
-
-    
-    
 }

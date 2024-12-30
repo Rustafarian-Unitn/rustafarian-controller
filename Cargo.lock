@@ -116,6 +116,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b5aba8db14291edd000dfcc4d620c7ebfb122c613afb886ca8803fa4e128a20a"
 
 [[package]]
+name = "log"
+version = "0.4.22"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a7a70ba024b9dc04c27ea2f0c0548feb474ec5c54bba33a7f72f873a39d07b24"
+
+[[package]]
 name = "memchr"
 version = "2.7.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -179,9 +185,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "rustafarian-chat-server"
+version = "0.1.0"
+source = "git+https://github.com/Rustafarian-Unitn/rustafarian-chat-server.git?branch=feature/allignment-with-client#d557f3aa3fedb3b2bfb5d7d86d07aee625c85851"
+dependencies = [
+ "crossbeam",
+ "crossbeam-channel",
+ "log",
+ "rand",
+ "rustafarian-shared",
+ "serde",
+ "serde_json",
+ "wg_2024",
+]
+
+[[package]]
 name = "rustafarian-client"
 version = "0.2.0"
-source = "git+https://github.com/Rustafarian-Unitn/rustafarian-client.git#1fcaf069d1970b22fd844ad5c8a15b7c263faf3c"
+source = "git+https://github.com/Rustafarian-Unitn/rustafarian-client#a41f55338f2e627aaebe6e06d59d46fdc41a1c6c"
 dependencies = [
  "crossbeam",
  "crossbeam-channel",
@@ -195,7 +216,7 @@ dependencies = [
 [[package]]
 name = "rustafarian-content-server"
 version = "0.1.0"
-source = "git+https://github.com/Rustafarian-Unitn/rustafarian-content_server.git?branch=change-request/crate-naming#d0df2904d08f92605e6cfeb55df861028cbeb36e"
+source = "git+https://github.com/Rustafarian-Unitn/rustafarian-content_server.git?branch=feature/allignment-with-client#ac2c0cb962db06f5e92b2553d9014df5933d3317"
 dependencies = [
  "crossbeam",
  "crossbeam-channel",
@@ -214,6 +235,7 @@ dependencies = [
  "crossbeam",
  "crossbeam-channel",
  "rand",
+ "rustafarian-chat-server",
  "rustafarian-client",
  "rustafarian-content-server",
  "rustafarian-drone 1.0.0",
@@ -263,8 +285,9 @@ dependencies = [
 [[package]]
 name = "rustafarian-shared"
 version = "0.1.1"
-source = "git+https://github.com/Rustafarian-Unitn/rustafarian-shared.git#c136b65dafc9436e9ee77486e06b36b4ff778b7a"
+source = "git+https://github.com/Rustafarian-Unitn/rustafarian-shared.git?branch=feature/addSender#30260a159010b01acc6068b334f56eaf923bdbd1"
 dependencies = [
+ "crossbeam-channel",
  "serde",
  "serde_json",
  "wg_2024",
