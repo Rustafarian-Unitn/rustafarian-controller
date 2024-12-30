@@ -53,12 +53,7 @@ mod client_communication {
             .unwrap()
             .receive_response_channel
             .clone();
-        // Instruct client to register to server
-        let res = client_command_channel.send(SimControllerCommand::Register(4));
-        assert!(res.is_ok());
-        let res = client_2_command_channel.send(SimControllerCommand::Register(4));
-        assert!(res.is_ok());
-
+        
         thread::spawn(move || {
             wg_2024::drone::Drone::run(&mut drone);
         });
@@ -66,15 +61,21 @@ mod client_communication {
         thread::spawn(move || {
             client.run(TICKS);
         });
-
+        
         thread::spawn(move || {
             client_2.run(TICKS);
         });
-
+        
         thread::spawn(move || {
             chat_server.run();
         });
-
+        
+        // Instruct client to register to server
+        let res = client_command_channel.send(SimControllerCommand::Register(4));
+        assert!(res.is_ok());
+        let res = client_2_command_channel.send(SimControllerCommand::Register(4));
+        assert!(res.is_ok());
+        
         // Instruct client to send message to server
         let res = client_command_channel.send(SimControllerCommand::SendMessage(
             "Hello".to_string(),
