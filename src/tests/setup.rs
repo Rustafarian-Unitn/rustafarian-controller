@@ -3,21 +3,21 @@ use std::collections::HashMap;
 use crossbeam_channel::unbounded;
 use rustafarian_client::{chat_client::ChatClient, client::Client};
 use rustafarian_drone::RustafarianDrone;
-use rustafarian_shared::messages::commander_messages::{
+use rustafarian_shared::messages::{commander_messages::{
     SimControllerCommand, SimControllerResponseWrapper,
-};
+}, general_messages::ServerType};
 use wg_2024::{
     controller::{DroneCommand, DroneEvent},
     drone::Drone,
     packet::Packet,
 };
 
-use crate::server::Server;
+use rustafarian_content_server::content_server::ContentServer;
 use crate::simulation_controller::DroneChannels;
 use crate::simulation_controller::NodeChannels;
 use crate::simulation_controller::SimulationController;
 
-pub fn setup() -> (ChatClient, Server, RustafarianDrone, SimulationController) {
+pub fn setup() -> (ChatClient, ContentServer, RustafarianDrone, SimulationController) {
     let mut drone_neighbors = HashMap::new();
     let mut client_neighbors = HashMap::new();
     let mut server_neighbors = HashMap::new();
@@ -77,8 +77,8 @@ pub fn setup() -> (ChatClient, Server, RustafarianDrone, SimulationController) {
         drone_neighbors,
         0.0,
     );
-
-    let server = Server::new(3, server_packet_channels.1, server_neighbors);
+    
+    let server = ContentServer::new(3, server_neighbors,server_packet_channels.1,  server_command_channels.1, server_response_channels.0, "files", "media", ServerType::Media);
 
     let mut client = ChatClient::new(
         1,
