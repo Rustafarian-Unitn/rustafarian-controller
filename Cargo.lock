@@ -180,14 +180,13 @@ dependencies = [
 
 [[package]]
 name = "rustafarian-client"
-version = "0.1.0"
-source = "git+https://github.com/Rustafarian-Unitn/rustafarian-client.git?branch=bug/change-name-package#ee119540b0898a78bbd3d936ce53aeeb3fac0415"
+version = "0.2.0"
+source = "git+https://github.com/Rustafarian-Unitn/rustafarian-client.git?branch=main#a41f55338f2e627aaebe6e06d59d46fdc41a1c6c"
 dependencies = [
  "crossbeam",
  "crossbeam-channel",
  "rand",
- "rustafarian-project",
- "rustafarian-shared",
+ "rustafarian-shared 0.1.1 (git+https://github.com/Rustafarian-Unitn/rustafarian-shared?branch=feature/addSender)",
  "serde",
  "serde_json",
  "wg_2024",
@@ -203,7 +202,7 @@ dependencies = [
  "rustafarian-client",
  "rustafarian-drone 1.0.0",
  "rustafarian-project",
- "rustafarian-shared",
+ "rustafarian-shared 0.1.1 (git+https://github.com/Rustafarian-Unitn/rustafarian-shared.git?branch=main)",
  "serde_json",
  "toml",
  "wg_2024",
@@ -243,6 +242,17 @@ dependencies = [
  "rand",
  "rustafarian-drone 0.1.0",
  "toml",
+ "wg_2024",
+]
+
+[[package]]
+name = "rustafarian-shared"
+version = "0.1.1"
+source = "git+https://github.com/Rustafarian-Unitn/rustafarian-shared?branch=feature/addSender#29a87d6e35dd724b3e62a26f5963dbb2654ef581"
+dependencies = [
+ "crossbeam-channel",
+ "serde",
+ "serde_json",
  "wg_2024",
 ]
 
