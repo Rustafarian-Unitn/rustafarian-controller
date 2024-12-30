@@ -6,6 +6,7 @@ use rand::Error;
 use rustafarian_client::browser_client::BrowserClient;
 use rustafarian_client::chat_client::ChatClient;
 use rustafarian_client::client::Client;
+use rustafarian_content_server::content_server::ContentServer as Server;
 use rustafarian_shared::messages::commander_messages::SimControllerEvent::PacketForwarded;
 use rustafarian_shared::messages::commander_messages::{
     SimControllerCommand, SimControllerEvent, SimControllerResponseWrapper,
@@ -19,7 +20,6 @@ use wg_2024::config::{Client as ClientConfig, Drone as DroneConfig, Server as Se
 use wg_2024::controller::{DroneCommand, DroneEvent};
 use wg_2024::network::NodeId;
 use wg_2024::packet::{Packet, PacketType};
-use rustafarian_content_server::content_server::ContentServer as Server;
 
 pub const TICKS: u64 = 100;
 pub const FILE_FOLDER: &str = "files";
@@ -275,7 +275,8 @@ impl SimulationController {
         // For each drone config pick the next factory in a circular fashion to generate a drone instance
         for server_config in servers_config {
             counter += 1;
-            let (send_command_channel, receive_command_channel) = unbounded::<SimControllerCommand>();
+            let (send_command_channel, receive_command_channel) =
+                unbounded::<SimControllerCommand>();
 
             let (send_response_channel, receive_response_channel) =
                 unbounded::<SimControllerResponseWrapper>();
@@ -324,13 +325,40 @@ impl SimulationController {
             // Start off the server
             handles.push(thread::spawn(move || {
                 if counter % 3 == 0 {
-                    let mut server = Server::new(server_config.id, drones, receive_packet_channel, receive_command_channel, send_response_channel, FILE_FOLDER, MEDIA_FOLDER, ServerType::Media);
+                    let mut server = Server::new(
+                        server_config.id,
+                        drones,
+                        receive_packet_channel,
+                        receive_command_channel,
+                        send_response_channel,
+                        FILE_FOLDER,
+                        MEDIA_FOLDER,
+                        ServerType::Media,
+                    );
                     server.run()
                 } else if counter % 3 == 1 {
-                    let mut server = Server::new(server_config.id, drones, receive_packet_channel, receive_command_channel, send_response_channel, FILE_FOLDER, MEDIA_FOLDER, ServerType::Text);
+                    let mut server = Server::new(
+                        server_config.id,
+                        drones,
+                        receive_packet_channel,
+                        receive_command_channel,
+                        send_response_channel,
+                        FILE_FOLDER,
+                        MEDIA_FOLDER,
+                        ServerType::Text,
+                    );
                     server.run()
                 } else {
-                    let mut server = Server::new(server_config.id, drones, receive_packet_channel, receive_command_channel, send_response_channel, FILE_FOLDER, MEDIA_FOLDER, ServerType::Chat);
+                    let mut server = Server::new(
+                        server_config.id,
+                        drones,
+                        receive_packet_channel,
+                        receive_command_channel,
+                        send_response_channel,
+                        FILE_FOLDER,
+                        MEDIA_FOLDER,
+                        ServerType::Chat,
+                    );
                     server.run()
                 }
             }));
@@ -504,7 +532,7 @@ mod tests {
 
     #[test]
     fn test_handle_controller_shortcut_success() {
-        let (_, _, _, controller) = setup::setup();
+        let (_, _, _, _, controller) = setup::setup();
 
         let server_receive_packet_channel = controller
             .nodes_channels
@@ -538,7 +566,7 @@ mod tests {
 
     #[test]
     fn test_handle_controller_shortcut_failure() {
-        let (_, _, _, controller) = setup::setup();
+        let (_, _, _, _, controller) = setup::setup();
 
         let packet = Packet {
             pack_type: PacketType::MsgFragment(Fragment {
