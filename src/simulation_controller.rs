@@ -333,7 +333,7 @@ impl SimulationController {
                         send_response_channel,
                         FILE_FOLDER,
                         MEDIA_FOLDER,
-                        ServerType::Media,
+                        ServerType::Chat,
                     );
                     server.run()
                 } else if counter % 3 == 1 {
@@ -345,7 +345,7 @@ impl SimulationController {
                         send_response_channel,
                         FILE_FOLDER,
                         MEDIA_FOLDER,
-                        ServerType::Text,
+                        ServerType::Media,
                     );
                     server.run()
                 } else {
@@ -357,7 +357,7 @@ impl SimulationController {
                         send_response_channel,
                         FILE_FOLDER,
                         MEDIA_FOLDER,
-                        ServerType::Chat,
+                        ServerType::Text,
                     );
                     server.run()
                 }

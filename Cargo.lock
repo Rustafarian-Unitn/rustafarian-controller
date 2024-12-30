@@ -187,7 +187,7 @@ dependencies = [
 [[package]]
 name = "rustafarian-chat-server"
 version = "0.1.0"
-source = "git+https://github.com/Rustafarian-Unitn/rustafarian-chat-server.git#7042fd8a760750751f269179e1c1604e680a0e9b"
+source = "git+https://github.com/Rustafarian-Unitn/rustafarian-chat-server.git?branch=feature/allignment-with-client#d557f3aa3fedb3b2bfb5d7d86d07aee625c85851"
 dependencies = [
  "crossbeam",
  "crossbeam-channel",
@@ -202,7 +202,7 @@ dependencies = [
 [[package]]
 name = "rustafarian-client"
 version = "0.2.0"
-source = "git+https://github.com/Rustafarian-Unitn/rustafarian-client.git#1fcaf069d1970b22fd844ad5c8a15b7c263faf3c"
+source = "git+https://github.com/Rustafarian-Unitn/rustafarian-client#a41f55338f2e627aaebe6e06d59d46fdc41a1c6c"
 dependencies = [
  "crossbeam",
  "crossbeam-channel",
@@ -216,7 +216,7 @@ dependencies = [
 [[package]]
 name = "rustafarian-content-server"
 version = "0.1.0"
-source = "git+https://github.com/Rustafarian-Unitn/rustafarian-content_server.git#df7100d27b1bf0c9d18652fadb52a114d5d9968e"
+source = "git+https://github.com/Rustafarian-Unitn/rustafarian-content_server.git?branch=feature/allignment-with-client#ac2c0cb962db06f5e92b2553d9014df5933d3317"
 dependencies = [
  "crossbeam",
  "crossbeam-channel",
@@ -285,8 +285,9 @@ dependencies = [
 [[package]]
 name = "rustafarian-shared"
 version = "0.1.1"
-source = "git+https://github.com/Rustafarian-Unitn/rustafarian-shared.git#c136b65dafc9436e9ee77486e06b36b4ff778b7a"
+source = "git+https://github.com/Rustafarian-Unitn/rustafarian-shared.git?branch=feature/addSender#30260a159010b01acc6068b334f56eaf923bdbd1"
 dependencies = [
+ "crossbeam-channel",
  "serde",
  "serde_json",
  "wg_2024",

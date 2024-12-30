@@ -1,44 +1,65 @@
 use std::collections::HashMap;
 
+use ::rustafarian_chat_server::chat_server::{self, ChatServer};
 use crossbeam_channel::unbounded;
 use rustafarian_client::{chat_client::ChatClient, client::Client};
 use rustafarian_drone::RustafarianDrone;
-use rustafarian_shared::messages::{commander_messages::{
-    SimControllerCommand, SimControllerResponseWrapper,
-}, general_messages::ServerType};
+use rustafarian_shared::messages::{
+    commander_messages::{SimControllerCommand, SimControllerResponseWrapper},
+    general_messages::ServerType,
+};
 use wg_2024::{
     controller::{DroneCommand, DroneEvent},
     drone::Drone,
     packet::Packet,
 };
 
-use rustafarian_content_server::content_server::ContentServer;
 use crate::simulation_controller::DroneChannels;
 use crate::simulation_controller::NodeChannels;
 use crate::simulation_controller::SimulationController;
+use rustafarian_content_server::content_server::ContentServer;
 
-pub fn setup() -> (ChatClient, ContentServer, RustafarianDrone, SimulationController) {
+pub fn setup() -> (
+    (ChatClient, ChatClient),
+    ContentServer,
+    ChatServer,
+    RustafarianDrone,
+    SimulationController,
+) {
     let mut drone_neighbors = HashMap::new();
     let mut client_neighbors = HashMap::new();
-    let mut server_neighbors = HashMap::new();
+    let mut client_2_neighbors = HashMap::new();
+    let mut content_server_neighbors = HashMap::new();
+    let mut chat_server_neighbors = HashMap::new();
 
     // Drone channels
     let drone_packet_channels = unbounded::<Packet>();
     let drone_event_channels = unbounded::<DroneEvent>();
     let drone_command_channels = unbounded::<DroneCommand>();
 
-    // Client channels
+    // Client 1 channels
     let client_packet_channels = unbounded::<Packet>();
     let client_command_channels = unbounded::<SimControllerCommand>();
     let client_response_channels = unbounded::<SimControllerResponseWrapper>();
 
-    // Server channels
-    let server_packet_channels = unbounded::<Packet>();
-    let server_command_channels = unbounded::<SimControllerCommand>();
-    let server_response_channels = unbounded::<SimControllerResponseWrapper>();
+    // Client 2 channels
+    let client_2_packet_channels = unbounded::<Packet>();
+    let client_2_command_channels = unbounded::<SimControllerCommand>();
+    let client_2_response_channels = unbounded::<SimControllerResponseWrapper>();
+
+    // Content Server channels
+    let content_server_packet_channels = unbounded::<Packet>();
+    let content_server_command_channels = unbounded::<SimControllerCommand>();
+    let content_server_response_channels = unbounded::<SimControllerResponseWrapper>();
+
+    // Chat Server channels
+    let chat_server_packet_channels = unbounded::<Packet>();
+    let chat_server_command_channels = unbounded::<SimControllerCommand>();
+    let chat_server_response_channels = unbounded::<SimControllerResponseWrapper>();
 
     drone_neighbors.insert(1, client_packet_channels.0.clone());
-    drone_neighbors.insert(3, server_packet_channels.0.clone());
+    drone_neighbors.insert(3, content_server_packet_channels.0.clone());
+    drone_neighbors.insert(4, chat_server_packet_channels.0.clone());
 
     // Simulation controller
     let client_channels = NodeChannels {
@@ -49,12 +70,28 @@ pub fn setup() -> (ChatClient, ContentServer, RustafarianDrone, SimulationContro
         send_response_channel: client_response_channels.0.clone(),
     };
 
-    let server_channels = NodeChannels {
-        send_packet_channel: server_packet_channels.0.clone(),
-        receive_packet_channel: server_packet_channels.1.clone(),
-        send_command_channel: server_command_channels.0.clone(),
-        receive_response_channel: server_response_channels.1.clone(),
-        send_response_channel: server_response_channels.0.clone(),
+    let client_2_channels = NodeChannels {
+        send_packet_channel: client_2_packet_channels.0.clone(),
+        receive_packet_channel: client_2_packet_channels.1.clone(),
+        send_command_channel: client_2_command_channels.0.clone(),
+        receive_response_channel: client_2_response_channels.1.clone(),
+        send_response_channel: client_2_response_channels.0.clone(),
+    };
+
+    let content_server_channels = NodeChannels {
+        send_packet_channel: content_server_packet_channels.0.clone(),
+        receive_packet_channel: content_server_packet_channels.1.clone(),
+        send_command_channel: content_server_command_channels.0.clone(),
+        receive_response_channel: content_server_response_channels.1.clone(),
+        send_response_channel: content_server_response_channels.0.clone(),
+    };
+
+    let chat_server_channels = NodeChannels {
+        send_packet_channel: chat_server_packet_channels.0.clone(),
+        receive_packet_channel: chat_server_packet_channels.1.clone(),
+        send_command_channel: chat_server_command_channels.0.clone(),
+        receive_response_channel: chat_server_response_channels.1.clone(),
+        send_response_channel: chat_server_response_channels.0.clone(),
     };
 
     let drone_channels = DroneChannels {
@@ -67,8 +104,10 @@ pub fn setup() -> (ChatClient, ContentServer, RustafarianDrone, SimulationContro
     };
 
     client_neighbors.insert(2, drone_packet_channels.0.clone());
-    server_neighbors.insert(2, drone_packet_channels.0.clone());
-    
+    client_2_neighbors.insert(2, drone_packet_channels.0.clone());
+    content_server_neighbors.insert(2, drone_packet_channels.0.clone());
+    chat_server_neighbors.insert(2, drone_packet_channels.0.clone());
+
     let drone = RustafarianDrone::new(
         2,
         drone_event_channels.0,
@@ -77,8 +116,26 @@ pub fn setup() -> (ChatClient, ContentServer, RustafarianDrone, SimulationContro
         drone_neighbors,
         0.0,
     );
-    
-    let server = ContentServer::new(3, server_neighbors,server_packet_channels.1,  server_command_channels.1, server_response_channels.0, "files", "media", ServerType::Media);
+
+    let content_server = ContentServer::new(
+        3,
+        content_server_neighbors,
+        content_server_packet_channels.1,
+        content_server_command_channels.1,
+        content_server_response_channels.0,
+        "resources/files",
+        "resources/media",
+        ServerType::Text,
+    );
+
+    let chat_server = ChatServer::new(
+        4,
+        chat_server_command_channels.1,
+        chat_server_response_channels.0,
+        chat_server_packet_channels.1,
+        chat_server_neighbors,
+        false,
+    );
 
     let mut client = ChatClient::new(
         1,
@@ -88,19 +145,42 @@ pub fn setup() -> (ChatClient, ContentServer, RustafarianDrone, SimulationContro
         client_response_channels.0,
     );
 
+    let mut client_2 = ChatClient::new(
+        5,
+        client_2_neighbors,
+        client_2_packet_channels.1.clone(),
+        client_2_command_channels.1.clone(),
+        client_2_response_channels.0,
+    );
+
     client.topology().add_node(1);
     client.topology().add_node(2);
     client.topology().add_node(3);
+    client.topology().add_node(4);
+    client.topology().add_node(5);
     client.topology().add_edge(1, 2);
     client.topology().add_edge(2, 3);
+    client.topology().add_edge(2, 4);
+    client.topology().add_edge(2, 5);
 
+    client_2.topology().add_node(1);
+    client_2.topology().add_node(2);
+    client_2.topology().add_node(3);
+    client_2.topology().add_node(4);
+    client_2.topology().add_node(5);
+    client_2.topology().add_edge(5, 2);
+    client_2.topology().add_edge(2, 3);
+    client_2.topology().add_edge(2, 4);
+    client_2.topology().add_edge(2, 1);
 
     let mut drones_channels = HashMap::new();
     drones_channels.insert(2, drone_channels);
 
     let mut nodes_channels = HashMap::new();
     nodes_channels.insert(1, client_channels);
-    nodes_channels.insert(3, server_channels);
+    nodes_channels.insert(3, content_server_channels);
+    nodes_channels.insert(4, chat_server_channels);
+    nodes_channels.insert(5, client_2_channels);
 
     let simulation_controller = SimulationController::new(
         nodes_channels,
@@ -109,5 +189,11 @@ pub fn setup() -> (ChatClient, ContentServer, RustafarianDrone, SimulationContro
         client.topology().clone(),
     );
 
-    (client, server, drone, simulation_controller)
+    (
+        (client, client_2),
+        content_server,
+        chat_server,
+        drone,
+        simulation_controller,
+    )
 }
