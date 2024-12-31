@@ -14,28 +14,41 @@ use wg_2024::{
     packet::Packet,
 };
 
-use crate::simulation_controller::DroneChannels;
+use crate::simulation_controller::{self, DroneChannels};
 use crate::simulation_controller::NodeChannels;
 use crate::simulation_controller::SimulationController;
 use rustafarian_content_server::content_server::ContentServer;
+const CHAT_DEBUG: bool = false;
 
 pub fn setup() -> (
     (ChatClient, ChatClient),
     ContentServer,
     ChatServer,
-    RustafarianDrone,
+    Vec<RustafarianDrone>,
     SimulationController,
 ) {
     let mut drone_neighbors = HashMap::new();
+    let mut drone_2_neighbors = HashMap::new();
+    let mut drone_3_neighbors = HashMap::new();
     let mut client_neighbors = HashMap::new();
     let mut client_2_neighbors = HashMap::new();
     let mut content_server_neighbors = HashMap::new();
     let mut chat_server_neighbors = HashMap::new();
 
-    // Drone channels
+    // Drone 1 channels
     let drone_packet_channels = unbounded::<Packet>();
     let drone_event_channels = unbounded::<DroneEvent>();
     let drone_command_channels = unbounded::<DroneCommand>();
+
+    // Drone 2 channels
+    let drone_2_packet_channels = unbounded::<Packet>();
+    let drone_2_event_channels = unbounded::<DroneEvent>();
+    let drone_2_command_channels = unbounded::<DroneCommand>();
+
+    // Drone 3 channels
+    let drone_3_packet_channels = unbounded::<Packet>();
+    let drone_3_event_channels = unbounded::<DroneEvent>();
+    let drone_3_command_channels = unbounded::<DroneCommand>();
 
     // Client 1 channels
     let client_packet_channels = unbounded::<Packet>();
@@ -60,6 +73,18 @@ pub fn setup() -> (
     drone_neighbors.insert(1, client_packet_channels.0.clone());
     drone_neighbors.insert(3, content_server_packet_channels.0.clone());
     drone_neighbors.insert(4, chat_server_packet_channels.0.clone());
+    drone_neighbors.insert(5, client_2_packet_channels.0.clone());
+    
+    
+    drone_2_neighbors.insert(1, client_packet_channels.0.clone());
+    drone_2_neighbors.insert(3, content_server_packet_channels.0.clone());
+    drone_2_neighbors.insert(4, chat_server_packet_channels.0.clone());
+    drone_3_neighbors.insert(5, client_2_packet_channels.0.clone());
+    
+    drone_3_neighbors.insert(1, client_packet_channels.0.clone());
+    drone_3_neighbors.insert(3, content_server_packet_channels.0.clone());
+    drone_3_neighbors.insert(4, chat_server_packet_channels.0.clone());
+    drone_3_neighbors.insert(5, client_2_packet_channels.0.clone());
 
     // Simulation controller
     let client_channels = NodeChannels {
@@ -103,10 +128,39 @@ pub fn setup() -> (
         receive_event_channel: drone_event_channels.1.clone(),
     };
 
+    let drone_2_channels = DroneChannels {
+        send_command_channel: drone_2_command_channels.0.clone(),
+        receive_command_channel: drone_2_command_channels.1.clone(),
+        send_packet_channel: drone_2_packet_channels.0.clone(),
+        receive_packet_channel: drone_2_packet_channels.1.clone(),
+        send_event_channel: drone_2_event_channels.0.clone(),
+        receive_event_channel: drone_2_event_channels.1.clone(),
+    };
+
+    let drone_3_channels = DroneChannels {
+        send_command_channel: drone_3_command_channels.0.clone(),
+        receive_command_channel: drone_3_command_channels.1.clone(),
+        send_packet_channel: drone_3_packet_channels.0.clone(),
+        receive_packet_channel: drone_3_packet_channels.1.clone(),
+        send_event_channel: drone_3_event_channels.0.clone(),
+        receive_event_channel: drone_3_event_channels.1.clone(),
+    };
+
     client_neighbors.insert(2, drone_packet_channels.0.clone());
+    client_neighbors.insert(6, drone_2_packet_channels.0.clone());
+    client_neighbors.insert(7, drone_3_packet_channels.0.clone());
+
     client_2_neighbors.insert(2, drone_packet_channels.0.clone());
+    client_2_neighbors.insert(6, drone_2_packet_channels.0.clone());
+    client_2_neighbors.insert(7, drone_3_packet_channels.0.clone());
+
     content_server_neighbors.insert(2, drone_packet_channels.0.clone());
+    content_server_neighbors.insert(6, drone_2_packet_channels.0.clone());
+    content_server_neighbors.insert(7, drone_3_packet_channels.0.clone());
+
     chat_server_neighbors.insert(2, drone_packet_channels.0.clone());
+    chat_server_neighbors.insert(6, drone_2_packet_channels.0.clone());
+    chat_server_neighbors.insert(7, drone_3_packet_channels.0.clone());
 
     let drone = RustafarianDrone::new(
         2,
@@ -117,7 +171,25 @@ pub fn setup() -> (
         0.0,
     );
 
-    let content_server = ContentServer::new(
+    let drone_2 = RustafarianDrone::new(
+        6,
+        drone_2_event_channels.0,
+        drone_2_command_channels.1,
+        drone_2_packet_channels.1,
+        drone_2_neighbors,
+        0.0,
+    );
+
+    let drone_3 = RustafarianDrone::new(
+        7,
+        drone_3_event_channels.0,
+        drone_3_command_channels.1,
+        drone_3_packet_channels.1,
+        drone_3_neighbors,
+        0.0,
+    );
+
+    let mut content_server = ContentServer::new(
         3,
         content_server_neighbors,
         content_server_packet_channels.1,
@@ -128,13 +200,13 @@ pub fn setup() -> (
         ServerType::Text,
     );
 
-    let chat_server = ChatServer::new(
+    let mut chat_server = ChatServer::new(
         4,
         chat_server_command_channels.1,
         chat_server_response_channels.0,
         chat_server_packet_channels.1,
         chat_server_neighbors,
-        false,
+        CHAT_DEBUG,
     );
 
     let mut client = ChatClient::new(
@@ -158,23 +230,61 @@ pub fn setup() -> (
     client.topology().add_node(3);
     client.topology().add_node(4);
     client.topology().add_node(5);
+    client.topology().add_node(6);
+    client.topology().add_node(7);
     client.topology().add_edge(1, 2);
     client.topology().add_edge(2, 3);
     client.topology().add_edge(2, 4);
     client.topology().add_edge(2, 5);
+    client.topology().add_edge(2, 6);
+    client.topology().add_edge(2, 7);
 
     client_2.topology().add_node(1);
     client_2.topology().add_node(2);
     client_2.topology().add_node(3);
     client_2.topology().add_node(4);
     client_2.topology().add_node(5);
+    client_2.topology().add_node(6);
+    client_2.topology().add_node(7);
     client_2.topology().add_edge(5, 2);
     client_2.topology().add_edge(2, 3);
     client_2.topology().add_edge(2, 4);
     client_2.topology().add_edge(2, 1);
+    client_2.topology().add_edge(2, 6);
+    client_2.topology().add_edge(2, 7);
 
+    content_server.topology.add_node(1);
+    content_server.topology.add_node(2);
+    content_server.topology.add_node(3);
+    content_server.topology.add_node(4);
+    content_server.topology.add_node(5);
+    content_server.topology.add_node(6);
+    content_server.topology.add_node(7);
+    content_server.topology.add_edge(3, 2);
+    content_server.topology.add_edge(2, 1);
+    content_server.topology.add_edge(2, 4);
+    content_server.topology.add_edge(2, 5);
+    content_server.topology.add_edge(2, 6);
+    content_server.topology.add_edge(2, 7);
+
+    chat_server.topology().add_node(1);
+    chat_server.topology().add_node(2);
+    chat_server.topology().add_node(3);
+    chat_server.topology().add_node(4);
+    chat_server.topology().add_node(5);
+    chat_server.topology().add_node(6);
+    chat_server.topology().add_node(7);
+    chat_server.topology().add_edge(4, 2);
+    chat_server.topology().add_edge(2, 1);
+    chat_server.topology().add_edge(2, 3);
+    chat_server.topology().add_edge(2, 5);
+    chat_server.topology().add_edge(2, 6);
+    chat_server.topology().add_edge(2, 7);
+    
     let mut drones_channels = HashMap::new();
     drones_channels.insert(2, drone_channels);
+    drones_channels.insert(6, drone_2_channels);
+    drones_channels.insert(7, drone_3_channels);
 
     let mut nodes_channels = HashMap::new();
     nodes_channels.insert(1, client_channels);
@@ -193,7 +303,7 @@ pub fn setup() -> (
         (client, client_2),
         content_server,
         chat_server,
-        drone,
+        vec![drone, drone_2, drone_3],
         simulation_controller,
     )
 }

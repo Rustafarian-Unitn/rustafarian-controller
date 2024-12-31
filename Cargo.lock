@@ -187,7 +187,7 @@ dependencies = [
 [[package]]
 name = "rustafarian-chat-server"
 version = "0.1.0"
-source = "git+https://github.com/Rustafarian-Unitn/rustafarian-chat-server.git?branch=feature/allignment-with-client#d557f3aa3fedb3b2bfb5d7d86d07aee625c85851"
+source = "git+https://github.com/Rustafarian-Unitn/rustafarian-chat-server.git?branch=feature/allignment-with-client#8022ceab793d5b83f1f6787849a86c5ac3db8468"
 dependencies = [
  "crossbeam",
  "crossbeam-channel",

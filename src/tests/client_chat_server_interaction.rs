@@ -1,12 +1,11 @@
 #[cfg(test)]
 mod client_communication {
-    use std::thread;
-
+    use ::rustafarian_chat_server::chat_server;
     use rustafarian_shared::messages::commander_messages::{
         SimControllerCommand, SimControllerEvent, SimControllerMessage,
         SimControllerResponseWrapper,
     };
-    use rustafarian_shared::messages::general_messages::Response;
+    use std::thread;
     use wg_2024::controller::DroneEvent;
     use wg_2024::packet::PacketType;
 
@@ -16,7 +15,7 @@ mod client_communication {
 
     #[test]
     fn test_message_from_client_to_server() {
-        let ((mut client, mut client_2), _, mut chat_server, mut drone, simulation_controller) =
+        let ((mut client, mut client_2), _, mut chat_server, drones, simulation_controller) =
             setup::setup();
 
         let client_command_channel = simulation_controller
@@ -33,13 +32,6 @@ mod client_communication {
             .send_command_channel
             .clone();
 
-        let server_receive_packet_channel = simulation_controller
-            .nodes_channels
-            .get(&3)
-            .unwrap()
-            .receive_packet_channel
-            .clone();
-
         let drone_receive_event_channel = simulation_controller
             .drone_channels
             .get(&2)
@@ -47,35 +39,38 @@ mod client_communication {
             .receive_event_channel
             .clone();
 
-        let client_response_channel = simulation_controller
+        let client_2_response_channel = simulation_controller
             .nodes_channels
-            .get(&1)
+            .get(&5)
             .unwrap()
             .receive_response_channel
             .clone();
-        
-        thread::spawn(move || {
-            wg_2024::drone::Drone::run(&mut drone);
-        });
+
+        for mut drone in drones {
+            thread::spawn(move || {
+                wg_2024::drone::Drone::run(&mut drone);
+            });
+        }
 
         thread::spawn(move || {
             client.run(TICKS);
         });
-        
+
         thread::spawn(move || {
             client_2.run(TICKS);
         });
-        
+
         thread::spawn(move || {
             chat_server.run();
         });
-        
+
         // Instruct client to register to server
         let res = client_command_channel.send(SimControllerCommand::Register(4));
         assert!(res.is_ok());
+
         let res = client_2_command_channel.send(SimControllerCommand::Register(4));
         assert!(res.is_ok());
-        
+
         // Instruct client to send message to server
         let res = client_command_channel.send(SimControllerCommand::SendMessage(
             "Hello".to_string(),
@@ -84,39 +79,34 @@ mod client_communication {
         ));
         assert!(res.is_ok());
 
-        // Server listen for message from client
-        let message = server_receive_packet_channel.recv().unwrap();
-        println!("first message {:?}", message);
-        assert!(matches!(message.pack_type, PacketType::MsgFragment(_)));
-
         // Listen for ack from drone
         let ack = drone_receive_event_channel.recv().unwrap();
         println!("ack {:?}", ack);
         assert!(matches!(ack, DroneEvent::PacketSent(_)));
 
-        // Listen for packets from client
-        let first_response = client_response_channel.recv().unwrap();
-
-        println!("{:?}", first_response);
+        // Listen for packets from end client //
+        //1. registration to server
+        let first_response = client_2_response_channel.recv().unwrap();
         println!("first response {:?}", first_response);
         assert!(matches!(
             first_response,
             SimControllerResponseWrapper::Event(SimControllerEvent::PacketSent { .. })
         ));
 
-        let second_response = client_response_channel.recv().unwrap();
+        //2. Ack from server
+        let second_response = client_2_response_channel.recv().unwrap();
         println!("second response {:?}", second_response);
-        println!("{:?}", second_response);
 
         assert!(
             matches!(
                 second_response,
-                SimControllerResponseWrapper::Event(SimControllerEvent::MessageSent(_, _, _))
+                SimControllerResponseWrapper::Event(SimControllerEvent::PacketReceived(_))
             ),
-            "Expected message sent"
+            "Expected packet received"
         );
 
-        let third_response = client_response_channel.recv().unwrap();
+        //3. Registration packet from server
+        let third_response = client_2_response_channel.recv().unwrap();
         println!("third response {:?}", third_response);
         assert!(
             matches!(
@@ -126,15 +116,42 @@ mod client_communication {
             "Expected packet received"
         );
 
-        let fourth_response = client_response_channel.recv().unwrap();
+        // Send ack to server
+        let fourth_response = client_2_response_channel.recv().unwrap();
         println!("Fourth response {:?}", fourth_response);
         assert!(
             matches!(
                 fourth_response,
+                SimControllerResponseWrapper::Event(SimControllerEvent::PacketSent {
+                    session_id,
+                    packet_type
+                })
+            ),
+            "Expected packet sent"
+        );
+
+        // Receive packet from server
+        let fifth_response = client_2_response_channel.recv().unwrap();
+        println!("Fifth response {:?}", fifth_response);
+        assert!(
+            matches!(
+                third_response,
+                SimControllerResponseWrapper::Event(SimControllerEvent::PacketReceived(_))
+            ),
+            "Expected packet received"
+        );
+
+        // Finally receive message from client through server
+        let sixth_response = client_2_response_channel.recv().unwrap();
+        println!("Sixth response {:?}", sixth_response);
+        let expected_response = "Hello".to_string();
+        assert!(
+            matches!(
+                sixth_response,
                 SimControllerResponseWrapper::Message(SimControllerMessage::MessageReceived(
-                    _,
-                    _,
-                    _
+                    4,
+                    1,
+                    expected_response
                 ))
             ),
             "Expected message received"
@@ -143,7 +160,8 @@ mod client_communication {
 
     #[test]
     fn test_client_register() {
-        let ((mut client, _), _, _, mut drone, simulation_controller) = setup::setup();
+        let ((mut client, _), _, mut chat_server, mut drones, simulation_controller) =
+            setup::setup();
 
         let client_command_channel = simulation_controller
             .nodes_channels
@@ -152,11 +170,11 @@ mod client_communication {
             .send_command_channel
             .clone();
 
-        let server_receive_packet_channel = simulation_controller
+        let client_response_channel = simulation_controller
             .nodes_channels
-            .get(&3)
+            .get(&1)
             .unwrap()
-            .receive_packet_channel
+            .receive_response_channel
             .clone();
 
         let drone_receive_event_channel = simulation_controller
@@ -166,32 +184,65 @@ mod client_communication {
             .receive_event_channel
             .clone();
 
-        thread::spawn(move || {
-            wg_2024::drone::Drone::run(&mut drone);
-        });
+        for mut drone in drones {
+            thread::spawn(move || {
+                wg_2024::drone::Drone::run(&mut drone);
+            });
+        }
 
         thread::spawn(move || {
             client.run(TICKS);
         });
 
+        thread::spawn(move || {
+            chat_server.run();
+        });
+
         // Instruct client to register to server
-        let res = client_command_channel.send(SimControllerCommand::Register(3));
+        let res = client_command_channel.send(SimControllerCommand::Register(4));
         assert!(res.is_ok());
-
-        // Server listen for message from client
-        let message = server_receive_packet_channel.recv().unwrap();
-
-        assert!(matches!(message.pack_type, PacketType::MsgFragment(_)));
 
         // Listen for ack from drone
         let ack = drone_receive_event_channel.recv().unwrap();
         assert!(matches!(ack, DroneEvent::PacketSent(_)));
+
+        //1. registration to server
+        let first_response = client_response_channel.recv().unwrap();
+        println!("first response {:?}", first_response);
+        assert!(matches!(
+            first_response,
+            SimControllerResponseWrapper::Event(SimControllerEvent::PacketSent { .. })
+        ));
+
+        //2. Ack from server
+        let second_response = client_response_channel.recv().unwrap();
+        println!("second response {:?}", second_response);
+
+        assert!(
+            matches!(
+                second_response,
+                SimControllerResponseWrapper::Event(SimControllerEvent::PacketReceived(_))
+            ),
+            "Expected packet received"
+        );
+
+        //3. Registration packet from server
+        let third_response = client_response_channel.recv().unwrap();
+        println!("third response {:?}", third_response);
+        assert!(
+            matches!(
+                third_response,
+                SimControllerResponseWrapper::Event(SimControllerEvent::PacketReceived(_))
+            ),
+            "Expected packet received"
+        );
     }
 
     // Test client list
     #[test]
     fn test_client_list() {
-        let ((mut client, _), _, _, mut drone, simulation_controller) = setup::setup();
+        let ((mut client, mut client_2), _, mut chat_server, drones, simulation_controller) =
+            setup::setup();
 
         let client_command_channel = simulation_controller
             .nodes_channels
@@ -200,46 +251,140 @@ mod client_communication {
             .send_command_channel
             .clone();
 
-        let server_receive_packet_channel = simulation_controller
+        let client_2_command_channel = simulation_controller
             .nodes_channels
-            .get(&3)
+            .get(&5)
             .unwrap()
-            .receive_packet_channel
+            .send_command_channel
             .clone();
 
-        let drone_receive_event_channel = simulation_controller
-            .drone_channels
-            .get(&2)
+        let client_response_channel = simulation_controller
+            .nodes_channels
+            .get(&1)
             .unwrap()
-            .receive_event_channel
+            .receive_response_channel
             .clone();
 
-        thread::spawn(move || {
-            wg_2024::drone::Drone::run(&mut drone);
-        });
+        for mut drone in drones {
+            thread::spawn(move || {
+                wg_2024::drone::Drone::run(&mut drone);
+            });
+        }
 
         thread::spawn(move || {
             client.run(TICKS);
         });
 
+        thread::spawn(move || {
+            client_2.run(TICKS);
+        });
+
+        thread::spawn(move || {
+            chat_server.run();
+        });
+
         // Instruct client to register to server
-        let res = client_command_channel.send(SimControllerCommand::ClientList(3));
+        let res = client_command_channel.send(SimControllerCommand::ClientList(4));
         assert!(res.is_ok());
 
-        // Server listen for message from client
-        let message = server_receive_packet_channel.recv().unwrap();
+        // Instruction client 2 to register to server
+        let res = client_2_command_channel.send(SimControllerCommand::Register(4));
+        assert!(res.is_ok());
 
-        assert!(matches!(message.pack_type, PacketType::MsgFragment(_)));
+        // Instruct client to request client list
+        let res = client_command_channel.send(SimControllerCommand::ClientList(4));
+        assert!(res.is_ok());
 
-        // Listen for ack from drone
-        let ack = drone_receive_event_channel.recv().unwrap();
-        assert!(matches!(ack, DroneEvent::PacketSent(_)));
+        // Listen for packets from end client //
+        //1. registration to server
+        let first_response = client_response_channel.recv().unwrap();
+        println!("first response {:?}", first_response);
+        assert!(matches!(
+            first_response,
+            SimControllerResponseWrapper::Event(SimControllerEvent::PacketSent { .. })
+        ));
+
+        //2. Ack from server
+        let second_response = client_response_channel.recv().unwrap();
+        println!("second response {:?}", second_response);
+        assert!(
+            matches!(
+                second_response,
+                SimControllerResponseWrapper::Event(SimControllerEvent::PacketSent { .. })
+            ),
+            "Expected packet received"
+        );
+
+        //3. Registration packet from server
+        let third_response = client_response_channel.recv().unwrap();
+        println!("third response {:?}", third_response);
+        assert!(
+            matches!(
+                third_response,
+                SimControllerResponseWrapper::Event(SimControllerEvent::PacketReceived { .. })
+            ),
+            "Expected packet received"
+        );
+
+        //4. Ack from server
+        let fourth_response = client_response_channel.recv().unwrap();
+        println!("fourth response {:?}", fourth_response);
+        assert!(
+            matches!(
+                fourth_response,
+                SimControllerResponseWrapper::Event(SimControllerEvent::PacketReceived(_))
+            ),
+            "Expected packet sent"
+        );
+
+        // 5. Ack from server
+        let fifth_response = client_response_channel.recv().unwrap();
+        println!("fifth response {:?}", fifth_response);
+        assert!(
+            matches!(
+                fifth_response,
+                SimControllerResponseWrapper::Event(SimControllerEvent::PacketSent { .. })
+            ),
+            "Expected packet sent"
+        );
+
+        //6. Client list from server
+        let sixth_response = client_response_channel.recv().unwrap();
+        println!("sixth response {:?}", sixth_response);
+        assert!(
+            matches!(
+                sixth_response,
+                SimControllerResponseWrapper::Event(SimControllerEvent::PacketReceived(_))
+            ),
+            "Expected client list"
+        );
+
+
+        // Ignore messages until ClientListResponse is received
+        for response in client_response_channel.iter().collect() {
+            if let SimControllerResponseWrapper::Message(
+                SimControllerMessage::ClientListResponse(_, _),
+            ) = response
+            {
+                println!("Client list response {:?}", response);
+                assert!(
+                    matches!(
+                        response,
+                        SimControllerResponseWrapper::Message(
+                            SimControllerMessage::ClientListResponse(_, _)
+                        )
+                    ),
+                    "Expected client list"
+                );
+                break;
+            }
+        }
     }
 
     //Test flood request
     #[test]
     fn test_flood_request() {
-        let ((mut client, _), mut server, _, mut drone, simulation_controller) = setup::setup();
+        let ((mut client, _), _, mut server, drones, simulation_controller) = setup::setup();
 
         let client_command_channel = simulation_controller
             .nodes_channels
@@ -255,16 +400,11 @@ mod client_communication {
             .receive_response_channel
             .clone();
 
-        let drone_receive_event_channel = simulation_controller
-            .drone_channels
-            .get(&2)
-            .unwrap()
-            .receive_event_channel
-            .clone();
-
-        thread::spawn(move || {
-            wg_2024::drone::Drone::run(&mut drone);
-        });
+        for mut drone in drones {
+            thread::spawn(move || {
+                wg_2024::drone::Drone::run(&mut drone);
+            });
+        }
 
         thread::spawn(move || {
             client.run(TICKS);
@@ -277,10 +417,6 @@ mod client_communication {
         // Instruct client to request flood
         let res = client_command_channel.send(SimControllerCommand::FloodRequest);
         assert!(res.is_ok());
-
-        // Listen for ack from drone
-        let ack = drone_receive_event_channel.recv().unwrap();
-        assert!(matches!(ack, DroneEvent::PacketSent(_)));
 
         // Listen for packets from client
         // First packet is the flood request sent
@@ -315,7 +451,7 @@ mod client_communication {
     // Test known servers
     #[test]
     fn test_known_servers() {
-        let ((mut client, _), _, _, mut drone, simulation_controller) = setup::setup();
+        let ((mut client, _), _, _, drones, simulation_controller) = setup::setup();
 
         let client_command_channel = simulation_controller
             .nodes_channels
@@ -331,16 +467,12 @@ mod client_communication {
             .receive_response_channel
             .clone();
 
-        let drone_receive_event_channel = simulation_controller
-            .drone_channels
-            .get(&2)
-            .unwrap()
-            .receive_event_channel
-            .clone();
 
-        thread::spawn(move || {
-            wg_2024::drone::Drone::run(&mut drone);
-        });
+        for mut drone in drones {
+            thread::spawn(move || {
+                wg_2024::drone::Drone::run(&mut drone);
+            });
+        }
 
         thread::spawn(move || {
             client.run(TICKS);
@@ -349,10 +481,6 @@ mod client_communication {
         // Instruct client to request known servers
         let res = client_command_channel.send(SimControllerCommand::KnownServers);
         assert!(res.is_ok());
-
-        // Listen for ack from drone
-        let ack = drone_receive_event_channel.recv().unwrap();
-        assert!(matches!(ack, DroneEvent::PacketSent(_)));
 
         // Listen for packets from client
         // First packet is the known servers request sent
@@ -375,7 +503,7 @@ mod client_communication {
     // Test registered servers
     #[test]
     fn test_registered_servers() {
-        let ((mut client, _), _, _, mut drone, simulation_controller) = setup::setup();
+        let ((mut client, _), _, _, mut drones, simulation_controller) = setup::setup();
 
         let client_command_channel = simulation_controller
             .nodes_channels
@@ -391,16 +519,12 @@ mod client_communication {
             .receive_response_channel
             .clone();
 
-        let drone_receive_event_channel = simulation_controller
-            .drone_channels
-            .get(&2)
-            .unwrap()
-            .receive_event_channel
-            .clone();
 
-        thread::spawn(move || {
-            wg_2024::drone::Drone::run(&mut drone);
-        });
+        for mut drone in drones {
+            thread::spawn(move || {
+                wg_2024::drone::Drone::run(&mut drone);
+            });
+        }
 
         thread::spawn(move || {
             client.run(TICKS);
@@ -409,10 +533,6 @@ mod client_communication {
         // Instruct client to request registered servers
         let res = client_command_channel.send(SimControllerCommand::RegisteredServers);
         assert!(res.is_ok());
-
-        // Listen for ack from drone
-        let ack = drone_receive_event_channel.recv().unwrap();
-        assert!(matches!(ack, DroneEvent::PacketSent(_)));
 
         // Listen for packets from client
         // First packet is the registered servers request sent
@@ -437,7 +557,7 @@ mod client_communication {
     // Test text file request
     #[test]
     fn test_text_file_request() {
-        let ((mut client, _), _, _, mut drone, simulation_controller) = setup::setup();
+        let ((mut client, _), _, _, mut drones, simulation_controller) = setup::setup();
 
         let client_command_channel = simulation_controller
             .nodes_channels
@@ -460,9 +580,11 @@ mod client_communication {
             .receive_event_channel
             .clone();
 
-        thread::spawn(move || {
-            wg_2024::drone::Drone::run(&mut drone);
-        });
+        for mut drone in drones {
+            thread::spawn(move || {
+                wg_2024::drone::Drone::run(&mut drone);
+            });
+        }
 
         thread::spawn(move || {
             client.run(TICKS);
@@ -485,7 +607,7 @@ mod client_communication {
     // Test media file request
     #[test]
     fn test_media_file_request() {
-        let ((mut client, _), _, _, mut drone, simulation_controller) = setup::setup();
+        let ((mut client, _), _, _, drones, simulation_controller) = setup::setup();
 
         let client_command_channel = simulation_controller
             .nodes_channels
@@ -508,9 +630,11 @@ mod client_communication {
             .receive_event_channel
             .clone();
 
-        thread::spawn(move || {
-            wg_2024::drone::Drone::run(&mut drone);
-        });
+        for mut drone in drones {
+            thread::spawn(move || {
+                wg_2024::drone::Drone::run(&mut drone);
+            });
+        }
 
         thread::spawn(move || {
             client.run(TICKS);
@@ -533,7 +657,7 @@ mod client_communication {
     // Test file list request
     #[test]
     fn test_file_list_request() {
-        let ((mut client, _), _, _, mut drone, simulation_controller) = setup::setup();
+        let ((mut client, _), _, _, drones, simulation_controller) = setup::setup();
 
         let client_command_channel = simulation_controller
             .nodes_channels
@@ -556,9 +680,11 @@ mod client_communication {
             .receive_event_channel
             .clone();
 
-        thread::spawn(move || {
-            wg_2024::drone::Drone::run(&mut drone);
-        });
+        for mut drone in drones {
+            thread::spawn(move || {
+                wg_2024::drone::Drone::run(&mut drone);
+            });
+        }
 
         thread::spawn(move || {
             client.run(TICKS);
