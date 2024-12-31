@@ -24,6 +24,8 @@ use wg_2024::packet::{Packet, PacketType};
 pub const TICKS: u64 = 100;
 pub const FILE_FOLDER: &str = "files";
 pub const MEDIA_FOLDER: &str = "media";
+
+///Internal channel management structures to distribute the channels among the instances of the topology
 #[derive(Debug)]
 pub struct NodeChannels {
     pub send_packet_channel: Sender<Packet>,
@@ -32,6 +34,7 @@ pub struct NodeChannels {
     pub receive_response_channel: Receiver<SimControllerResponseWrapper>,
     pub send_response_channel: Sender<SimControllerResponseWrapper>,
 }
+///Internal channel management structures to distribute the channels among the instances of the topology 
 #[derive(Debug)]
 pub struct DroneChannels {
     pub send_command_channel: Sender<DroneCommand>,
@@ -42,6 +45,8 @@ pub struct DroneChannels {
     pub send_event_channel: Sender<DroneEvent>,
 }
 
+
+/// A factory function that creates drone instances for every drone configuration and drone acquired 
 type DroneFactory = fn(
     id: NodeId,
     controller_send: Sender<DroneEvent>,
@@ -51,6 +56,46 @@ type DroneFactory = fn(
     pdr: f32,
 ) -> (Box<dyn Runnable>, String);
 
+
+/// A controller that manages the simulation of a network composed of drones, clients, and servers.
+/// 
+/// The `SimulationController` is responsible for:
+/// - Initializing and managing communication channels between different network components
+/// - Setting up the network topology
+/// - Handling packet routing between nodes
+/// 
+/// # Methods
+/// 
+/// - `new`: Creates a new instance with pre-configured channels and topology
+/// - `build`: Constructs a controller from a configuration string
+/// - `init_drones`: Initializes drone nodes in the network
+/// - `init_clients`: Sets up client nodes (chat and browser clients)
+/// - `init_servers`: Configures server nodes (chat, media, and text servers)
+/// - `handle_controller_shortcut`: Processes direct packet routing between nodes
+/// 
+/// # Components
+/// 
+/// The controller manages three types of nodes:
+/// - Drones: Network routing nodes
+/// - Clients: End-user applications (chat and browser clients)
+/// - Servers: Service providers (chat, media, and text servers)
+/// 
+/// Each node type has its own communication channels and is registered in the network topology.
+/// 
+/// # Communication
+/// 
+/// The controller uses crossbeam channels for:
+/// - Command distribution
+/// - Event handling
+/// - Packet routing
+/// - Response processing
+/// 
+/// # Topology
+/// 
+/// Maintains a graph-like structure representing network connections between:
+/// - Drones to drones
+/// - Clients to drones
+/// - Servers to drones
 #[derive(Debug)]
 pub struct SimulationController {
     pub topology: Topology,
@@ -74,6 +119,11 @@ impl SimulationController {
         }
     }
 
+    /// Builds a simulation controller from a configuration string.
+    /// # Arguments
+    /// * `config` - A string containing the path to the configuration for the simulation
+    /// # Returns
+    /// A `SimulationController` instance with the network topology and channels set up.
     pub fn build(config: &str) -> Self {
         let config = config_parser::parse_config(config);
         // let clients: Vec<ChatClient> = Vec::new();
@@ -117,6 +167,16 @@ impl SimulationController {
         SimulationController::new(node_channels, drone_channels, handles, topology)
     }
 
+
+    /// Initializes the drone nodes in the network.
+    /// # Arguments
+    /// * `handles` - A mutable reference to the vector of thread handles
+    /// * `drones_config` - A vector of drone configurations parsed from the configuration file
+    /// * `drone_factories` - A mutable reference to the drone factory iterator which returns in a round robin fashion a drone factory for each drone acquired
+    /// * `drone_channels` - A mutable reference to the drone channels hashmap for communication
+    /// * `topology` - A mutable reference to the network topology. This is used to represent the network in the frontend
+    /// # Returns
+    /// A vector of thread handles for the drone instances
     fn init_drones(
         handles: &mut Vec<JoinHandle<()>>,
         drones_config: Vec<DroneConfig>,
@@ -145,6 +205,7 @@ impl SimulationController {
                 },
             );
 
+            // Build the topology to represent the network in the frontend
             topology.add_node(drone_config.id);
             drone_config.connected_node_ids.iter().for_each(|node_id| {
                 topology.add_edge(drone_config.id, *node_id);
@@ -180,7 +241,17 @@ impl SimulationController {
             handles.push(thread::spawn(move || drone.run()));
         }
     }
-
+    
+    /// Initializes the client nodes in the network.
+    /// # Arguments
+    /// * `handles` - A mutable reference to the vector of thread handles
+    /// * `clients_config` - A vector of client configurations parsed from the configuration file
+    /// * `node_channels` - A mutable reference to the node channels hashmap for communication
+    /// * `drone_channels` - A mutable reference to the drone channels hashmap for communication
+    /// * `topology` - A mutable reference to the network topology. This is used to represent the network in the frontend
+    /// # Returns
+    /// A vector of thread handles for the client instances
+    
     fn init_clients(
         handles: &mut Vec<JoinHandle<()>>,
         clients_config: Vec<ClientConfig>,
@@ -264,6 +335,16 @@ impl SimulationController {
         }
     }
 
+    /// Initializes the server nodes in the network.
+    /// # Arguments
+    /// * `handles` - A mutable reference to the vector of thread handles
+    /// * `servers_config` - A vector of server configurations parsed from the configuration file
+    /// * `node_channels` - A mutable reference to the node channels hashmap for communication
+    /// * `drone_channels` - A mutable reference to the drone channels hashmap for communication
+    /// * `topology` - A mutable reference to the network topology. This is used to represent the network in the frontend
+    /// # Returns
+    /// A vector of thread handles for the server instances
+    /// 
     fn init_servers(
         handles: &mut Vec<JoinHandle<()>>,
         servers_config: Vec<ServerConfig>,
@@ -365,6 +446,14 @@ impl SimulationController {
         }
     }
 
+    /// Handles direct packet routing between nodes.
+    /// # Arguments
+    /// * `packet` - A packet to be routed between nodes
+    /// # Returns
+    /// A `SimControllerEvent` representing the event of the packet being forwarded
+    /// # Errors
+    /// Returns an error if the packet could not be sent to the destination node
+    /// 
     pub fn handle_controller_shortcut(&self, packet: Packet) -> Result<SimControllerEvent, Error> {
         let packet_type = packet.pack_type.clone();
         let session_id = packet.session_id;
