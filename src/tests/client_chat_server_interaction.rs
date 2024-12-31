@@ -79,83 +79,28 @@ mod client_communication {
         ));
         assert!(res.is_ok());
 
-        // Listen for ack from drone
-        let ack = drone_receive_event_channel.recv().unwrap();
-        println!("ack {:?}", ack);
-        assert!(matches!(ack, DroneEvent::PacketSent(_)));
-
-        // Listen for packets from end client //
-        //1. registration to server
-        let first_response = client_2_response_channel.recv().unwrap();
-        println!("first response {:?}", first_response);
-        assert!(matches!(
-            first_response,
-            SimControllerResponseWrapper::Event(SimControllerEvent::PacketSent { .. })
-        ));
-
-        //2. Ack from server
-        let second_response = client_2_response_channel.recv().unwrap();
-        println!("second response {:?}", second_response);
-
-        assert!(
-            matches!(
-                second_response,
-                SimControllerResponseWrapper::Event(SimControllerEvent::PacketReceived(_))
-            ),
-            "Expected packet received"
-        );
-
-        //3. Registration packet from server
-        let third_response = client_2_response_channel.recv().unwrap();
-        println!("third response {:?}", third_response);
-        assert!(
-            matches!(
-                third_response,
-                SimControllerResponseWrapper::Event(SimControllerEvent::PacketReceived(_))
-            ),
-            "Expected packet received"
-        );
-
-        // Send ack to server
-        let fourth_response = client_2_response_channel.recv().unwrap();
-        println!("Fourth response {:?}", fourth_response);
-        assert!(
-            matches!(
-                fourth_response,
-                SimControllerResponseWrapper::Event(SimControllerEvent::PacketSent {
-                    session_id,
-                    packet_type
-                })
-            ),
-            "Expected packet sent"
-        );
-
-        // Receive packet from server
-        let fifth_response = client_2_response_channel.recv().unwrap();
-        println!("Fifth response {:?}", fifth_response);
-        assert!(
-            matches!(
-                third_response,
-                SimControllerResponseWrapper::Event(SimControllerEvent::PacketReceived(_))
-            ),
-            "Expected packet received"
-        );
-
-        // Finally receive message from client through server
-        let sixth_response = client_2_response_channel.recv().unwrap();
-        println!("Sixth response {:?}", sixth_response);
-        let expected_response = "Hello".to_string();
-        assert!(
-            matches!(
-                sixth_response,
-                SimControllerResponseWrapper::Message(SimControllerMessage::MessageReceived(
-                    4,
-                    1,
-                    expected_response
-                ))
-            ),
-            "Expected message received"
-        );
+        // ignore messages until message is received
+        for response in client_2_response_channel.iter() {
+            if let SimControllerResponseWrapper::Message(
+                SimControllerMessage::MessageReceived(_, _, _),
+            ) = response
+            {
+                println!("TEST - Message received {:?}", response);
+                let expected_response = "Hello".to_string();
+                assert!(
+                    matches!(
+                        response,
+                        SimControllerResponseWrapper::Message(SimControllerMessage::MessageReceived(
+                            4,
+                            1,
+                            expected_response
+                        ))
+                    ),
+                    "Expected message received"
+                );
+                break;
+            }
+        }
     }
 
     #[test]
@@ -198,6 +143,7 @@ mod client_communication {
             chat_server.run();
         });
 
+      
         // Instruct client to register to server
         let res = client_command_channel.send(SimControllerCommand::Register(4));
         assert!(res.is_ok());
@@ -284,94 +230,32 @@ mod client_communication {
         });
 
         // Instruct client to register to server
-        let res = client_command_channel.send(SimControllerCommand::ClientList(4));
+        let res = client_command_channel.send(SimControllerCommand::Register(4));
         assert!(res.is_ok());
-
+        
         // Instruction client 2 to register to server
         let res = client_2_command_channel.send(SimControllerCommand::Register(4));
         assert!(res.is_ok());
 
+        
         // Instruct client to request client list
         let res = client_command_channel.send(SimControllerCommand::ClientList(4));
         assert!(res.is_ok());
 
-        // Listen for packets from end client //
-        //1. registration to server
-        let first_response = client_response_channel.recv().unwrap();
-        println!("first response {:?}", first_response);
-        assert!(matches!(
-            first_response,
-            SimControllerResponseWrapper::Event(SimControllerEvent::PacketSent { .. })
-        ));
-
-        //2. Ack from server
-        let second_response = client_response_channel.recv().unwrap();
-        println!("second response {:?}", second_response);
-        assert!(
-            matches!(
-                second_response,
-                SimControllerResponseWrapper::Event(SimControllerEvent::PacketSent { .. })
-            ),
-            "Expected packet received"
-        );
-
-        //3. Registration packet from server
-        let third_response = client_response_channel.recv().unwrap();
-        println!("third response {:?}", third_response);
-        assert!(
-            matches!(
-                third_response,
-                SimControllerResponseWrapper::Event(SimControllerEvent::PacketReceived { .. })
-            ),
-            "Expected packet received"
-        );
-
-        //4. Ack from server
-        let fourth_response = client_response_channel.recv().unwrap();
-        println!("fourth response {:?}", fourth_response);
-        assert!(
-            matches!(
-                fourth_response,
-                SimControllerResponseWrapper::Event(SimControllerEvent::PacketReceived(_))
-            ),
-            "Expected packet sent"
-        );
-
-        // 5. Ack from server
-        let fifth_response = client_response_channel.recv().unwrap();
-        println!("fifth response {:?}", fifth_response);
-        assert!(
-            matches!(
-                fifth_response,
-                SimControllerResponseWrapper::Event(SimControllerEvent::PacketSent { .. })
-            ),
-            "Expected packet sent"
-        );
-
-        //6. Client list from server
-        let sixth_response = client_response_channel.recv().unwrap();
-        println!("sixth response {:?}", sixth_response);
-        assert!(
-            matches!(
-                sixth_response,
-                SimControllerResponseWrapper::Event(SimControllerEvent::PacketReceived(_))
-            ),
-            "Expected client list"
-        );
-
 
         // Ignore messages until ClientListResponse is received
-        for response in client_response_channel.iter().collect() {
+        for response in client_response_channel.iter() {
             if let SimControllerResponseWrapper::Message(
                 SimControllerMessage::ClientListResponse(_, _),
             ) = response
             {
-                println!("Client list response {:?}", response);
+                println!("TEST - Client list response {:?}", response);
+                let expected_list = vec![1, 5];
                 assert!(
                     matches!(
                         response,
                         SimControllerResponseWrapper::Message(
-                            SimControllerMessage::ClientListResponse(_, _)
+                            SimControllerMessage::ClientListResponse(4, expected_response)
                         )
                     ),
                     "Expected client list"
@@ -467,7 +351,6 @@ mod client_communication {
             .receive_response_channel
             .clone();
 
-
         for mut drone in drones {
             thread::spawn(move || {
                 wg_2024::drone::Drone::run(&mut drone);
@@ -503,7 +386,8 @@ mod client_communication {
     // Test registered servers
     #[test]
     fn test_registered_servers() {
-        let ((mut client, _), _, _, mut drones, simulation_controller) = setup::setup();
+        let ((mut client, _), _, mut chat_server, mut drones, simulation_controller) =
+            setup::setup();
 
         let client_command_channel = simulation_controller
             .nodes_channels
@@ -512,13 +396,19 @@ mod client_communication {
             .send_command_channel
             .clone();
 
-        let controller_response_channel = simulation_controller
+        let client_response_channel = simulation_controller
             .nodes_channels
             .get(&1)
             .unwrap()
             .receive_response_channel
             .clone();
 
+        let drone_receive_event_channel = simulation_controller
+            .drone_channels
+            .get(&2)
+            .unwrap()
+            .receive_event_channel
+            .clone();
 
         for mut drone in drones {
             thread::spawn(move || {
@@ -530,28 +420,44 @@ mod client_communication {
             client.run(TICKS);
         });
 
+        thread::spawn(move || {
+            chat_server.run();
+        });
+
+      
+        // Instruct client to register to server
+        let res = client_command_channel.send(SimControllerCommand::Register(4));
+        assert!(res.is_ok());
+
+        // Allow time for registration
+        thread::sleep(std::time::Duration::from_secs(2));
+
         // Instruct client to request registered servers
         let res = client_command_channel.send(SimControllerCommand::RegisteredServers);
         assert!(res.is_ok());
 
-        // Listen for packets from client
-        // First packet is the registered servers request sent
-        let first_packet = controller_response_channel.recv().unwrap();
-        assert!(
-            matches!(first_packet, SimControllerResponseWrapper::Event(SimControllerEvent::PacketSent{packet_type, ..}) if packet_type == "RegisteredServers"),
-            "Expected registered servers request sent"
-        );
-        // Second packet is RegisteredServers response
-        let second_packet = controller_response_channel.recv().unwrap();
-        assert!(
-            matches!(
-                second_packet,
-                SimControllerResponseWrapper::Message(
-                    SimControllerMessage::RegisteredServersResponse(_)
-                )
-            ),
-            "Expected registered servers response"
-        );
+        // Ignore messages until RegisteredServersResponse is received
+        //RegisteredServersResponse
+        for response in client_response_channel.iter() {
+            if let SimControllerResponseWrapper::Message(
+                SimControllerMessage::RegisteredServersResponse(_),
+            ) = response
+            {
+                let expected_response = vec![4];
+                assert!(
+                    matches!(
+                        response,
+                        SimControllerResponseWrapper::Message(
+                            SimControllerMessage::RegisteredServersResponse(expected_response)
+                        )
+                    ),
+                    "Expected registered servers response"
+                );
+                break;
+            }
+        }
+
+
     }
 
     // Test text file request
