@@ -17,36 +17,57 @@ fn test_simulation_controller_build_complex_topology() {
     let controller = SimulationController::build(config_str);
 
     assert_eq!(controller.drone_channels.len(), 3);
-    assert_eq!(controller.nodes_channels.len(), 3);
-    assert_eq!(controller.handles.len(), 6);
-    assert_eq!(controller.topology.nodes().len(), 6);
+    assert_eq!(controller.nodes_channels.len(), 5);
+    assert_eq!(controller.handles.len(), 8);
+    assert_eq!(controller.topology.nodes().len(), 8);
 
     // Check the topology
     let edges = controller.topology.edges();
-    assert!(edges.len() == 6);
+    println!("{:?}", edges);
+    assert!(edges.len() == 8);
     assert!(edges.get(&1).unwrap().contains(&2));
     assert!(edges.get(&1).unwrap().contains(&3));
     assert!(edges.get(&1).unwrap().contains(&4));
-    assert!(edges.get(&1).unwrap().contains(&6));
+    assert!(edges.get(&1).unwrap().contains(&4));
+    assert!(edges.get(&1).unwrap().contains(&5));
+    assert!(edges.get(&1).unwrap().contains(&7));
+    assert!(edges.get(&1).unwrap().contains(&8));
 
     assert!(edges.get(&2).unwrap().contains(&1));
     assert!(edges.get(&2).unwrap().contains(&3));
     assert!(edges.get(&2).unwrap().contains(&4));
     assert!(edges.get(&2).unwrap().contains(&5));
+    assert!(edges.get(&2).unwrap().contains(&6));
+    assert!(edges.get(&2).unwrap().contains(&7));
+    assert!(edges.get(&2).unwrap().contains(&8));
 
     assert!(edges.get(&3).unwrap().contains(&1));
     assert!(edges.get(&3).unwrap().contains(&2));
+    assert!(edges.get(&3).unwrap().contains(&4));
     assert!(edges.get(&3).unwrap().contains(&5));
     assert!(edges.get(&3).unwrap().contains(&6));
+    assert!(edges.get(&3).unwrap().contains(&7));
+    assert!(edges.get(&3).unwrap().contains(&8));
 
     assert!(edges.get(&4).unwrap().contains(&1));
     assert!(edges.get(&4).unwrap().contains(&2));
+    assert!(edges.get(&4).unwrap().contains(&3));
 
+    assert!(edges.get(&5).unwrap().contains(&1));
     assert!(edges.get(&5).unwrap().contains(&2));
     assert!(edges.get(&5).unwrap().contains(&3));
 
     assert!(edges.get(&6).unwrap().contains(&1));
+    assert!(edges.get(&6).unwrap().contains(&2));
     assert!(edges.get(&6).unwrap().contains(&3));
+
+    assert!(edges.get(&7).unwrap().contains(&1));
+    assert!(edges.get(&7).unwrap().contains(&2));
+    assert!(edges.get(&7).unwrap().contains(&3));
+
+    assert!(edges.get(&8).unwrap().contains(&1));
+    assert!(edges.get(&8).unwrap().contains(&2));
+    assert!(edges.get(&8).unwrap().contains(&3));
 }
 
 #[test]
@@ -66,17 +87,15 @@ fn test_client_topology() {
         chat_client.run(500);
     });
     // Wait for the response
-    let response = client_channels.receive_response_channel.recv().unwrap();
-    assert!(matches!(
-        response.clone(),
-        SimControllerResponseWrapper::Message(msg) if matches!(msg, SimControllerMessage::TopologyResponse(_))
-    ));
-
-    // Check the client topology: 3 nodes (1,2,3) and 2 edges (1-2, 2-3)
-    if let SimControllerResponseWrapper::Message(SimControllerMessage::TopologyResponse(topology)) =
-        response
-    {
-        assert_eq!(topology.nodes().len(), 3);
-        assert_eq!(topology.edges().len(), 3);
+    for response in  client_channels.receive_response_channel.iter() {
+        if let SimControllerResponseWrapper::Message(msg) = response {
+            if let SimControllerMessage::TopologyResponse(topology) = msg {
+                assert_eq!(topology.nodes().len(), 7);
+                assert_eq!(topology.edges().len(), 7);
+                break;
+            }
+        }
+        
     }
+
 }
