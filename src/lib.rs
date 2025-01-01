@@ -3,6 +3,7 @@ mod drone_functions;
 mod runnable;
 pub mod simulation_controller;
 
+#[cfg(test)]
 mod tests {
     pub mod client_chat_server_interaction;
     pub mod setup;

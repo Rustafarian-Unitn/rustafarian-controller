@@ -1,16 +1,17 @@
-#[cfg(test)]
 mod client_communication {
     use ::rustafarian_chat_server::chat_server;
     use rustafarian_shared::messages::commander_messages::{
         SimControllerCommand, SimControllerEvent, SimControllerMessage,
         SimControllerResponseWrapper,
     };
+    use std::collections::HashSet;
     use std::thread;
     use wg_2024::controller::DroneEvent;
     use wg_2024::packet::PacketType;
 
     use crate::simulation_controller::TICKS;
     use crate::tests::setup;
+    use crossbeam_channel::unbounded;
     use rustafarian_client::client::Client;
 
     #[test]
@@ -81,20 +82,20 @@ mod client_communication {
 
         // ignore messages until message is received
         for response in client_2_response_channel.iter() {
-            if let SimControllerResponseWrapper::Message(
-                SimControllerMessage::MessageReceived(_, _, _),
-            ) = response
+            if let SimControllerResponseWrapper::Message(SimControllerMessage::MessageReceived(
+                _,
+                _,
+                _,
+            )) = response
             {
                 println!("TEST - Message received {:?}", response);
                 let expected_response = "Hello".to_string();
                 assert!(
                     matches!(
                         response,
-                        SimControllerResponseWrapper::Message(SimControllerMessage::MessageReceived(
-                            4,
-                            1,
-                            expected_response
-                        ))
+                        SimControllerResponseWrapper::Message(
+                            SimControllerMessage::MessageReceived(4, 1, expected_response)
+                        )
                     ),
                     "Expected message received"
                 );
@@ -143,7 +144,6 @@ mod client_communication {
             chat_server.run();
         });
 
-      
         // Instruct client to register to server
         let res = client_command_channel.send(SimControllerCommand::Register(4));
         assert!(res.is_ok());
@@ -232,16 +232,14 @@ mod client_communication {
         // Instruct client to register to server
         let res = client_command_channel.send(SimControllerCommand::Register(4));
         assert!(res.is_ok());
-        
+
         // Instruction client 2 to register to server
         let res = client_2_command_channel.send(SimControllerCommand::Register(4));
         assert!(res.is_ok());
 
-        
         // Instruct client to request client list
         let res = client_command_channel.send(SimControllerCommand::ClientList(4));
         assert!(res.is_ok());
-
 
         // Ignore messages until ClientListResponse is received
         for response in client_response_channel.iter() {
@@ -424,7 +422,6 @@ mod client_communication {
             chat_server.run();
         });
 
-      
         // Instruct client to register to server
         let res = client_command_channel.send(SimControllerCommand::Register(4));
         assert!(res.is_ok());
@@ -456,8 +453,163 @@ mod client_communication {
                 break;
             }
         }
+    }
+
+    // Test remove sender from server
+    #[test]
+    fn test_client_remove_senders() {
+        let ((mut client, mut client_2), _, mut chat_server, drones, simulation_controller) =
+            setup::setup();
+
+        let client_command_channel = simulation_controller
+            .nodes_channels
+            .get(&1)
+            .unwrap()
+            .send_command_channel
+            .clone();
+
+        let client_id = client.client_id();
+
+        let client_response_channel = simulation_controller
+            .nodes_channels
+            .get(&1)
+            .unwrap()
+            .receive_response_channel
+            .clone();
+
+        // custom channel to receive panic from client
+        let (panic_sender, panic_receiver) = crossbeam_channel::unbounded();
+
+        for mut drone in drones {
+            thread::spawn(move || {
+                wg_2024::drone::Drone::run(&mut drone);
+            });
+        }
+
+        thread::spawn(move || {
+            let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                client.run(TICKS);
+            }));
+            panic_sender.send(result.is_err()).unwrap();
+        });
+
+        thread::spawn(move || {
+            client_2.run(TICKS);
+        });
+
+        thread::spawn(move || {
+            chat_server.run();
+        });
+
+      
+        // Instruct client to remove sender 1
+        let res = client_command_channel.send(SimControllerCommand::RemoveSender(2));
+        assert!(res.is_ok());
+
+        // Instruct client to remove sender 2
+        let res = client_command_channel.send(SimControllerCommand::RemoveSender(6));
+        assert!(res.is_ok());
+
+        // Instruct client to remove sender 3
+        let res = client_command_channel.send(SimControllerCommand::RemoveSender(7));
+        assert!(res.is_ok());
+
+        // Send message to client 2
+        let res = client_command_channel.send(SimControllerCommand::SendMessage(
+            "Hello".to_string(),
+            4,
+            5,
+        ));
+        assert!(res.is_ok());
 
 
+    }
+
+    // Test remove sender from server
+    #[test]
+    fn test_server_remove_receivers() {
+        let ((mut client, _), _, mut chat_server, drones, simulation_controller) = setup::setup();
+
+        let client_command_channel = simulation_controller
+            .nodes_channels
+            .get(&1)
+            .unwrap()
+            .send_command_channel
+            .clone();
+
+        let client_id = client.client_id();
+
+        let client_response_channel = simulation_controller
+            .nodes_channels
+            .get(&1)
+            .unwrap()
+            .receive_response_channel
+            .clone();
+
+        let server_receive_packet_channel = simulation_controller
+            .nodes_channels
+            .get(&3)
+            .unwrap()
+            .receive_packet_channel
+            .clone();
+
+        let drone_receive_event_channel = simulation_controller
+            .drone_channels
+            .get(&2)
+            .unwrap()
+            .receive_event_channel
+            .clone();
+
+        for mut drone in drones {
+            thread::spawn(move || {
+                wg_2024::drone::Drone::run(&mut drone);
+            });
+        }
+
+        thread::spawn(move || {
+            client.run(TICKS);
+        });
+
+        thread::spawn(move || {
+            chat_server.run();
+        });
+
+        // Instruct client to register to server
+        let res = client_command_channel.send(SimControllerCommand::Register(4));
+        assert!(res.is_ok());
+
+        // Allow time for registration
+        thread::sleep(std::time::Duration::from_secs(2));
+
+        // Check topology before receiver removal
+        let res = client_command_channel.send(SimControllerCommand::Topology);
+        assert!(res.is_ok());
+
+        // Listen for topology response
+        for response in client_response_channel.iter() {
+            if let SimControllerResponseWrapper::Message(SimControllerMessage::TopologyResponse(
+                topology,
+            )) = response
+            {
+                println!(
+                    "TEST - Topology response for client {} -  {:?}",
+                    client_id,
+                    topology.edges().get(&client_id)
+                );
+
+                let expected_response = vec![2, 6, 7];
+                let expected_response: HashSet<_> = expected_response.into_iter().collect();
+                assert_eq!(topology.edges().get(&client_id), Some(&expected_response));
+                break;
+            }
+        }
+
+        // // Instruct server to remove receiver 1
+        // let res = client_command_channel.send(SimControllerCommand::RemoveReceiver(2));
+        // assert!(res.is_ok());
+
+        // Instruct server to remove receiver 2
+        // let res = client_command
     }
 
     // Test text file request
