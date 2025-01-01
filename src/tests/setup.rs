@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use ::rustafarian_chat_server::chat_server::{self, ChatServer};
+use ::rustafarian_chat_server::chat_server::ChatServer;
 use crossbeam_channel::unbounded;
 use rustafarian_client::{chat_client::ChatClient, client::Client};
 use rustafarian_drone::RustafarianDrone;
@@ -14,11 +14,11 @@ use wg_2024::{
     packet::Packet,
 };
 
-use crate::simulation_controller::{self, DroneChannels};
+use crate::simulation_controller::DroneChannels;
 use crate::simulation_controller::NodeChannels;
 use crate::simulation_controller::SimulationController;
 use rustafarian_content_server::content_server::ContentServer;
-const CHAT_DEBUG: bool = false;
+const CHAT_DEBUG: bool = true;
 
 pub fn setup() -> (
     (ChatClient, ChatClient),
@@ -233,11 +233,15 @@ pub fn setup() -> (
     client.topology().add_node(6);
     client.topology().add_node(7);
     client.topology().add_edge(1, 2);
+    client.topology().add_edge(1, 6);
+    client.topology().add_edge(1, 7);
+
     client.topology().add_edge(2, 3);
     client.topology().add_edge(2, 4);
     client.topology().add_edge(2, 5);
     client.topology().add_edge(2, 6);
     client.topology().add_edge(2, 7);
+
 
     client_2.topology().add_node(1);
     client_2.topology().add_node(2);
@@ -267,19 +271,8 @@ pub fn setup() -> (
     content_server.topology.add_edge(2, 6);
     content_server.topology.add_edge(2, 7);
 
-    chat_server.topology().add_node(1);
-    chat_server.topology().add_node(2);
-    chat_server.topology().add_node(3);
-    chat_server.topology().add_node(4);
-    chat_server.topology().add_node(5);
-    chat_server.topology().add_node(6);
-    chat_server.topology().add_node(7);
-    chat_server.topology().add_edge(4, 2);
-    chat_server.topology().add_edge(2, 1);
-    chat_server.topology().add_edge(2, 3);
-    chat_server.topology().add_edge(2, 5);
-    chat_server.topology().add_edge(2, 6);
-    chat_server.topology().add_edge(2, 7);
+    chat_server.update_topology(vec![1,2,3,4,5,6,7], vec![(1,2), (2,3), (2,4), (2,5), (2,6), (2,7)]);
+
     
     let mut drones_channels = HashMap::new();
     drones_channels.insert(2, drone_channels);

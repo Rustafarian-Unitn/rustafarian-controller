@@ -406,8 +406,8 @@ dependencies = [
 
 [[package]]
 name = "rustafarian-client"
-version = "0.2.0"
-source = "git+https://github.com/Rustafarian-Unitn/rustafarian-client#f6b52e3c9263e2569327350e12ee38d20970b211"
+version = "0.3.0"
+source = "git+https://github.com/Rustafarian-Unitn/rustafarian-client#a90a5c0df7f4418aab2619fe13103a19b9bbb69a"
 dependencies = [
  "crossbeam",
  "crossbeam-channel",
@@ -421,7 +421,7 @@ dependencies = [
 [[package]]
 name = "rustafarian-content-server"
 version = "0.1.0"
-source = "git+https://github.com/Rustafarian-Unitn/rustafarian-content_server.git#f918210643337e072b1fa0a8d35bc7bbb01bc08c"
+source = "git+https://github.com/Rustafarian-Unitn/rustafarian-content_server.git#d0e8368903a5ce357c13fae1f131d86f295671d5"
 dependencies = [
  "crossbeam",
  "crossbeam-channel",
@@ -710,9 +710,9 @@ dependencies = [
 
 [[package]]
 name = "winnow"
-version = "0.6.20"
+version = "0.6.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "36c1fec1a2bb5866f07c25f68c26e565c4c200aebb96d7e55710c19d3e8ac49b"
+checksum = "e6f5bb5257f2407a5425c6e749bfd9692192a73e70a6060516ac04f889087d68"
 dependencies = [
  "memchr",
 ]

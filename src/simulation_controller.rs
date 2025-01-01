@@ -22,8 +22,8 @@ use wg_2024::network::NodeId;
 use wg_2024::packet::{Packet, PacketType};
 
 pub const TICKS: u64 = 100;
-pub const FILE_FOLDER: &str = "files";
-pub const MEDIA_FOLDER: &str = "media";
+pub const FILE_FOLDER: &str = "resources/files";
+pub const MEDIA_FOLDER: &str = "resources/media";
 
 ///Internal channel management structures to distribute the channels among the instances of the topology
 #[derive(Debug)]
@@ -225,7 +225,8 @@ impl SimulationController {
                 .filter(|(k, _)| drone_config.connected_node_ids.contains(k))
                 .map(|(k, v)| (*k, v.send_packet_channel.clone()))
                 .collect();
-
+            println!("Neighbouring drones: {:?}", neighbor_channels);
+            
             let drone_channels = drone_channels.get(&drone_config.id).unwrap();
 
             let (mut drone, name) = factory(

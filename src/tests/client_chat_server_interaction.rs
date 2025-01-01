@@ -477,8 +477,6 @@ mod client_communication {
             .receive_response_channel
             .clone();
 
-        // custom channel to receive panic from client
-        let (panic_sender, panic_receiver) = crossbeam_channel::unbounded();
 
         for mut drone in drones {
             thread::spawn(move || {
@@ -487,10 +485,7 @@ mod client_communication {
         }
 
         thread::spawn(move || {
-            let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
                 client.run(TICKS);
-            }));
-            panic_sender.send(result.is_err()).unwrap();
         });
 
         thread::spawn(move || {
@@ -501,6 +496,8 @@ mod client_communication {
             chat_server.run();
         });
 
+        // Leave time for flood request
+        thread::sleep(std::time::Duration::from_secs(5));
       
         // Instruct client to remove sender 1
         let res = client_command_channel.send(SimControllerCommand::RemoveSender(2));
@@ -522,6 +519,28 @@ mod client_communication {
         ));
         assert!(res.is_ok());
 
+        // Test client topology
+        let res = client_command_channel.send(SimControllerCommand::Topology);
+        assert!(res.is_ok());
+        
+        // Listen for topology response
+        for response in client_response_channel.iter() {
+            if let SimControllerResponseWrapper::Message(SimControllerMessage::TopologyResponse(
+                topology,
+            )) = response
+            {
+                println!(
+                    "TEST - Topology response for client {} -  {:?}",
+                    client_id,
+                    topology.edges().get(&client_id)
+                );
+
+                let expected_response = vec![];
+                let expected_response: HashSet<_> = expected_response.into_iter().collect();
+                assert_eq!(topology.edges().get(&client_id), Some(&expected_response));
+                break;
+            }
+        }
 
     }
 
