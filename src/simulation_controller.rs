@@ -31,10 +31,11 @@ pub struct NodeChannels {
     pub send_packet_channel: Sender<Packet>,
     pub receive_packet_channel: Receiver<Packet>,
     pub send_command_channel: Sender<SimControllerCommand>,
+    pub receive_command_channel: Receiver<SimControllerCommand>,
     pub receive_response_channel: Receiver<SimControllerResponseWrapper>,
     pub send_response_channel: Sender<SimControllerResponseWrapper>,
 }
-///Internal channel management structures to distribute the channels among the instances of the topology 
+///Internal channel management structures to distribute the channels among the instances of the topology
 #[derive(Debug)]
 pub struct DroneChannels {
     pub send_command_channel: Sender<DroneCommand>,
@@ -45,8 +46,7 @@ pub struct DroneChannels {
     pub send_event_channel: Sender<DroneEvent>,
 }
 
-
-/// A factory function that creates drone instances for every drone configuration and drone acquired 
+/// A factory function that creates drone instances for every drone configuration and drone acquired
 type DroneFactory = fn(
     id: NodeId,
     controller_send: Sender<DroneEvent>,
@@ -56,42 +56,41 @@ type DroneFactory = fn(
     pdr: f32,
 ) -> (Box<dyn Runnable>, String);
 
-
 /// A controller that manages the simulation of a network composed of drones, clients, and servers.
-/// 
+///
 /// The `SimulationController` is responsible for:
 /// - Initializing and managing communication channels between different network components
 /// - Setting up the network topology
 /// - Handling packet routing between nodes
-/// 
+///
 /// # Methods
-/// 
+///
 /// - `new`: Creates a new instance with pre-configured channels and topology
 /// - `build`: Constructs a controller from a configuration string
 /// - `init_drones`: Initializes drone nodes in the network
 /// - `init_clients`: Sets up client nodes (chat and browser clients)
 /// - `init_servers`: Configures server nodes (chat, media, and text servers)
 /// - `handle_controller_shortcut`: Processes direct packet routing between nodes
-/// 
+///
 /// # Components
-/// 
+///
 /// The controller manages three types of nodes:
 /// - Drones: Network routing nodes
 /// - Clients: End-user applications (chat and browser clients)
 /// - Servers: Service providers (chat, media, and text servers)
-/// 
+///
 /// Each node type has its own communication channels and is registered in the network topology.
-/// 
+///
 /// # Communication
-/// 
+///
 /// The controller uses crossbeam channels for:
 /// - Command distribution
 /// - Event handling
 /// - Packet routing
 /// - Response processing
-/// 
+///
 /// # Topology
-/// 
+///
 /// Maintains a graph-like structure representing network connections between:
 /// - Drones to drones
 /// - Clients to drones
@@ -140,12 +139,14 @@ impl SimulationController {
         let mut handles = Vec::new();
 
         let mut topology = Topology::new();
+        Self::init_channels(&config, &mut node_channels, &mut drone_channels, &mut topology);
 
         Self::init_drones(
             &mut handles,
             config.drone,
             &mut drone_factories,
             &mut drone_channels,
+            &mut node_channels,
             &mut topology,
         );
         Self::init_clients(
@@ -167,6 +168,80 @@ impl SimulationController {
         SimulationController::new(node_channels, drone_channels, handles, topology)
     }
 
+    fn init_channels(
+        config: &wg_2024::config::Config,
+        node_channels: &mut HashMap<NodeId, NodeChannels>,
+        drone_channels: &mut HashMap<NodeId, DroneChannels>,
+        topology: &mut Topology,
+    ) {
+        for drone_config in config.drone.iter() {
+            let (send_command_channel, receive_command_channel) = unbounded::<DroneCommand>();
+            let (send_event_channel, receive_event_channel) = unbounded::<DroneEvent>();
+            let (send_packet_channel, receive_packet_channel) = unbounded::<Packet>();
+
+            drone_channels.insert(
+                drone_config.id,
+                DroneChannels {
+                    send_command_channel,
+                    receive_command_channel,
+                    send_packet_channel,
+                    receive_packet_channel,
+                    receive_event_channel,
+                    send_event_channel,
+                },
+            );
+            // Build the topology to represent the network in the frontend
+            topology.add_node(drone_config.id);
+            drone_config.connected_node_ids.iter().for_each(|node_id| {
+                topology.add_edge(drone_config.id, *node_id);
+            });
+
+            topology.set_node_type(drone_config.id, "drone".to_string());
+        }
+
+        let mut client_counter = 0;
+
+        for client_config in config.client.iter() {
+            
+            let (send_command_channel, receive_command_channel) =
+                unbounded::<SimControllerCommand>();
+            let (send_response_channel, receive_response_channel) =
+                unbounded::<SimControllerResponseWrapper>();
+            let (send_packet_channel, receive_packet_channel) = unbounded::<Packet>();
+
+            node_channels.insert(
+                client_config.id,
+                NodeChannels {
+                    send_packet_channel,
+                    receive_packet_channel,
+                    send_command_channel,
+                    receive_command_channel,
+                    receive_response_channel,
+                    send_response_channel,
+                },
+            );
+        }
+
+        for server_config in config.server.iter() {
+            let (send_command_channel, receive_command_channel) =
+                unbounded::<SimControllerCommand>();
+            let (send_response_channel, receive_response_channel) =
+                unbounded::<SimControllerResponseWrapper>();
+            let (send_packet_channel, receive_packet_channel) = unbounded::<Packet>();
+
+            node_channels.insert(
+                server_config.id,
+                NodeChannels {
+                    send_packet_channel,
+                    receive_packet_channel,
+                    send_command_channel,
+                    receive_command_channel,
+                    receive_response_channel,
+                    send_response_channel,
+                },
+            );
+        }
+    }
 
     /// Initializes the drone nodes in the network.
     /// # Arguments
@@ -182,52 +257,35 @@ impl SimulationController {
         drones_config: Vec<DroneConfig>,
         drone_factories: &mut dyn Iterator<Item = DroneFactory>,
         drone_channels: &mut HashMap<NodeId, DroneChannels>,
+        node_channels: &mut HashMap<NodeId, NodeChannels>,
         topology: &mut Topology,
     ) {
-        for drone_config in drones_config.iter() {
-            // Generate the channels for drone communication with sc
-            let (send_command_channel, receive_command_channel) = unbounded::<DroneCommand>();
-            let (send_event_channel, receive_event_channel) = unbounded::<DroneEvent>();
-
-            // Generate the channels for inter-drone communication
-            let (send_packet_channel, receive_packet_channel) = unbounded::<Packet>();
-
-            // Save the drone's channel counterparts for later use
-            drone_channels.insert(
-                drone_config.id,
-                DroneChannels {
-                    send_command_channel,
-                    receive_command_channel,
-                    send_packet_channel,
-                    receive_packet_channel,
-                    receive_event_channel,
-                    send_event_channel,
-                },
-            );
-
-            // Build the topology to represent the network in the frontend
-            topology.add_node(drone_config.id);
-            drone_config.connected_node_ids.iter().for_each(|node_id| {
-                topology.add_edge(drone_config.id, *node_id);
-            });
-
-            topology.set_node_type(drone_config.id, "drone".to_string());
-        }
-
+       
         // For each drone config pick the next factory in a circular fashion to generate a drone instance
         for drone_config in drones_config.iter() {
             // Get the next drone in line
             let factory = drone_factories.next().unwrap();
 
-            // Neighbouring nodes
+            // Neighbouring drones
             let neighbor_channels: HashMap<NodeId, Sender<Packet>> = drone_channels
                 .iter()
                 .filter(|(k, _)| drone_config.connected_node_ids.contains(k))
                 .map(|(k, v)| (*k, v.send_packet_channel.clone()))
+                .chain(
+                    node_channels
+                        .iter()
+                        .filter(|(k, _)| drone_config.connected_node_ids.contains(k))
+                        .map(|(k, v)| (*k, v.send_packet_channel.clone())),
+                )
                 .collect();
-            println!("Neighbouring drones: {:?}", neighbor_channels);
-            
+
             let drone_channels = drone_channels.get(&drone_config.id).unwrap();
+
+            println!(
+                "Drone {} has neighbours {:?}",
+                drone_config.id,
+                neighbor_channels.keys()
+            );
 
             let (mut drone, name) = factory(
                 drone_config.id,
@@ -242,7 +300,7 @@ impl SimulationController {
             handles.push(thread::spawn(move || drone.run()));
         }
     }
-    
+
     /// Initializes the client nodes in the network.
     /// # Arguments
     /// * `handles` - A mutable reference to the vector of thread handles
@@ -252,7 +310,7 @@ impl SimulationController {
     /// * `topology` - A mutable reference to the network topology. This is used to represent the network in the frontend
     /// # Returns
     /// A vector of thread handles for the client instances
-    
+
     fn init_clients(
         handles: &mut Vec<JoinHandle<()>>,
         clients_config: Vec<ClientConfig>,
@@ -264,28 +322,6 @@ impl SimulationController {
         for client_config in clients_config {
             counter += 1;
 
-            // Simulation controller keeps send command channel, client keeps receive command channel
-            let (send_command_channel, receive_command_channel) =
-                unbounded::<SimControllerCommand>();
-
-            // Simulation controller keeps receive Response channel, client keeps send Response channel
-            let (send_response_channel, receive_response_channel) =
-                unbounded::<SimControllerResponseWrapper>();
-
-            // Generate the channels for inter-drone communication
-            let (send_packet_channel, receive_packet_channel) = unbounded::<Packet>();
-
-            // Save the client's channel counterparts for later use
-            node_channels.insert(
-                client_config.id,
-                NodeChannels {
-                    send_packet_channel,                                    // network comm.
-                    receive_packet_channel: receive_packet_channel.clone(), // network comm.
-                    send_command_channel,     // sc sends commands to client
-                    receive_response_channel, // sc receives responses the client got from the servers
-                    send_response_channel: send_response_channel.clone(), // sc sends responses to the client
-                },
-            );
 
             // Register assigned neighbouring drones
             let neighbour_drones = drone_channels
@@ -310,6 +346,10 @@ impl SimulationController {
                 .for_each(|node_id| {
                     topology.add_edge(client_config.id, *node_id);
                 });
+            
+            let receive_packet_channel = node_channels.get(&client_config.id).unwrap().receive_packet_channel.clone();
+            let receive_command_channel = node_channels.get(&client_config.id).unwrap().receive_command_channel.clone();
+            let send_response_channel = node_channels.get(&client_config.id).unwrap().send_response_channel.clone();
 
             // Start off the client
             handles.push(thread::spawn(move || {
@@ -345,7 +385,7 @@ impl SimulationController {
     /// * `topology` - A mutable reference to the network topology. This is used to represent the network in the frontend
     /// # Returns
     /// A vector of thread handles for the server instances
-    /// 
+    ///
     fn init_servers(
         handles: &mut Vec<JoinHandle<()>>,
         servers_config: Vec<ServerConfig>,
@@ -357,27 +397,7 @@ impl SimulationController {
         // For each drone config pick the next factory in a circular fashion to generate a drone instance
         for server_config in servers_config {
             counter += 1;
-            let (send_command_channel, receive_command_channel) =
-                unbounded::<SimControllerCommand>();
-
-            let (send_response_channel, receive_response_channel) =
-                unbounded::<SimControllerResponseWrapper>();
-
-            // Generate the channels for inter-drone communication
-            let (send_packet_channel, receive_packet_channel) = unbounded::<Packet>();
-
-            // Save the server's channel counterparts for later use
-            node_channels.insert(
-                server_config.id,
-                NodeChannels {
-                    send_packet_channel,
-                    receive_packet_channel: receive_packet_channel.clone(),
-                    send_command_channel,
-                    receive_response_channel,
-                    send_response_channel: send_response_channel.clone(),
-                },
-            );
-
+           
             let drones = drone_channels
                 .iter()
                 .filter(|(k, _)| server_config.connected_drone_ids.contains(k))
@@ -404,6 +424,10 @@ impl SimulationController {
                 topology.set_node_type(server_config.id, "text_server".to_string());
             }
 
+            let receive_packet_channel = node_channels.get(&server_config.id).unwrap().receive_packet_channel.clone();
+            let receive_command_channel = node_channels.get(&server_config.id).unwrap().receive_command_channel.clone();
+            let send_response_channel = node_channels.get(&server_config.id).unwrap().send_response_channel.clone();
+            
             // Start off the server
             handles.push(thread::spawn(move || {
                 if counter % 3 == 0 {
@@ -454,7 +478,7 @@ impl SimulationController {
     /// A `SimControllerEvent` representing the event of the packet being forwarded
     /// # Errors
     /// Returns an error if the packet could not be sent to the destination node
-    /// 
+    ///
     pub fn handle_controller_shortcut(&self, packet: Packet) -> Result<SimControllerEvent, Error> {
         let packet_type = packet.pack_type.clone();
         let session_id = packet.session_id;
@@ -563,16 +587,20 @@ mod tests {
         let drone_factories: Vec<DroneFactory> = vec![rustafarian_drone];
         let mut drone_factories = drone_factories.into_iter().cycle();
         let mut drone_channels = HashMap::new();
+        let mut node_channels = HashMap::new();
         let mut topology = Topology::new();
+
         SimulationController::init_drones(
             &mut handles,
             drones_config,
             &mut drone_factories,
             &mut drone_channels,
+            &mut node_channels,
             &mut topology,
         );
 
         assert_eq!(drone_channels.len(), 1);
+
         assert_eq!(handles.len(), 1);
     }
 

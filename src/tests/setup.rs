@@ -74,13 +74,12 @@ pub fn setup() -> (
     drone_neighbors.insert(3, content_server_packet_channels.0.clone());
     drone_neighbors.insert(4, chat_server_packet_channels.0.clone());
     drone_neighbors.insert(5, client_2_packet_channels.0.clone());
-    
-    
+
     drone_2_neighbors.insert(1, client_packet_channels.0.clone());
     drone_2_neighbors.insert(3, content_server_packet_channels.0.clone());
     drone_2_neighbors.insert(4, chat_server_packet_channels.0.clone());
     drone_3_neighbors.insert(5, client_2_packet_channels.0.clone());
-    
+
     drone_3_neighbors.insert(1, client_packet_channels.0.clone());
     drone_3_neighbors.insert(3, content_server_packet_channels.0.clone());
     drone_3_neighbors.insert(4, chat_server_packet_channels.0.clone());
@@ -91,6 +90,7 @@ pub fn setup() -> (
         send_packet_channel: client_packet_channels.0.clone(),
         receive_packet_channel: client_packet_channels.1.clone(),
         send_command_channel: client_command_channels.0.clone(),
+        receive_command_channel: client_command_channels.1.clone(),
         receive_response_channel: client_response_channels.1.clone(),
         send_response_channel: client_response_channels.0.clone(),
     };
@@ -99,6 +99,7 @@ pub fn setup() -> (
         send_packet_channel: client_2_packet_channels.0.clone(),
         receive_packet_channel: client_2_packet_channels.1.clone(),
         send_command_channel: client_2_command_channels.0.clone(),
+        receive_command_channel: client_2_command_channels.1.clone(),
         receive_response_channel: client_2_response_channels.1.clone(),
         send_response_channel: client_2_response_channels.0.clone(),
     };
@@ -106,7 +107,9 @@ pub fn setup() -> (
     let content_server_channels = NodeChannels {
         send_packet_channel: content_server_packet_channels.0.clone(),
         receive_packet_channel: content_server_packet_channels.1.clone(),
+
         send_command_channel: content_server_command_channels.0.clone(),
+        receive_command_channel: content_server_command_channels.1.clone(),
         receive_response_channel: content_server_response_channels.1.clone(),
         send_response_channel: content_server_response_channels.0.clone(),
     };
@@ -115,6 +118,7 @@ pub fn setup() -> (
         send_packet_channel: chat_server_packet_channels.0.clone(),
         receive_packet_channel: chat_server_packet_channels.1.clone(),
         send_command_channel: chat_server_command_channels.0.clone(),
+        receive_command_channel: chat_server_command_channels.1.clone(),
         receive_response_channel: chat_server_response_channels.1.clone(),
         send_response_channel: chat_server_response_channels.0.clone(),
     };
@@ -242,7 +246,6 @@ pub fn setup() -> (
     client.topology().add_edge(2, 6);
     client.topology().add_edge(2, 7);
 
-
     client_2.topology().add_node(1);
     client_2.topology().add_node(2);
     client_2.topology().add_node(3);
@@ -271,9 +274,11 @@ pub fn setup() -> (
     content_server.topology.add_edge(2, 6);
     content_server.topology.add_edge(2, 7);
 
-    chat_server.update_topology(vec![1,2,3,4,5,6,7], vec![(1,2), (2,3), (2,4), (2,5), (2,6), (2,7)]);
+    chat_server.update_topology(
+        vec![1, 2, 3, 4, 5, 6, 7],
+        vec![(1, 2), (2, 3), (2, 4), (2, 5), (2, 6), (2, 7)],
+    );
 
-    
     let mut drones_channels = HashMap::new();
     drones_channels.insert(2, drone_channels);
     drones_channels.insert(6, drone_2_channels);
