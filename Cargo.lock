@@ -406,8 +406,8 @@ dependencies = [
 
 [[package]]
 name = "rustafarian-client"
-version = "0.3.0"
-source = "git+https://github.com/Rustafarian-Unitn/rustafarian-client#e1ae9045bce223e65122a3163695c777542cce75"
+version = "0.3.1"
+source = "git+https://github.com/Rustafarian-Unitn/rustafarian-client?branch=testController#f1467f03727a647acbf3e4666b8f117e56bd31c8"
 dependencies = [
  "crossbeam",
  "crossbeam-channel",
@@ -436,7 +436,7 @@ dependencies = [
 
 [[package]]
 name = "rustafarian-controller"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "crossbeam",
  "crossbeam-channel",
