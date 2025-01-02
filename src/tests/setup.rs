@@ -90,7 +90,7 @@ pub fn setup() -> (
         send_packet_channel: client_packet_channels.0.clone(),
         receive_packet_channel: client_packet_channels.1.clone(),
         send_command_channel: client_command_channels.0.clone(),
-        receive_command_channel: Some(client_command_channels.1.clone()),
+        receive_command_channel: client_command_channels.1.clone(),
         receive_response_channel: client_response_channels.1.clone(),
         send_response_channel: client_response_channels.0.clone(),
     };
@@ -99,7 +99,7 @@ pub fn setup() -> (
         send_packet_channel: client_2_packet_channels.0.clone(),
         receive_packet_channel: client_2_packet_channels.1.clone(),
         send_command_channel: client_2_command_channels.0.clone(),
-        receive_command_channel: Some(client_command_channels.1.clone()),
+        receive_command_channel: client_command_channels.1.clone(),
         receive_response_channel: client_2_response_channels.1.clone(),
         send_response_channel: client_2_response_channels.0.clone(),
     };
@@ -109,7 +109,7 @@ pub fn setup() -> (
         receive_packet_channel: content_server_packet_channels.1.clone(),
 
         send_command_channel: content_server_command_channels.0.clone(),
-        receive_command_channel: Some(client_command_channels.1.clone()),
+        receive_command_channel: client_command_channels.1.clone(),
         receive_response_channel: content_server_response_channels.1.clone(),
         send_response_channel: content_server_response_channels.0.clone(),
     };
@@ -118,7 +118,7 @@ pub fn setup() -> (
         send_packet_channel: chat_server_packet_channels.0.clone(),
         receive_packet_channel: chat_server_packet_channels.1.clone(),
         send_command_channel: chat_server_command_channels.0.clone(),
-        receive_command_channel: Some(client_command_channels.1.clone()),
+        receive_command_channel: client_command_channels.1.clone(),
         receive_response_channel: chat_server_response_channels.1.clone(),
         send_response_channel: chat_server_response_channels.0.clone(),
     };

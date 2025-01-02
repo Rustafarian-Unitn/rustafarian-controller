@@ -31,7 +31,7 @@ pub struct NodeChannels {
     pub send_packet_channel: Sender<Packet>,
     pub receive_packet_channel: Receiver<Packet>,
     pub send_command_channel: Sender<SimControllerCommand>,
-    pub receive_command_channel: Option<Receiver<SimControllerCommand>>,
+    pub receive_command_channel: Receiver<SimControllerCommand>,
     pub receive_response_channel: Receiver<SimControllerResponseWrapper>,
     pub send_response_channel: Sender<SimControllerResponseWrapper>,
 }
@@ -213,7 +213,7 @@ impl SimulationController {
                     send_packet_channel,
                     receive_packet_channel,
                     send_command_channel,
-                    receive_command_channel: Some(receive_command_channel),
+                    receive_command_channel,
                     receive_response_channel,
                     send_response_channel,
                 },
@@ -233,7 +233,7 @@ impl SimulationController {
                     send_packet_channel,
                     receive_packet_channel,
                     send_command_channel,
-                    receive_command_channel: Some(receive_command_channel),
+                    receive_command_channel,
                     receive_response_channel,
                     send_response_channel,
                 },
@@ -346,7 +346,7 @@ impl SimulationController {
                 });
             
             let receive_packet_channel = node_channels.get(&client_config.id).unwrap().receive_packet_channel.clone();
-            let receive_command_channel = node_channels.get_mut(&client_config.id).unwrap().receive_command_channel.take().unwrap();
+            let receive_command_channel = node_channels.get_mut(&client_config.id).unwrap().receive_command_channel.clone();
             let send_response_channel = node_channels.get(&client_config.id).unwrap().send_response_channel.clone();
 
             // Start off the client
@@ -423,7 +423,7 @@ impl SimulationController {
             }
 
             let receive_packet_channel = node_channels.get(&server_config.id).unwrap().receive_packet_channel.clone();
-            let receive_command_channel = node_channels.get_mut(&server_config.id).unwrap().receive_command_channel.take().unwrap();
+            let receive_command_channel = node_channels.get_mut(&server_config.id).unwrap().receive_command_channel.clone();
             let send_response_channel = node_channels.get(&server_config.id).unwrap().send_response_channel.clone();
             
             // Start off the server
