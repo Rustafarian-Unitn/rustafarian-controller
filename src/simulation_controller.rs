@@ -164,7 +164,11 @@ impl SimulationController {
             &mut drone_channels,
             &mut topology,
         );
-
+        
+        for handle in handles.iter_mut() {
+            handle.take().unwrap().join().unwrap();
+        }
+        
         SimulationController::new(node_channels, drone_channels, handles, topology)
     }
 
