@@ -100,14 +100,14 @@ pub struct SimulationController {
     pub topology: Topology,
     pub nodes_channels: HashMap<NodeId, NodeChannels>,
     pub drone_channels: HashMap<NodeId, DroneChannels>,
-    pub handles: Vec<JoinHandle<()>>,
+    pub handles: Vec<Option<JoinHandle<()>>>,
 }
 
 impl SimulationController {
     pub fn new(
         nodes_channels: HashMap<NodeId, NodeChannels>,
         drone_channels: HashMap<NodeId, DroneChannels>,
-        handles: Vec<JoinHandle<()>>,
+        handles: Vec<Option<JoinHandle<()>>>,
         topology: Topology,
     ) -> Self {
         SimulationController {
@@ -168,9 +168,9 @@ impl SimulationController {
         SimulationController::new(node_channels, drone_channels, handles, topology)
     }
 
-    pub fn run(self) {
-        for handle in self.handles {
-            handle.join().unwrap();
+    pub fn run(&mut self) {
+        for handle in self.handles.iter_mut() {
+            handle.take().unwrap().join().unwrap();
         }
     }
 
@@ -257,7 +257,7 @@ impl SimulationController {
     /// # Returns
     /// A vector of thread handles for the drone instances
     fn init_drones(
-        handles: &mut Vec<JoinHandle<()>>,
+        handles: &mut Vec<Option<JoinHandle<()>>>,
         drones_config: Vec<DroneConfig>,
         drone_factories: &mut dyn Iterator<Item = DroneFactory>,
         drone_channels: &mut HashMap<NodeId, DroneChannels>,
@@ -301,7 +301,7 @@ impl SimulationController {
             );
             topology.set_label(drone_config.id, name);
 
-            handles.push(thread::spawn(move || drone.run()));
+            handles.push(Some(thread::spawn(move || drone.run())));
         }
     }
 
@@ -316,7 +316,7 @@ impl SimulationController {
     /// A vector of thread handles for the client instances
 
     fn init_clients(
-        handles: &mut Vec<JoinHandle<()>>,
+        handles: &mut Vec<Option<JoinHandle<()>>>,
         clients_config: Vec<ClientConfig>,
         node_channels: &mut HashMap<NodeId, NodeChannels>,
         drone_channels: &mut HashMap<NodeId, DroneChannels>,
@@ -356,7 +356,7 @@ impl SimulationController {
             let send_response_channel = node_channels.get(&client_config.id).unwrap().send_response_channel.clone();
 
             // Start off the client
-            handles.push(thread::spawn(move || {
+            handles.push(Some(thread::spawn(move || {
                 if counter % 2 == 0 {
                     let mut client = ChatClient::new(
                         client_config.id,
@@ -376,7 +376,7 @@ impl SimulationController {
                     );
                     client.run(TICKS)
                 }
-            }));
+            })));
         }
     }
 
@@ -391,7 +391,7 @@ impl SimulationController {
     /// A vector of thread handles for the server instances
     ///
     fn init_servers(
-        handles: &mut Vec<JoinHandle<()>>,
+        handles: &mut Vec<Option<JoinHandle<()>>>,
         servers_config: Vec<ServerConfig>,
         node_channels: &mut HashMap<NodeId, NodeChannels>,
         drone_channels: &mut HashMap<NodeId, DroneChannels>,
@@ -433,7 +433,7 @@ impl SimulationController {
             let send_response_channel = node_channels.get(&server_config.id).unwrap().send_response_channel.clone();
             
             // Start off the server
-            handles.push(thread::spawn(move || {
+            handles.push(Some(thread::spawn(move || {
                 if counter % 3 == 0 {
                     let mut server = Server::new(
                         server_config.id,
@@ -471,7 +471,7 @@ impl SimulationController {
                     );
                     server.run()
                 }
-            }));
+            })));
         }
     }
 
