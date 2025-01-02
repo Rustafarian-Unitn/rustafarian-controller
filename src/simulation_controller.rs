@@ -6,7 +6,8 @@ use rand::Error;
 use rustafarian_client::browser_client::BrowserClient;
 use rustafarian_client::chat_client::ChatClient;
 use rustafarian_client::client::Client;
-use rustafarian_content_server::content_server::ContentServer as Server;
+use rustafarian_content_server::content_server::ContentServer;
+use rustafarian_chat_server::chat_server::ChatServer;
 use rustafarian_shared::messages::commander_messages::SimControllerEvent::PacketForwarded;
 use rustafarian_shared::messages::commander_messages::{
     SimControllerCommand, SimControllerEvent, SimControllerResponseWrapper,
@@ -24,7 +25,7 @@ use wg_2024::packet::{Packet, PacketType};
 pub const TICKS: u64 = u64::MAX;
 pub const FILE_FOLDER: &str = "resources/files";
 pub const MEDIA_FOLDER: &str = "resources/media";
-
+pub const DEBUG: bool = false;
 ///Internal channel management structures to distribute the channels among the instances of the topology
 #[derive(Debug)]
 pub struct NodeChannels {
@@ -316,11 +317,8 @@ impl SimulationController {
         drone_channels: &mut HashMap<NodeId, DroneChannels>,
         topology: &mut Topology,
     ) {
-        let mut counter = 0;
+       
         for client_config in clients_config {
-            counter += 1;
-
-
             // Register assigned neighbouring drones
             let neighbour_drones = drone_channels
                 .iter()
@@ -330,7 +328,7 @@ impl SimulationController {
 
             // Register the client's node in the topology
             topology.add_node(client_config.id);
-            if counter % 2 == 0 {
+            if client_config.id % 2 == 0 {
                 topology.set_label(client_config.id, "Chat client".to_string());
                 topology.set_node_type(client_config.id, "chat_client".to_string());
             } else {
@@ -351,7 +349,7 @@ impl SimulationController {
 
             // Start off the client
             handles.push(Some(thread::spawn(move || {
-                if counter % 2 == 0 {
+                if client_config.id % 2 == 0 {
                     let mut client = ChatClient::new(
                         client_config.id,
                         neighbour_drones,
@@ -391,11 +389,8 @@ impl SimulationController {
         drone_channels: &mut HashMap<NodeId, DroneChannels>,
         topology: &mut Topology,
     ) {
-        let mut counter = 0;
         // For each drone config pick the next factory in a circular fashion to generate a drone instance
         for server_config in servers_config {
-            counter += 1;
-           
             let drones = drone_channels
                 .iter()
                 .filter(|(k, _)| server_config.connected_drone_ids.contains(k))
@@ -411,10 +406,10 @@ impl SimulationController {
                     topology.add_edge(server_config.id, *node_id);
                 });
 
-            if counter % 3 == 0 {
+            if server_config.id % 3 == 0 {
                 topology.set_label(server_config.id, "Chat server".to_string());
                 topology.set_node_type(server_config.id, "chat_server".to_string());
-            } else if counter % 3 == 1 {
+            } else if server_config.id % 3 == 1 {
                 topology.set_label(server_config.id, "Media server".to_string());
                 topology.set_node_type(server_config.id, "media_server".to_string());
             } else {
@@ -428,20 +423,20 @@ impl SimulationController {
             
             // Start off the server
             handles.push(Some(thread::spawn(move || {
-                if counter % 3 == 0 {
-                    let mut server = Server::new(
+                if server_config.id % 3 == 0 {
+                    let mut server = ChatServer::new(
                         server_config.id,
-                        drones,
-                        receive_packet_channel,
                         receive_command_channel,
                         send_response_channel,
-                        FILE_FOLDER,
-                        MEDIA_FOLDER,
-                        ServerType::Chat,
+                        receive_packet_channel,
+                        drones,
+                        DEBUG
                     );
+                    println!("Server {} is running", server_config.id);
                     server.run()
-                } else if counter % 3 == 1 {
-                    let mut server = Server::new(
+                } else if server_config.id % 3 == 1 {
+
+                    let mut server = ContentServer::new(
                         server_config.id,
                         drones,
                         receive_packet_channel,
@@ -451,9 +446,11 @@ impl SimulationController {
                         MEDIA_FOLDER,
                         ServerType::Media,
                     );
+                    println!("Server {} of type {:?}is running",server_config.id,  ServerType::Media);
+
                     server.run()
                 } else {
-                    let mut server = Server::new(
+                    let mut server = ContentServer::new(
                         server_config.id,
                         drones,
                         receive_packet_channel,
@@ -463,6 +460,8 @@ impl SimulationController {
                         MEDIA_FOLDER,
                         ServerType::Text,
                     );
+                    println!("Server {} of type {:?}is running",server_config.id,  ServerType::Text);
+
                     server.run()
                 }
             })));
