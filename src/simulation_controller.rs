@@ -21,7 +21,7 @@ use wg_2024::controller::{DroneCommand, DroneEvent};
 use wg_2024::network::NodeId;
 use wg_2024::packet::{Packet, PacketType};
 
-pub const TICKS: u64 = 100;
+pub const TICKS: u64 = u64::MAX;
 pub const FILE_FOLDER: &str = "resources/files";
 pub const MEDIA_FOLDER: &str = "resources/media";
 
