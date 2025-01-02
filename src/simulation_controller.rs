@@ -168,12 +168,6 @@ impl SimulationController {
         SimulationController::new(node_channels, drone_channels, handles, topology)
     }
 
-    pub fn run(&mut self) {
-        for handle in self.handles.iter_mut() {
-            handle.take().unwrap().join().unwrap();
-        }
-    }
-
     fn init_channels(
         config: &wg_2024::config::Config,
         node_channels: &mut HashMap<NodeId, NodeChannels>,
