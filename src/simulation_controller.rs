@@ -168,6 +168,12 @@ impl SimulationController {
         SimulationController::new(node_channels, drone_channels, handles, topology)
     }
 
+    pub fn run(self) {
+        for handle in self.handles {
+            handle.join().unwrap();
+        }
+    }
+
     fn init_channels(
         config: &wg_2024::config::Config,
         node_channels: &mut HashMap<NodeId, NodeChannels>,
@@ -198,8 +204,6 @@ impl SimulationController {
 
             topology.set_node_type(drone_config.id, "drone".to_string());
         }
-
-        let mut client_counter = 0;
 
         for client_config in config.client.iter() {
             

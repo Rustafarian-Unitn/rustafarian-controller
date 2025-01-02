@@ -9,7 +9,7 @@ mod client_communication {
     use wg_2024::controller::DroneEvent;
     use wg_2024::packet::PacketType;
 
-    use crate::simulation_controller::TICKS;
+    use crate::simulation_controller::{self, SimulationController, TICKS};
     use crate::tests::setup;
     use crossbeam_channel::unbounded;
     use rustafarian_client::client::Client;
@@ -679,6 +679,31 @@ mod client_communication {
         // Listen for ack from drone
         let ack = drone_receive_event_channel.recv().unwrap();
         assert!(matches!(ack, DroneEvent::PacketSent(_)));
+    }
+
+
+    #[test]
+    fn test_topology_using_config_file_setup(){
+        let simulation_controller = SimulationController::build("src/tests/configurations/test_complex_config.toml");
+        println!("Simulation controller {:?}", simulation_controller);
+        let client_command_channel = simulation_controller.nodes_channels.get(&4).unwrap().send_command_channel.clone();
+        let client_response_channel = simulation_controller.nodes_channels.get(&4).unwrap().receive_response_channel.clone();
+        //send topology request
+        let res = client_command_channel.send(SimControllerCommand::Topology);
+        assert!(res.is_ok());
+        // Listen for topology response
+        for response in client_response_channel.iter() {
+            if let SimControllerResponseWrapper::Message(SimControllerMessage::TopologyResponse(
+                topology,
+            )) = response
+            {
+                println!("TEST - Topology response {:?}", topology);
+                let expected_response = vec![1,2, 3];
+                let expected_response: HashSet<_> = expected_response.into_iter().collect();
+                assert_eq!(topology.edges().get(&4), Some(&expected_response));
+                break;
+            }
+        }
     }
 
     // Test media file request
