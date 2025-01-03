@@ -48,7 +48,7 @@ mod content_communication {
             )) = response
             {
                 println!("TEST - Message received {:?}", response);
-                let expected_list: Vec<u8> = vec![];
+                let expected_list: Vec<u8> = vec![0,1];
                 assert!(
                     matches!(
                         response,
@@ -70,6 +70,7 @@ mod content_communication {
             SimulationController::build("src/tests/configurations/simple_config_for_content_tests.toml");
        
         let client_id: u8 = 5;
+        let server_id = 8;
 
         let client_command_channel = simulation_controller
             .nodes_channels
@@ -85,8 +86,11 @@ mod content_communication {
             .receive_response_channel
             .clone();
 
+        // wait for flood to finish
+        thread::sleep(std::time::Duration::from_secs(1));    
+
         // Instruct client to request text file
-        let res = client_command_channel.send(SimControllerCommand::RequestTextFile(1, 3));
+        let res = client_command_channel.send(SimControllerCommand::RequestTextFile(1, server_id));
         assert!(res.is_ok());
 
         // ignore messages until message is received

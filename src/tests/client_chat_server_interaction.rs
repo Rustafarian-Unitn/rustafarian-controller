@@ -43,7 +43,7 @@ mod client_communication {
             .clone();
 
         // Wait for flood request
-        thread::sleep(std::time::Duration::from_secs(5));
+        thread::sleep(std::time::Duration::from_millis(500));
 
         // Instruct client to register to server
         let res = client_command_channel.send(SimControllerCommand::Register(server_id));
@@ -75,7 +75,7 @@ mod client_communication {
                     matches!(
                         response,
                         SimControllerResponseWrapper::Message(
-                            SimControllerMessage::MessageReceived(4, 1, expected_response)
+                            SimControllerMessage::MessageReceived(server_id, client_id, expected_response)
                         )
                     ),
                     "Expected message received"
