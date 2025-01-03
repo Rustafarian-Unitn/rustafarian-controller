@@ -408,13 +408,13 @@ impl SimulationController {
 
             if server_config.id % 3 == 0 {
                 topology.set_label(server_config.id, "Chat server".to_string());
-                topology.set_node_type(server_config.id, "chat_server".to_string());
+                topology.set_node_type(server_config.id, "Chat".to_string());
             } else if server_config.id % 3 == 1 {
                 topology.set_label(server_config.id, "Media server".to_string());
-                topology.set_node_type(server_config.id, "media_server".to_string());
+                topology.set_node_type(server_config.id, "Media".to_string());
             } else {
                 topology.set_label(server_config.id, "Text server".to_string());
-                topology.set_node_type(server_config.id, "text_server".to_string());
+                topology.set_node_type(server_config.id, "Text".to_string());
             }
 
             let receive_packet_channel = node_channels.get(&server_config.id).unwrap().receive_packet_channel.clone();
