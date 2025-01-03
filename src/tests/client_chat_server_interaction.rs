@@ -28,6 +28,12 @@ mod client_communication {
             .unwrap()
             .send_command_channel
             .clone();
+        let client_2_command_channel = controller
+            .nodes_channels
+            .get(&client_2_id)
+            .unwrap()
+            .send_command_channel
+            .clone();
         
         let client_2_response_channel = controller
             .nodes_channels
@@ -44,7 +50,7 @@ mod client_communication {
         assert!(res.is_ok());
 
         // Instruct client 2 to register to server
-        let res = client_command_channel.send(SimControllerCommand::Register(server_id));
+        let res = client_2_command_channel.send(SimControllerCommand::Register(server_id));
         assert!(res.is_ok());
 
         // Instruct client to send message to server
