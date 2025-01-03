@@ -39,6 +39,14 @@ mod client_communication {
         // Wait for flood request
         thread::sleep(std::time::Duration::from_secs(5));
 
+        // Instruct client to register to server
+        let res = client_command_channel.send(SimControllerCommand::Register(server_id));
+        assert!(res.is_ok());
+
+        // Instruct client 2 to register to server
+        let res = client_command_channel.send(SimControllerCommand::Register(server_id));
+        assert!(res.is_ok());
+
         // Instruct client to send message to server
         let res = client_command_channel.send(SimControllerCommand::SendMessage(
             "Hello".to_string(),
@@ -46,10 +54,9 @@ mod client_communication {
             client_2_id,
         ));
         assert!(res.is_ok());
-
+        
         // ignore messages until message is received
         for response in client_2_response_channel.iter() {
-            println!("TEST - Message received {:?}", response);
             if let SimControllerResponseWrapper::Message(SimControllerMessage::MessageReceived(
                 _,
                 _,
