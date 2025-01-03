@@ -36,17 +36,19 @@ mod content_communication {
             .receive_response_channel
             .clone();
 
-
         // Instruct client to register to server
-        let res = client_command_channel.send(SimControllerCommand::RequestFileList(content_server_id));
+        let res =
+            client_command_channel.send(SimControllerCommand::RequestFileList(content_server_id));
         assert!(res.is_ok());
 
         // ignore messages until message is received
         for response in client_response_channel.iter() {
-            if let SimControllerResponseWrapper::Message(SimControllerMessage::FileListResponse(_)) = response
+            if let SimControllerResponseWrapper::Message(SimControllerMessage::FileListResponse(
+                _,
+            )) = response
             {
                 println!("TEST - Message received {:?}", response);
-                let expected_list:Vec<u8>  = vec![];
+                let expected_list: Vec<u8> = vec![];
                 assert!(
                     matches!(
                         response,
@@ -59,6 +61,156 @@ mod content_communication {
                 break;
             }
         }
+    }
+
+    // Test text file request
+    #[test]
+    fn test_text_file_request() {
+        let simulation_controller =
+            SimulationController::build("src/tests/configurations/simple_config_for_content_tests.toml");
+       
+        let client_id: u8 = 5;
+
+        let client_command_channel = simulation_controller
+            .nodes_channels
+            .get(&client_id)
+            .unwrap()
+            .send_command_channel
+            .clone();
+
+        let client_response_channel = simulation_controller
+            .nodes_channels
+            .get(&client_id)
+            .unwrap()
+            .receive_response_channel
+            .clone();
+
+        // Instruct client to request text file
+        let res = client_command_channel.send(SimControllerCommand::RequestTextFile(1, 3));
+        assert!(res.is_ok());
+
+        // ignore messages until message is received
+        for response in client_response_channel.iter() {
+            if let SimControllerResponseWrapper::Message(SimControllerMessage::TextFileResponse(
+                _,_
+            )) = response
+            {
+                println!("TEST - Message received {:?}", response);
+                let expected_text = "test".to_string();
+
+                assert!(
+                    matches!(
+                        response,
+                        SimControllerResponseWrapper::Message(
+                            SimControllerMessage::TextFileResponse(1, expected_text)
+                        )
+                    ),
+                    "Expected message received"
+                );
+                break;
+            }
+        }
+
+
+    }
+
+    // Test file list request
+    #[test]
+    fn test_file_list_request() {
+        let ((mut client, _), _, _, drones, simulation_controller) = setup::setup();
+
+        let client_command_channel = simulation_controller
+            .nodes_channels
+            .get(&1)
+            .unwrap()
+            .send_command_channel
+            .clone();
+
+        let server_receive_packet_channel = simulation_controller
+            .nodes_channels
+            .get(&3)
+            .unwrap()
+            .receive_packet_channel
+            .clone();
+
+        let drone_receive_event_channel = simulation_controller
+            .drone_channels
+            .get(&2)
+            .unwrap()
+            .receive_event_channel
+            .clone();
+
+        for mut drone in drones {
+            thread::spawn(move || {
+                wg_2024::drone::Drone::run(&mut drone);
+            });
+        }
+
+        thread::spawn(move || {
+            client.run(TICKS);
+        });
+
+        // Instruct client to request file list
+        let res = client_command_channel.send(SimControllerCommand::RequestFileList(3));
+        assert!(res.is_ok());
+
+        // Server listen for message from client
+        let message = server_receive_packet_channel.recv().unwrap();
+
+        assert!(matches!(message.pack_type, PacketType::MsgFragment(_)));
+
+        // Listen for ack from drone
+        let ack = drone_receive_event_channel.recv().unwrap();
+        assert!(matches!(ack, DroneEvent::PacketSent(_)));
+    }
+
+    #[test]
+    fn test_media_file_request() {
+        let ((mut client, _), _, _, drones, simulation_controller) = setup::setup();
+
+        let client_command_channel = simulation_controller
+            .nodes_channels
+            .get(&1)
+            .unwrap()
+            .send_command_channel
+            .clone();
+
+        let server_receive_packet_channel = simulation_controller
+            .nodes_channels
+            .get(&3)
+            .unwrap()
+            .receive_packet_channel
+            .clone();
+
+        let drone_receive_event_channel = simulation_controller
+            .drone_channels
+            .get(&2)
+            .unwrap()
+            .receive_event_channel
+            .clone();
+
+        for mut drone in drones {
+            thread::spawn(move || {
+                wg_2024::drone::Drone::run(&mut drone);
+            });
+        }
+
+        thread::spawn(move || {
+            client.run(TICKS);
+        });
+
+        // Instruct client to request media file
+        let res = client_command_channel.send(SimControllerCommand::RequestMediaFile(1, 3));
+        assert!(res.is_ok());
+
+        // Server listen for message from client
+        let message = server_receive_packet_channel.recv().unwrap();
+
+        assert!(matches!(message.pack_type, PacketType::MsgFragment(_)));
+
+        // Listen for ack from drone
+        let ack = drone_receive_event_channel.recv().unwrap();
+        assert!(matches!(ack, DroneEvent::PacketSent(_)));
     }
 
 }

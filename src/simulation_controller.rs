@@ -555,7 +555,7 @@ mod tests {
         let controller =
             SimulationController::new(nodes_channels, drone_channels, handles, Topology::new());
 
-        assert!(controller.topology.nodes().len() == 0);
+        assert!(controller.topology.nodes().is_empty());
         assert!(controller.nodes_channels.is_empty());
         assert!(controller.drone_channels.is_empty());
         assert!(controller.handles.is_empty());
@@ -576,17 +576,15 @@ mod tests {
     #[test]
     fn test_init_drones() {
         let mut handles = Vec::new();
-        let drones_config = vec![DroneConfig {
-            id: 1,
-            pdr: 0.9,
-            connected_node_ids: vec![2],
-        }];
         let drone_factories: Vec<DroneFactory> = vec![rustafarian_drone];
         let mut drone_factories = drone_factories.into_iter().cycle();
         let mut drone_channels = HashMap::new();
         let mut node_channels = HashMap::new();
         let mut topology = Topology::new();
+        let config = config_parser::parse_config("src/tests/configurations/test_config.toml");
+        SimulationController::init_channels(&config, &mut node_channels, &mut drone_channels, &mut topology);
 
+        let drones_config = config.drone;
         SimulationController::init_drones(
             &mut handles,
             drones_config,
@@ -604,13 +602,14 @@ mod tests {
     #[test]
     fn test_init_clients() {
         let mut handles = Vec::new();
-        let clients_config = vec![ClientConfig {
-            id: 2,
-            connected_drone_ids: vec![1],
-        }];
+        let config = config_parser::parse_config("src/tests/configurations/test_config.toml");
         let mut node_channels = HashMap::new();
         let mut drone_channels = HashMap::new();
         let mut topology = Topology::new();
+
+        SimulationController::init_channels(&config, &mut node_channels, &mut drone_channels, &mut topology);
+        
+        let clients_config = config.client;
         SimulationController::init_clients(
             &mut handles,
             clients_config,
@@ -619,20 +618,21 @@ mod tests {
             &mut topology,
         );
 
-        assert_eq!(node_channels.len(), 1);
+        assert_eq!(node_channels.len(), 2);
         assert_eq!(handles.len(), 1);
     }
 
     #[test]
     fn test_init_servers() {
         let mut handles = Vec::new();
-        let servers_config = vec![ServerConfig {
-            id: 3,
-            connected_drone_ids: vec![1],
-        }];
+        let config = config_parser::parse_config("src/tests/configurations/test_config.toml");
         let mut node_channels = HashMap::new();
         let mut drone_channels = HashMap::new();
         let mut topology = Topology::new();
+
+        SimulationController::init_channels(&config, &mut node_channels, &mut drone_channels, &mut topology);
+        let servers_config = config.server;
+
         SimulationController::init_servers(
             &mut handles,
             servers_config,
@@ -641,7 +641,7 @@ mod tests {
             &mut topology,
         );
 
-        assert_eq!(node_channels.len(), 1);
+        assert_eq!(node_channels.len(), 2);
         assert_eq!(handles.len(), 1);
     }
 
@@ -692,7 +692,7 @@ mod tests {
             }),
             session_id: 1,
             routing_header: SourceRoutingHeader {
-                hops: vec![1, 2, 4],
+                hops: vec![1, 2, 14],
                 hop_index: 1,
             },
         };
@@ -700,5 +700,22 @@ mod tests {
         let result = controller.handle_controller_shortcut(packet);
 
         assert!(result.is_err());
+    }
+
+    // test circular drone factory
+    #[test]
+    fn test_drone_factories_cycle() {
+        let drone_factories: Vec<DroneFactory> = vec![rustafarian_drone];
+        let mut drone_factories = drone_factories.into_iter().cycle();
+
+        let drone1 = drone_factories.next().unwrap();
+        let drone2 = drone_factories.next().unwrap();
+        let drone3 = drone_factories.next().unwrap();
+        let drone4 = drone_factories.next().unwrap();
+
+        assert_eq!(drone1 as *const fn(NodeId, Sender<DroneEvent>, Receiver<DroneCommand>, Receiver<Packet>, HashMap<NodeId, Sender<Packet>>, f32) -> (Box<dyn Runnable>, String), rustafarian_drone as *const fn(NodeId, Sender<DroneEvent>, Receiver<DroneCommand>, Receiver<Packet>, HashMap<NodeId, Sender<Packet>>, f32) -> (Box<dyn Runnable>, String));
+        assert_eq!(drone2 as *const fn(NodeId, Sender<DroneEvent>, Receiver<DroneCommand>, Receiver<Packet>, HashMap<NodeId, Sender<Packet>>, f32) -> (Box<dyn Runnable>, String), rustafarian_drone as *const fn(NodeId, Sender<DroneEvent>, Receiver<DroneCommand>, Receiver<Packet>, HashMap<NodeId, Sender<Packet>>, f32) -> (Box<dyn Runnable>, String));
+        assert_eq!(drone3 as *const fn(NodeId, Sender<DroneEvent>, Receiver<DroneCommand>, Receiver<Packet>, HashMap<NodeId, Sender<Packet>>, f32) -> (Box<dyn Runnable>, String), rustafarian_drone as *const fn(NodeId, Sender<DroneEvent>, Receiver<DroneCommand>, Receiver<Packet>, HashMap<NodeId, Sender<Packet>>, f32) -> (Box<dyn Runnable>, String));
+        assert_eq!(drone4 as *const fn(NodeId, Sender<DroneEvent>, Receiver<DroneCommand>, Receiver<Packet>, HashMap<NodeId, Sender<Packet>>, f32) -> (Box<dyn Runnable>, String), rustafarian_drone as *const fn(NodeId, Sender<DroneEvent>, Receiver<DroneCommand>, Receiver<Packet>, HashMap<NodeId, Sender<Packet>>, f32) -> (Box<dyn Runnable>, String));
     }
 }
