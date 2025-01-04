@@ -14,7 +14,7 @@ fn test_simulation_controller_build_complex_topology() {
         std::path::Path::new(config_str).exists(),
         "Config file does not exist at the specified path"
     );
-    let controller = SimulationController::build(config_str);
+    let controller = SimulationController::build(config_str, false);
 
     assert_eq!(controller.drone_channels.len(), 3);
     assert_eq!(controller.nodes_channels.len(), 5);

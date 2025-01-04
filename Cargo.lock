@@ -481,7 +481,7 @@ dependencies = [
 [[package]]
 name = "rustafarian-chat-server"
 version = "0.1.0"
-source = "git+https://github.com/Rustafarian-Unitn/rustafarian-chat-server.git?branch=bug%2Ffix-timeout-costant#e0fe9d6ded648bb98c87e1de1e1de0c886c80312"
+source = "git+https://github.com/Rustafarian-Unitn/rustafarian-chat-server.git#ab636346460ee8e72a0aa96572f77aa15f3b9eb6"
 dependencies = [
  "chrono",
  "crossbeam",

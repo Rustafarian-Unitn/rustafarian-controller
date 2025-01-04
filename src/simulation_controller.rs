@@ -124,7 +124,7 @@ impl SimulationController {
     /// * `config` - A string containing the path to the configuration for the simulation
     /// # Returns
     /// A `SimulationController` instance with the network topology and channels set up.
-    pub fn build(config: &str) -> Self {
+    pub fn build(config: &str, debug_mode: bool) -> Self {
         let config = config_parser::parse_config(config);
         // let clients: Vec<ChatClient> = Vec::new();
         // let server: Vec<Server> = Vec::new();
@@ -164,6 +164,7 @@ impl SimulationController {
             &mut node_channels,
             &mut drone_channels,
             &mut topology,
+            debug_mode
         );
                 
         SimulationController::new(node_channels, drone_channels, handles, topology)
@@ -388,6 +389,7 @@ impl SimulationController {
         node_channels: &mut HashMap<NodeId, NodeChannels>,
         drone_channels: &mut HashMap<NodeId, DroneChannels>,
         topology: &mut Topology,
+        debug_mode: bool
     ) {
         // For each drone config pick the next factory in a circular fashion to generate a drone instance
         for server_config in servers_config {
@@ -430,7 +432,7 @@ impl SimulationController {
                         send_response_channel,
                         receive_packet_channel,
                         drones,
-                        DEBUG
+                        debug_mode
                     );
                     println!("Server {} is running", server_config.id);
                     server.run()
@@ -565,7 +567,7 @@ mod tests {
     fn test_simulation_controller_build() {
         let config_str = "src/tests/configurations/test_config.toml";
 
-        let controller = SimulationController::build(config_str);
+        let controller = SimulationController::build(config_str, false);
 
         assert_eq!(controller.drone_channels.len(), 1);
         assert_eq!(controller.nodes_channels.len(), 2);
@@ -639,6 +641,7 @@ mod tests {
             &mut node_channels,
             &mut drone_channels,
             &mut topology,
+            false
         );
 
         assert_eq!(node_channels.len(), 2);

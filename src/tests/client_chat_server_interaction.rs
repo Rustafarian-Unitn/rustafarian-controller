@@ -17,7 +17,7 @@ mod client_communication {
 
     #[test]
     fn test_message_from_client_to_server() {
-        let controller = SimulationController::build("src/tests/configurations/simple_config_for_chat_tests.toml");
+        let controller = SimulationController::build("src/tests/configurations/simple_config_for_chat_tests.toml", false);
         let client_id: u8 = 6;
         let client_2_id: u8 = 8;
         let server_id: u8 = 9;
@@ -501,7 +501,7 @@ mod client_communication {
     #[test]
     fn test_topology_using_config_file_setup() {
         let simulation_controller =
-            SimulationController::build("src/tests/configurations/test_complex_config.toml");
+            SimulationController::build("src/tests/configurations/test_complex_config.toml", false);
         println!("Simulation controller {:?}", simulation_controller);
         let client_command_channel = simulation_controller
             .nodes_channels

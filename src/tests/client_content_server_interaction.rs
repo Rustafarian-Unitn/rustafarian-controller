@@ -18,7 +18,7 @@ mod content_communication {
     #[test]
     fn test_file_list_from_to_server() {
         let simulation_controller =
-            SimulationController::build("src/tests/configurations/test_complex_config.toml");
+            SimulationController::build("src/tests/configurations/test_complex_config.toml", false);
         let content_server_id: u8 = 8;
         let client_id: u8 = 5;
 
@@ -67,7 +67,7 @@ mod content_communication {
     #[test]
     fn test_text_file_request() {
         let simulation_controller =
-            SimulationController::build("src/tests/configurations/simple_config_for_content_tests.toml");
+            SimulationController::build("src/tests/configurations/simple_config_for_content_tests.toml", false);
        
         let client_id: u8 = 5;
         let server_id = 8;
