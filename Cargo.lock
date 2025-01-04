@@ -481,7 +481,7 @@ dependencies = [
 [[package]]
 name = "rustafarian-chat-server"
 version = "0.1.0"
-source = "git+https://github.com/Rustafarian-Unitn/rustafarian-chat-server.git#ab636346460ee8e72a0aa96572f77aa15f3b9eb6"
+source = "git+https://github.com/Rustafarian-Unitn/rustafarian-chat-server.git#30f232c9a543481ddef6afc36f2fd5c34d11a944"
 dependencies = [
  "chrono",
  "crossbeam",
@@ -494,7 +494,7 @@ dependencies = [
 [[package]]
 name = "rustafarian-client"
 version = "0.3.0"
-source = "git+https://github.com/Rustafarian-Unitn/rustafarian-client#d4c553d554c168125e7bbec3062a820a0684b516"
+source = "git+https://github.com/Rustafarian-Unitn/rustafarian-client#d0a93fe044f4f1fa30161eb2fa216b7cdeadb537"
 dependencies = [
  "crossbeam",
  "crossbeam-channel",
@@ -508,8 +508,9 @@ dependencies = [
 [[package]]
 name = "rustafarian-content-server"
 version = "0.1.0"
-source = "git+https://github.com/Rustafarian-Unitn/rustafarian-content_server.git#17ceecf1f241a36f3a14bb1d2222ae7e60cd46ae"
+source = "git+https://github.com/Rustafarian-Unitn/rustafarian-content_server.git#301854ae91906d13ede1b97a9d290d5c9d8b4930"
 dependencies = [
+ "chrono",
  "crossbeam",
  "crossbeam-channel",
  "image",
@@ -578,7 +579,7 @@ dependencies = [
 [[package]]
 name = "rustafarian-shared"
 version = "0.1.1"
-source = "git+https://github.com/Rustafarian-Unitn/rustafarian-shared.git#7c976512df787de654eb08a8e93a46925972ea17"
+source = "git+https://github.com/Rustafarian-Unitn/rustafarian-shared.git#2a3918b1916d7214f3029775830596aef300b212"
 dependencies = [
  "crossbeam-channel",
  "serde",
@@ -930,9 +931,9 @@ checksum = "589f6da84c646204747d1270a2a5661ea66ed1cced2631d546fdfb155959f9ec"
 
 [[package]]
 name = "winnow"
-version = "0.6.21"
+version = "0.6.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e6f5bb5257f2407a5425c6e749bfd9692192a73e70a6060516ac04f889087d68"
+checksum = "39281189af81c07ec09db316b302a3e67bf9bd7cbf6c820b50e35fee9c2fa980"
 dependencies = [
  "memchr",
 ]

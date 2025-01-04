@@ -10,4 +10,6 @@ mod tests {
     pub mod setup;
     pub mod topology;
     pub mod drone_communication;
+    pub mod content_test;
+    pub mod chat_test;
 }
