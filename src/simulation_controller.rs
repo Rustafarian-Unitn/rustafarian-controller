@@ -25,7 +25,7 @@ use wg_2024::packet::{Packet, PacketType};
 pub const TICKS: u64 = u64::MAX;
 pub const FILE_FOLDER: &str = "resources/files";
 pub const MEDIA_FOLDER: &str = "resources/media";
-pub const DEBUG: bool = false;
+pub const DEBUG: bool = true;
 ///Internal channel management structures to distribute the channels among the instances of the topology
 #[derive(Debug)]
 pub struct NodeChannels {
