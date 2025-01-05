@@ -24,10 +24,14 @@ mod chat_test {
             .unwrap()
             .receive_response_channel
             .clone();
-        //send topology request
+
+        // Wait for the flood to finish
+        std::thread::sleep(std::time::Duration::from_secs(1));
+        //send known servers request
         let res = client_command_channel.send(SimControllerCommand::KnownServers);
         assert!(res.is_ok());
-        // Listen for topology response
+        
+        // Listen for response
         for response in client_response_channel.iter() {
             if let SimControllerResponseWrapper::Message(SimControllerMessage::KnownServers(
                 known_servers,
