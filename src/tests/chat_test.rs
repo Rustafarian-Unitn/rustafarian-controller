@@ -1,6 +1,6 @@
 mod chat_test {
 
-    use rustafarian_shared::messages::commander_messages::{SimControllerMessage, SimControllerResponseWrapper};
+    use rustafarian_shared::messages::commander_messages::{SimControllerCommand, SimControllerMessage, SimControllerResponseWrapper};
 
     use crate::simulation_controller::SimulationController;
 
