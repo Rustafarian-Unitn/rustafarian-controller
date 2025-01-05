@@ -87,7 +87,7 @@ fn test_client_topology() {
         chat_client.run(500);
     });
     // Wait for the response
-    for response in  client_channels.receive_response_channel.iter() {
+    for response in client_channels.receive_response_channel.iter() {
         if let SimControllerResponseWrapper::Message(msg) = response {
             if let SimControllerMessage::TopologyResponse(topology) = msg {
                 assert_eq!(topology.nodes().len(), 7);
@@ -95,7 +95,5 @@ fn test_client_topology() {
                 break;
             }
         }
-        
     }
-
 }
