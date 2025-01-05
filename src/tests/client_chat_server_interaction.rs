@@ -1,18 +1,13 @@
 mod client_communication {
-    use ::rustafarian_chat_server::chat_server;
-    use ::rustafarian_client::client;
     use rustafarian_shared::messages::commander_messages::{
-        SimControllerCommand, SimControllerEvent, SimControllerMessage,
+        SimControllerCommand, SimControllerMessage,
         SimControllerResponseWrapper,
     };
     use std::collections::HashSet;
     use std::thread;
-    use wg_2024::controller::DroneEvent;
-    use wg_2024::packet::PacketType;
 
-    use crate::simulation_controller::{self, SimulationController, TICKS};
+    use crate::simulation_controller::{SimulationController, TICKS};
     use crate::tests::setup;
-    use crossbeam_channel::unbounded;
     use rustafarian_client::client::Client;
 
     #[test]
@@ -70,12 +65,12 @@ mod client_communication {
             )) = response
             {
                 println!("TEST - Message received {:?}", response);
-                let expected_response = "Hello".to_string();
+                let _expected_response = "Hello".to_string();
                 assert!(
                     matches!(
                         response,
                         SimControllerResponseWrapper::Message(
-                            SimControllerMessage::MessageReceived(server_id, client_id, expected_response)
+                            SimControllerMessage::MessageReceived(_server_id, _client_id, _expected_response2)
                         )
                     ),
                     "Expected message received"
@@ -148,12 +143,12 @@ mod client_communication {
             ) = response
             {
                 println!("TEST - Client list response {:?}", response);
-                let expected_list = vec![1, 5];
+                let _expected_list = vec![1, 5];
                 assert!(
                     matches!(
                         response,
                         SimControllerResponseWrapper::Message(
-                            SimControllerMessage::ClientListResponse(4, expected_response)
+                            SimControllerMessage::ClientListResponse(4, _expected_response2)
                         )
                     ),
                     "Expected client list"
@@ -322,12 +317,12 @@ mod client_communication {
                 SimControllerMessage::RegisteredServersResponse(_),
             ) = response
             {
-                let expected_response = vec![4];
+                let _expected_response = vec![4];
                 assert!(
                     matches!(
                         response,
                         SimControllerResponseWrapper::Message(
-                            SimControllerMessage::RegisteredServersResponse(expected_response)
+                            SimControllerMessage::RegisteredServersResponse(_expected_response2)
                         )
                     ),
                     "Expected registered servers response"

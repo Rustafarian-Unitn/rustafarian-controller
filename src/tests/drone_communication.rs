@@ -1,12 +1,12 @@
 // test set drone pdr
 #[cfg(test)]
 mod drone_communication {
-    use crate::tests::setup;
-    use rustafarian_shared::messages::commander_messages::SimControllerCommand;
-    use std::thread;
-    use wg_2024::{controller::{DroneCommand, DroneEvent}, drone::Drone, packet::PacketType};
-    const TICKS: u64 = 1000;
-    use rustafarian_client::client::Client;
+    // use crate::tests::setup;
+    // use rustafarian_shared::messages::commander_messages::SimControllerCommand;
+    // use std::thread;
+    // use wg_2024::{controller::{DroneCommand, DroneEvent}, drone::Drone, packet::PacketType};
+    // const TICKS: u64 = 1000;
+    // use rustafarian_client::client::Client;
 
     // #[test]
     // fn test_set_drone_pdr() {
