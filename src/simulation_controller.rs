@@ -391,6 +391,10 @@ impl SimulationController {
         topology: &mut Topology,
         debug_mode: bool
     ) {
+        // Generate the file and media folders
+        let _ = std::fs::create_dir_all(FILE_FOLDER);
+        let _ = std::fs::create_dir_all(MEDIA_FOLDER);
+        
         // For each drone config pick the next factory in a circular fashion to generate a drone instance
         for server_config in servers_config {
             let drones = drone_channels
