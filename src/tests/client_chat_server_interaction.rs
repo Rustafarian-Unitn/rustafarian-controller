@@ -1,23 +1,20 @@
 mod client_communication {
-    use ::rustafarian_chat_server::chat_server;
-    use ::rustafarian_client::client;
     use rustafarian_shared::messages::commander_messages::{
-        SimControllerCommand, SimControllerEvent, SimControllerMessage,
-        SimControllerResponseWrapper,
+        SimControllerCommand, SimControllerMessage, SimControllerResponseWrapper,
     };
     use std::collections::HashSet;
     use std::thread;
-    use wg_2024::controller::DroneEvent;
-    use wg_2024::packet::PacketType;
 
-    use crate::simulation_controller::{self, SimulationController, TICKS};
+    use crate::simulation_controller::{SimulationController, TICKS};
     use crate::tests::setup;
-    use crossbeam_channel::unbounded;
     use rustafarian_client::client::Client;
 
     #[test]
     fn test_message_from_client_to_server() {
-        let controller = SimulationController::build("src/tests/configurations/simple_config_for_chat_tests.toml", false);
+        let controller = SimulationController::build(
+            "src/tests/configurations/simple_config_for_chat_tests.toml",
+            false,
+        );
         let client_id: u8 = 6;
         let client_2_id: u8 = 8;
         let server_id: u8 = 9;
@@ -34,7 +31,7 @@ mod client_communication {
             .unwrap()
             .send_command_channel
             .clone();
-        
+
         let client_2_response_channel = controller
             .nodes_channels
             .get(&client_2_id)
@@ -60,7 +57,7 @@ mod client_communication {
             client_2_id,
         ));
         assert!(res.is_ok());
-        
+
         // ignore messages until message is received
         for response in client_2_response_channel.iter() {
             if let SimControllerResponseWrapper::Message(SimControllerMessage::MessageReceived(
@@ -70,12 +67,16 @@ mod client_communication {
             )) = response
             {
                 println!("TEST - Message received {:?}", response);
-                let expected_response = "Hello".to_string();
+                let _expected_response = "Hello".to_string();
                 assert!(
                     matches!(
                         response,
                         SimControllerResponseWrapper::Message(
-                            SimControllerMessage::MessageReceived(server_id, client_id, expected_response)
+                            SimControllerMessage::MessageReceived(
+                                _server_id,
+                                _client_id,
+                                _expected_response2
+                            )
                         )
                     ),
                     "Expected message received"
@@ -148,12 +149,12 @@ mod client_communication {
             ) = response
             {
                 println!("TEST - Client list response {:?}", response);
-                let expected_list = vec![1, 5];
+                let _expected_list = vec![1, 5];
                 assert!(
                     matches!(
                         response,
                         SimControllerResponseWrapper::Message(
-                            SimControllerMessage::ClientListResponse(4, expected_response)
+                            SimControllerMessage::ClientListResponse(4, _expected_response2)
                         )
                     ),
                     "Expected client list"
@@ -209,7 +210,9 @@ mod client_communication {
                 assert!(
                     matches!(
                         response,
-                        SimControllerResponseWrapper::Message(SimControllerMessage::FloodResponse(_))
+                        SimControllerResponseWrapper::Message(SimControllerMessage::FloodResponse(
+                            _
+                        ))
                     ),
                     "Expected flood response"
                 );
@@ -250,22 +253,23 @@ mod client_communication {
         thread::spawn(move || {
             chat_server.run();
         });
-        
+
         // Instruct client to request known servers
         let res = client_command_channel.send(SimControllerCommand::KnownServers);
         assert!(res.is_ok());
         // Listen for packets from client
         // Ignore messages until KnownServers Response is received
         for response in controller_response_channel.iter() {
-            if let SimControllerResponseWrapper::Message(
-                SimControllerMessage::KnownServers(_),
-            ) = response
+            if let SimControllerResponseWrapper::Message(SimControllerMessage::KnownServers(_)) =
+                response
             {
                 println!("TEST - Known servers response {:?}", response);
                 assert!(
                     matches!(
                         response,
-                        SimControllerResponseWrapper::Message(SimControllerMessage::KnownServers(_))
+                        SimControllerResponseWrapper::Message(SimControllerMessage::KnownServers(
+                            _
+                        ))
                     ),
                     "Expected known servers response"
                 );
@@ -277,8 +281,7 @@ mod client_communication {
     // Test registered servers
     #[test]
     fn test_registered_servers() {
-        let ((mut client, _), _, mut chat_server, drones, simulation_controller) =
-            setup::setup();
+        let ((mut client, _), _, mut chat_server, drones, simulation_controller) = setup::setup();
 
         let client_command_channel = simulation_controller
             .nodes_channels
@@ -322,12 +325,12 @@ mod client_communication {
                 SimControllerMessage::RegisteredServersResponse(_),
             ) = response
             {
-                let expected_response = vec![4];
+                let _expected_response = vec![4];
                 assert!(
                     matches!(
                         response,
                         SimControllerResponseWrapper::Message(
-                            SimControllerMessage::RegisteredServersResponse(expected_response)
+                            SimControllerMessage::RegisteredServersResponse(_expected_response2)
                         )
                     ),
                     "Expected registered servers response"
@@ -438,7 +441,6 @@ mod client_communication {
             .send_command_channel
             .clone();
 
-
         let server_response_channel = simulation_controller
             .nodes_channels
             .get(&server_id)
@@ -531,5 +533,5 @@ mod client_communication {
                 break;
             }
         }
-    } 
+    }
 }
