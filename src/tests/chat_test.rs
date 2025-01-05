@@ -16,8 +16,5 @@ mod chat_test {
     // use rustafarian_client::client::Client;
 
     #[test]
-    fn initialization_test() {
-        
-    }
-
+    fn initialization_test() {}
 }

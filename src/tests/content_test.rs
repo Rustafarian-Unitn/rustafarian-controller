@@ -16,53 +16,32 @@ mod chat_test {
     // use rustafarian_client::client::Client;
 
     #[test]
-    fn initialization_test() {
-        
-    }
+    fn initialization_test() {}
 
     #[test]
-    fn server_type_test() {
-        
-    }
+    fn server_type_test() {}
 
     #[test]
-    fn file_list_test() {
-        
-    }
+    fn file_list_test() {}
 
     #[test]
-    fn file_text_test() {
-        
-    }
+    fn file_text_test() {}
 
     #[test]
-    fn file_media_test() {
-        
-    }
+    fn file_media_test() {}
 
     #[test]
-    fn file_text_media_test() {
-        
-    }
+    fn file_text_media_test() {}
 
     #[test]
-    fn drop_client_test() {
-        
-    }
+    fn drop_client_test() {}
 
     #[test]
-    fn drop_server_test() {
-        
-    }
+    fn drop_server_test() {}
 
     #[test]
-    fn error_routing_client_test() {
-        
-    }
+    fn error_routing_client_test() {}
 
     #[test]
-    fn error_routing_server_test() {
-        
-    }
-
+    fn error_routing_server_test() {}
 }

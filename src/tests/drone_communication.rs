@@ -48,7 +48,7 @@ mod drone_communication {
 
     //     // test message receiving before setting new pdr
     //     let message = server_receive_packet_channel.recv().unwrap();
-        
+
     //     assert!(matches!(message.pack_type, PacketType::MsgFragment(_)));
 
     //      // Listen for ack from drone

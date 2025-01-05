@@ -1,7 +1,6 @@
 mod client_communication {
     use rustafarian_shared::messages::commander_messages::{
-        SimControllerCommand, SimControllerMessage,
-        SimControllerResponseWrapper,
+        SimControllerCommand, SimControllerMessage, SimControllerResponseWrapper,
     };
     use std::collections::HashSet;
     use std::thread;
@@ -12,7 +11,10 @@ mod client_communication {
 
     #[test]
     fn test_message_from_client_to_server() {
-        let controller = SimulationController::build("src/tests/configurations/simple_config_for_chat_tests.toml", false);
+        let controller = SimulationController::build(
+            "src/tests/configurations/simple_config_for_chat_tests.toml",
+            false,
+        );
         let client_id: u8 = 6;
         let client_2_id: u8 = 8;
         let server_id: u8 = 9;
@@ -29,7 +31,7 @@ mod client_communication {
             .unwrap()
             .send_command_channel
             .clone();
-        
+
         let client_2_response_channel = controller
             .nodes_channels
             .get(&client_2_id)
@@ -55,7 +57,7 @@ mod client_communication {
             client_2_id,
         ));
         assert!(res.is_ok());
-        
+
         // ignore messages until message is received
         for response in client_2_response_channel.iter() {
             if let SimControllerResponseWrapper::Message(SimControllerMessage::MessageReceived(
@@ -70,7 +72,11 @@ mod client_communication {
                     matches!(
                         response,
                         SimControllerResponseWrapper::Message(
-                            SimControllerMessage::MessageReceived(_server_id, _client_id, _expected_response2)
+                            SimControllerMessage::MessageReceived(
+                                _server_id,
+                                _client_id,
+                                _expected_response2
+                            )
                         )
                     ),
                     "Expected message received"
@@ -204,7 +210,9 @@ mod client_communication {
                 assert!(
                     matches!(
                         response,
-                        SimControllerResponseWrapper::Message(SimControllerMessage::FloodResponse(_))
+                        SimControllerResponseWrapper::Message(SimControllerMessage::FloodResponse(
+                            _
+                        ))
                     ),
                     "Expected flood response"
                 );
@@ -245,22 +253,23 @@ mod client_communication {
         thread::spawn(move || {
             chat_server.run();
         });
-        
+
         // Instruct client to request known servers
         let res = client_command_channel.send(SimControllerCommand::KnownServers);
         assert!(res.is_ok());
         // Listen for packets from client
         // Ignore messages until KnownServers Response is received
         for response in controller_response_channel.iter() {
-            if let SimControllerResponseWrapper::Message(
-                SimControllerMessage::KnownServers(_),
-            ) = response
+            if let SimControllerResponseWrapper::Message(SimControllerMessage::KnownServers(_)) =
+                response
             {
                 println!("TEST - Known servers response {:?}", response);
                 assert!(
                     matches!(
                         response,
-                        SimControllerResponseWrapper::Message(SimControllerMessage::KnownServers(_))
+                        SimControllerResponseWrapper::Message(SimControllerMessage::KnownServers(
+                            _
+                        ))
                     ),
                     "Expected known servers response"
                 );
@@ -272,8 +281,7 @@ mod client_communication {
     // Test registered servers
     #[test]
     fn test_registered_servers() {
-        let ((mut client, _), _, mut chat_server, drones, simulation_controller) =
-            setup::setup();
+        let ((mut client, _), _, mut chat_server, drones, simulation_controller) = setup::setup();
 
         let client_command_channel = simulation_controller
             .nodes_channels
@@ -433,7 +441,6 @@ mod client_communication {
             .send_command_channel
             .clone();
 
-
         let server_response_channel = simulation_controller
             .nodes_channels
             .get(&server_id)
@@ -526,5 +533,5 @@ mod client_communication {
                 break;
             }
         }
-    } 
+    }
 }
