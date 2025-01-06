@@ -15,3 +15,14 @@ toml = "0.8"
 crossbeam-channel = "0.5"
 rand = "0.8"
 serde_json = "1.0"
+### Drones
+rusteze_drone = { git = "https://github.com/Rusteze-AP/drone.git", branch = "main" }
+ap2024_unitn_cppenjoyers_drone = { git = "https://github.com/Cpp-enjoyers/drone.git" }
+d-r-o-n-e_drone = { git = "https://github.com/AP-2024-25-D-R-O-N-E/drone.git" }
+rust_do_it = { git = "https://github.com/RustDoIt/Drone.git" }
+drone = { git = "https://github.com/Rustbusters/drone.git" }
+rusty_drones = { git = "https://github.com/rusty-drone-2024/rusty-drone.git" }
+dr_ones = { git = "https://github.com/Dr-Ones/drone" }
+rustastic-drone = { git = "https://github.com/Rustastic/RustasticDrone.git" }
+lockheedrustin-drone = { git = "https://github.com/Lockheed-Rustin/drone.git" }
+getdroned = { git = "https://github.com/GetDroned/Drone.git", features = ["log"] }
