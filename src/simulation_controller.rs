@@ -3,11 +3,11 @@ use crate::drone_functions::rustafarian_drone;
 use crate::runnable::Runnable;
 use crossbeam_channel::{unbounded, Receiver, Sender};
 use rand::Error;
+use rustafarian_chat_server::chat_server::ChatServer;
 use rustafarian_client::browser_client::BrowserClient;
 use rustafarian_client::chat_client::ChatClient;
 use rustafarian_client::client::Client;
 use rustafarian_content_server::content_server::ContentServer;
-use rustafarian_chat_server::chat_server::ChatServer;
 use rustafarian_shared::messages::commander_messages::SimControllerEvent::PacketForwarded;
 use rustafarian_shared::messages::commander_messages::{
     SimControllerCommand, SimControllerEvent, SimControllerResponseWrapper,
@@ -25,7 +25,7 @@ use wg_2024::packet::{Packet, PacketType};
 pub const TICKS: u64 = u64::MAX;
 pub const FILE_FOLDER: &str = "resources/files";
 pub const MEDIA_FOLDER: &str = "resources/media";
-pub const DEBUG: bool = false;
+pub const DEBUG: bool = true;
 ///Internal channel management structures to distribute the channels among the instances of the topology
 #[derive(Debug)]
 pub struct NodeChannels {
@@ -124,7 +124,7 @@ impl SimulationController {
     /// * `config` - A string containing the path to the configuration for the simulation
     /// # Returns
     /// A `SimulationController` instance with the network topology and channels set up.
-    pub fn build(config: &str) -> Self {
+    pub fn build(config: &str, debug_mode: bool) -> Self {
         let config = config_parser::parse_config(config);
         // let clients: Vec<ChatClient> = Vec::new();
         // let server: Vec<Server> = Vec::new();
@@ -140,7 +140,12 @@ impl SimulationController {
         let mut handles = Vec::new();
 
         let mut topology = Topology::new();
-        Self::init_channels(&config, &mut node_channels, &mut drone_channels, &mut topology);
+        Self::init_channels(
+            &config,
+            &mut node_channels,
+            &mut drone_channels,
+            &mut topology,
+        );
 
         Self::init_drones(
             &mut handles,
@@ -164,8 +169,9 @@ impl SimulationController {
             &mut node_channels,
             &mut drone_channels,
             &mut topology,
+            debug_mode,
         );
-                
+
         SimulationController::new(node_channels, drone_channels, handles, topology)
     }
 
@@ -201,7 +207,6 @@ impl SimulationController {
         }
 
         for client_config in config.client.iter() {
-            
             let (send_command_channel, receive_command_channel) =
                 unbounded::<SimControllerCommand>();
             let (send_response_channel, receive_response_channel) =
@@ -259,7 +264,6 @@ impl SimulationController {
         node_channels: &mut HashMap<NodeId, NodeChannels>,
         topology: &mut Topology,
     ) {
-       
         // For each drone config pick the next factory in a circular fashion to generate a drone instance
         for drone_config in drones_config.iter() {
             // Get the next drone in line
@@ -317,7 +321,6 @@ impl SimulationController {
         drone_channels: &mut HashMap<NodeId, DroneChannels>,
         topology: &mut Topology,
     ) {
-       
         for client_config in clients_config {
             // Register assigned neighbouring drones
             let neighbour_drones = drone_channels
@@ -342,10 +345,22 @@ impl SimulationController {
                 .for_each(|node_id| {
                     topology.add_edge(client_config.id, *node_id);
                 });
-            
-            let receive_packet_channel = node_channels.get(&client_config.id).unwrap().receive_packet_channel.clone();
-            let receive_command_channel = node_channels.get_mut(&client_config.id).unwrap().receive_command_channel.clone();
-            let send_response_channel = node_channels.get(&client_config.id).unwrap().send_response_channel.clone();
+
+            let receive_packet_channel = node_channels
+                .get(&client_config.id)
+                .unwrap()
+                .receive_packet_channel
+                .clone();
+            let receive_command_channel = node_channels
+                .get_mut(&client_config.id)
+                .unwrap()
+                .receive_command_channel
+                .clone();
+            let send_response_channel = node_channels
+                .get(&client_config.id)
+                .unwrap()
+                .send_response_channel
+                .clone();
 
             // Start off the client
             handles.push(Some(thread::spawn(move || {
@@ -388,7 +403,12 @@ impl SimulationController {
         node_channels: &mut HashMap<NodeId, NodeChannels>,
         drone_channels: &mut HashMap<NodeId, DroneChannels>,
         topology: &mut Topology,
+        debug_mode: bool,
     ) {
+        // Generate the file and media folders
+        let _ = std::fs::create_dir_all(FILE_FOLDER);
+        let _ = std::fs::create_dir_all(MEDIA_FOLDER);
+
         // For each drone config pick the next factory in a circular fashion to generate a drone instance
         for server_config in servers_config {
             let drones = drone_channels
@@ -408,19 +428,31 @@ impl SimulationController {
 
             if server_config.id % 3 == 0 {
                 topology.set_label(server_config.id, "Chat server".to_string());
-                topology.set_node_type(server_config.id, "chat_server".to_string());
+                topology.set_node_type(server_config.id, "Chat".to_string());
             } else if server_config.id % 3 == 1 {
                 topology.set_label(server_config.id, "Media server".to_string());
-                topology.set_node_type(server_config.id, "media_server".to_string());
+                topology.set_node_type(server_config.id, "Media".to_string());
             } else {
                 topology.set_label(server_config.id, "Text server".to_string());
-                topology.set_node_type(server_config.id, "text_server".to_string());
+                topology.set_node_type(server_config.id, "Text".to_string());
             }
 
-            let receive_packet_channel = node_channels.get(&server_config.id).unwrap().receive_packet_channel.clone();
-            let receive_command_channel = node_channels.get_mut(&server_config.id).unwrap().receive_command_channel.clone();
-            let send_response_channel = node_channels.get(&server_config.id).unwrap().send_response_channel.clone();
-            
+            let receive_packet_channel = node_channels
+                .get(&server_config.id)
+                .unwrap()
+                .receive_packet_channel
+                .clone();
+            let receive_command_channel = node_channels
+                .get_mut(&server_config.id)
+                .unwrap()
+                .receive_command_channel
+                .clone();
+            let send_response_channel = node_channels
+                .get(&server_config.id)
+                .unwrap()
+                .send_response_channel
+                .clone();
+
             // Start off the server
             handles.push(Some(thread::spawn(move || {
                 if server_config.id % 3 == 0 {
@@ -430,12 +462,11 @@ impl SimulationController {
                         send_response_channel,
                         receive_packet_channel,
                         drones,
-                        DEBUG
+                        debug_mode,
                     );
                     println!("Server {} is running", server_config.id);
                     server.run()
                 } else if server_config.id % 3 == 1 {
-
                     let mut server = ContentServer::new(
                         server_config.id,
                         drones,
@@ -446,7 +477,11 @@ impl SimulationController {
                         MEDIA_FOLDER,
                         ServerType::Media,
                     );
-                    println!("Server {} of type {:?}is running",server_config.id,  ServerType::Media);
+                    println!(
+                        "Server {} of type {:?}is running",
+                        server_config.id,
+                        ServerType::Media
+                    );
 
                     server.run()
                 } else {
@@ -460,7 +495,11 @@ impl SimulationController {
                         MEDIA_FOLDER,
                         ServerType::Text,
                     );
-                    println!("Server {} of type {:?}is running",server_config.id,  ServerType::Text);
+                    println!(
+                        "Server {} of type {:?}is running",
+                        server_config.id,
+                        ServerType::Text
+                    );
 
                     server.run()
                 }
@@ -565,7 +604,7 @@ mod tests {
     fn test_simulation_controller_build() {
         let config_str = "src/tests/configurations/test_config.toml";
 
-        let controller = SimulationController::build(config_str);
+        let controller = SimulationController::build(config_str, false);
 
         assert_eq!(controller.drone_channels.len(), 1);
         assert_eq!(controller.nodes_channels.len(), 2);
@@ -582,7 +621,12 @@ mod tests {
         let mut node_channels = HashMap::new();
         let mut topology = Topology::new();
         let config = config_parser::parse_config("src/tests/configurations/test_config.toml");
-        SimulationController::init_channels(&config, &mut node_channels, &mut drone_channels, &mut topology);
+        SimulationController::init_channels(
+            &config,
+            &mut node_channels,
+            &mut drone_channels,
+            &mut topology,
+        );
 
         let drones_config = config.drone;
         SimulationController::init_drones(
@@ -607,8 +651,13 @@ mod tests {
         let mut drone_channels = HashMap::new();
         let mut topology = Topology::new();
 
-        SimulationController::init_channels(&config, &mut node_channels, &mut drone_channels, &mut topology);
-        
+        SimulationController::init_channels(
+            &config,
+            &mut node_channels,
+            &mut drone_channels,
+            &mut topology,
+        );
+
         let clients_config = config.client;
         SimulationController::init_clients(
             &mut handles,
@@ -630,7 +679,12 @@ mod tests {
         let mut drone_channels = HashMap::new();
         let mut topology = Topology::new();
 
-        SimulationController::init_channels(&config, &mut node_channels, &mut drone_channels, &mut topology);
+        SimulationController::init_channels(
+            &config,
+            &mut node_channels,
+            &mut drone_channels,
+            &mut topology,
+        );
         let servers_config = config.server;
 
         SimulationController::init_servers(
@@ -639,6 +693,7 @@ mod tests {
             &mut node_channels,
             &mut drone_channels,
             &mut topology,
+            false,
         );
 
         assert_eq!(node_channels.len(), 2);
@@ -713,9 +768,85 @@ mod tests {
         let drone3 = drone_factories.next().unwrap();
         let drone4 = drone_factories.next().unwrap();
 
-        assert_eq!(drone1 as *const fn(NodeId, Sender<DroneEvent>, Receiver<DroneCommand>, Receiver<Packet>, HashMap<NodeId, Sender<Packet>>, f32) -> (Box<dyn Runnable>, String), rustafarian_drone as *const fn(NodeId, Sender<DroneEvent>, Receiver<DroneCommand>, Receiver<Packet>, HashMap<NodeId, Sender<Packet>>, f32) -> (Box<dyn Runnable>, String));
-        assert_eq!(drone2 as *const fn(NodeId, Sender<DroneEvent>, Receiver<DroneCommand>, Receiver<Packet>, HashMap<NodeId, Sender<Packet>>, f32) -> (Box<dyn Runnable>, String), rustafarian_drone as *const fn(NodeId, Sender<DroneEvent>, Receiver<DroneCommand>, Receiver<Packet>, HashMap<NodeId, Sender<Packet>>, f32) -> (Box<dyn Runnable>, String));
-        assert_eq!(drone3 as *const fn(NodeId, Sender<DroneEvent>, Receiver<DroneCommand>, Receiver<Packet>, HashMap<NodeId, Sender<Packet>>, f32) -> (Box<dyn Runnable>, String), rustafarian_drone as *const fn(NodeId, Sender<DroneEvent>, Receiver<DroneCommand>, Receiver<Packet>, HashMap<NodeId, Sender<Packet>>, f32) -> (Box<dyn Runnable>, String));
-        assert_eq!(drone4 as *const fn(NodeId, Sender<DroneEvent>, Receiver<DroneCommand>, Receiver<Packet>, HashMap<NodeId, Sender<Packet>>, f32) -> (Box<dyn Runnable>, String), rustafarian_drone as *const fn(NodeId, Sender<DroneEvent>, Receiver<DroneCommand>, Receiver<Packet>, HashMap<NodeId, Sender<Packet>>, f32) -> (Box<dyn Runnable>, String));
+        assert_eq!(
+            drone1
+                as *const fn(
+                    NodeId,
+                    Sender<DroneEvent>,
+                    Receiver<DroneCommand>,
+                    Receiver<Packet>,
+                    HashMap<NodeId, Sender<Packet>>,
+                    f32,
+                ) -> (Box<dyn Runnable>, String),
+            rustafarian_drone
+                as *const fn(
+                    NodeId,
+                    Sender<DroneEvent>,
+                    Receiver<DroneCommand>,
+                    Receiver<Packet>,
+                    HashMap<NodeId, Sender<Packet>>,
+                    f32,
+                ) -> (Box<dyn Runnable>, String)
+        );
+        assert_eq!(
+            drone2
+                as *const fn(
+                    NodeId,
+                    Sender<DroneEvent>,
+                    Receiver<DroneCommand>,
+                    Receiver<Packet>,
+                    HashMap<NodeId, Sender<Packet>>,
+                    f32,
+                ) -> (Box<dyn Runnable>, String),
+            rustafarian_drone
+                as *const fn(
+                    NodeId,
+                    Sender<DroneEvent>,
+                    Receiver<DroneCommand>,
+                    Receiver<Packet>,
+                    HashMap<NodeId, Sender<Packet>>,
+                    f32,
+                ) -> (Box<dyn Runnable>, String)
+        );
+        assert_eq!(
+            drone3
+                as *const fn(
+                    NodeId,
+                    Sender<DroneEvent>,
+                    Receiver<DroneCommand>,
+                    Receiver<Packet>,
+                    HashMap<NodeId, Sender<Packet>>,
+                    f32,
+                ) -> (Box<dyn Runnable>, String),
+            rustafarian_drone
+                as *const fn(
+                    NodeId,
+                    Sender<DroneEvent>,
+                    Receiver<DroneCommand>,
+                    Receiver<Packet>,
+                    HashMap<NodeId, Sender<Packet>>,
+                    f32,
+                ) -> (Box<dyn Runnable>, String)
+        );
+        assert_eq!(
+            drone4
+                as *const fn(
+                    NodeId,
+                    Sender<DroneEvent>,
+                    Receiver<DroneCommand>,
+                    Receiver<Packet>,
+                    HashMap<NodeId, Sender<Packet>>,
+                    f32,
+                ) -> (Box<dyn Runnable>, String),
+            rustafarian_drone
+                as *const fn(
+                    NodeId,
+                    Sender<DroneEvent>,
+                    Receiver<DroneCommand>,
+                    Receiver<Packet>,
+                    HashMap<NodeId, Sender<Packet>>,
+                    f32,
+                ) -> (Box<dyn Runnable>, String)
+        );
     }
 }

@@ -14,7 +14,7 @@ fn test_simulation_controller_build_complex_topology() {
         std::path::Path::new(config_str).exists(),
         "Config file does not exist at the specified path"
     );
-    let controller = SimulationController::build(config_str);
+    let controller = SimulationController::build(config_str, false);
 
     assert_eq!(controller.drone_channels.len(), 3);
     assert_eq!(controller.nodes_channels.len(), 5);
@@ -87,7 +87,7 @@ fn test_client_topology() {
         chat_client.run(500);
     });
     // Wait for the response
-    for response in  client_channels.receive_response_channel.iter() {
+    for response in client_channels.receive_response_channel.iter() {
         if let SimControllerResponseWrapper::Message(msg) = response {
             if let SimControllerMessage::TopologyResponse(topology) = msg {
                 assert_eq!(topology.nodes().len(), 7);
@@ -95,7 +95,5 @@ fn test_client_topology() {
                 break;
             }
         }
-        
     }
-
 }
