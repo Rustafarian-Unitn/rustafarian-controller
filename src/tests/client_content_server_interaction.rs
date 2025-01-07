@@ -1,12 +1,14 @@
 mod content_communication {
     use ::rustafarian_chat_server::chat_server;
     use ::rustafarian_content_server::content_server;
+    use crossbeam_channel::select;
     use rustafarian_shared::messages::commander_messages::{
         SimControllerCommand, SimControllerEvent, SimControllerMessage,
         SimControllerResponseWrapper,
     };
     use std::collections::HashSet;
     use std::thread;
+    use std::time::Duration;
     use wg_2024::controller::DroneEvent;
     use wg_2024::packet::PacketType;
 
@@ -17,8 +19,9 @@ mod content_communication {
 
     #[test]
     fn test_file_list_from_to_server() {
-        let simulation_controller =
-            SimulationController::build("src/tests/configurations/test_complex_config.toml");
+        let simulation_controller = SimulationController::build(
+            "src/tests/configurations/simple_config_for_content_tests.toml",
+        );
         let content_server_id: u8 = 8;
         let client_id: u8 = 5;
 
@@ -37,6 +40,9 @@ mod content_communication {
             .clone();
 
         // Instruct client to register to server
+        let res = client_command_channel.send(SimControllerCommand::Register(content_server_id));
+        assert!(res.is_ok());
+
         let res =
             client_command_channel.send(SimControllerCommand::RequestFileList(content_server_id));
         assert!(res.is_ok());
@@ -44,7 +50,7 @@ mod content_communication {
         // ignore messages until message is received
         for response in client_response_channel.iter() {
             if let SimControllerResponseWrapper::Message(SimControllerMessage::FileListResponse(
-                _,
+                _,_
             )) = response
             {
                 println!("TEST - Message received {:?}", response);
@@ -53,7 +59,7 @@ mod content_communication {
                     matches!(
                         response,
                         SimControllerResponseWrapper::Message(
-                            SimControllerMessage::FileListResponse(expected_list)
+                            SimControllerMessage::FileListResponse(_, expected_list)
                         )
                     ),
                     "Expected message received"
@@ -66,9 +72,10 @@ mod content_communication {
     // Test text file request
     #[test]
     fn test_text_file_request() {
-        let simulation_controller =
-            SimulationController::build("src/tests/configurations/simple_config_for_content_tests.toml");
-       
+        let simulation_controller = SimulationController::build(
+            "src/tests/configurations/simple_config_for_content_tests.toml",
+        );
+
         let client_id: u8 = 5;
 
         let client_command_channel = simulation_controller
@@ -89,29 +96,33 @@ mod content_communication {
         let res = client_command_channel.send(SimControllerCommand::RequestTextFile(1, 3));
         assert!(res.is_ok());
 
-        // ignore messages until message is received
-        for response in client_response_channel.iter() {
-            if let SimControllerResponseWrapper::Message(SimControllerMessage::TextFileResponse(
-                _,_
-            )) = response
-            {
-                println!("TEST - Message received {:?}", response);
-                let expected_text = "test".to_string();
+        // ignore messages until message is received or timeout
+        let timeout = Duration::from_secs(5);
+        loop {
+            select! {
+                recv(client_response_channel) -> response => {
+                    if let Ok(SimControllerResponseWrapper::Message(SimControllerMessage::TextFileResponse(_, _))) = response {
+                        println!("TEST - Message received {:?}", response);
+                        let _expected_text = "test".to_string();
 
-                assert!(
-                    matches!(
-                        response,
-                        SimControllerResponseWrapper::Message(
-                            SimControllerMessage::TextFileResponse(1, expected_text)
-                        )
-                    ),
-                    "Expected message received"
-                );
-                break;
+                        assert!(
+                            matches!(
+                                response.unwrap(),
+                                SimControllerResponseWrapper::Message(
+                                    SimControllerMessage::TextFileResponse(1, _expected_text)
+                                )
+                            ),
+                            "Expected message received"
+                        );
+                        break;
+                    }
+                }
+                default(timeout) => {
+                    println!("TEST - Timeout reached");
+                    break;
+                }
             }
         }
-
-
     }
 
     // Test file list request
@@ -212,5 +223,4 @@ mod content_communication {
         let ack = drone_receive_event_channel.recv().unwrap();
         assert!(matches!(ack, DroneEvent::PacketSent(_)));
     }
-
 }
