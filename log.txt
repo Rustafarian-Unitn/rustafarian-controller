@@ -1,165 +1,868 @@
 
 running 1 test
-Drone 1 has neighbours [2, 5, 3, 8]
-Drone 2 has neighbours [8, 3, 1, 5]
-Drone 3 has neighbours [1, 8, 5, 2]
+Drone 1 has neighbours [6, 2, 3, 7, 8, 5, 4]
+Drone 2 has neighbours [7, 5, 8, 4, 3, 1, 6]
+Drone 3 has neighbours [5, 2, 1, 6, 7, 8, 4]
+Client 4 running
 Client 5 running
+Client 6 running
+Client 6: Sending flood request
 Client 5: Sending flood request
+Client 4: Sending flood request
+Client 7 running
+Client 7: Sending flood request
+Sent response to 1
+Sent response to 3
+Sent response to 1
+Client 5: Received flood request: FloodRequest { flood_id: 2034403035045039033, initiator_id: 4, path_trace: [(4, Client), (2, Drone)] }
+Client 6: Received flood request: FloodRequest { flood_id: 2034403035045039033, initiator_id: 4, path_trace: [(4, Client), (1, Drone)] }
+Client 6: Received flood request: FloodRequest { flood_id: 14921803900745694004, initiator_id: 5, path_trace: [(5, Client), (3, Drone)] }
+Client 7: Received flood request: FloodRequest { flood_id: 14921803900745694004, initiator_id: 5, path_trace: [(5, Client), (3, Drone)] }
+Client 7: Received flood request: FloodRequest { flood_id: 2034403035045039033, initiator_id: 4, path_trace: [(4, Client), (2, Drone)] }
+Client 7: Received flood request: FloodRequest { flood_id: 2034403035045039033, initiator_id: 4, path_trace: [(4, Client), (1, Drone)] }
+Client 7: Received flood request: FloodRequest { flood_id: 2034403035045039033, initiator_id: 4, path_trace: [(4, Client), (3, Drone)] }
+Client 7: Received flood request: FloodRequest { flood_id: 14921803900745694004, initiator_id: 5, path_trace: [(5, Client), (2, Drone)] }
+Client 7: Received flood request: FloodRequest { flood_id: 14921803900745694004, initiator_id: 5, path_trace: [(5, Client), (1, Drone)] }
+Client 4: Received flood request: FloodRequest { flood_id: 14921803900745694004, initiator_id: 5, path_trace: [(5, Client), (3, Drone)] }
+Client 4: Received flood request: FloodRequest { flood_id: 18007704237500113926, initiator_id: 7, path_trace: [(7, Client), (3, Drone)] }
+Client 4: Received flood request: FloodRequest { flood_id: 14921803900745694004, initiator_id: 5, path_trace: [(5, Client), (2, Drone)] }
+Client 4: Received flood request: FloodRequest { flood_id: 18007704237500113926, initiator_id: 7, path_trace: [(7, Client), (2, Drone)] }
+Client 4: Received flood request: FloodRequest { flood_id: 14921803900745694004, initiator_id: 5, path_trace: [(5, Client), (1, Drone)] }
+Client 4: Received flood request: FloodRequest { flood_id: 18007704237500113926, initiator_id: 7, path_trace: [(7, Client), (1, Drone)] }
+Sent response to 3
+Sent response to 2
+Sent response to 2
+Client 5: Received flood request: FloodRequest { flood_id: 2034403035045039033, initiator_id: 4, path_trace: [(4, Client), (1, Drone)] }
+Client 6: Received flood request: FloodRequest { flood_id: 2034403035045039033, initiator_id: 4, path_trace: [(4, Client), (2, Drone)] }
+Sent response to 3
+Sent response to 3
+Sent response to 2
+Sent response to 2
+Sent response to 1
+Client 5: Received flood request: FloodRequest { flood_id: 2034403035045039033, initiator_id: 4, path_trace: [(4, Client), (3, Drone)] }
 Server 8 of type Textis running
 Server 8 is running
+Client 5: Received flood request: FloodRequest { flood_id: 18007704237500113926, initiator_id: 7, path_trace: [(7, Client), (3, Drone)] }
+Sent response to 3
+Sent response to 1
+Sent response to 1
+Sent response to 3
+Sent response to 1
+Sent response to 6
+Client 7: Received flood request: FloodRequest { flood_id: 187000084447348124, initiator_id: 6, path_trace: [(6, Client), (2, Drone)] }
 Server 8 send flood request
-Sent response to 1
-Sent response to 3
-Sent response to 3
-Sent response to 1
-Server 8 received floodrequest for FloodRequest { flood_id: 7853805352038326837, initiator_id: 5, path_trace: [(5, Client), (1, Drone)] }
+Sent response to 5
+Client 5: Received flood request: FloodRequest { flood_id: 18007704237500113926, initiator_id: 7, path_trace: [(7, Client), (2, Drone)] }
+Client 4 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (2, Drone), (3, Drone)] }
 Sent response to 2
-Server 8 received floodrequest for FloodRequest { flood_id: 7853805352038326837, initiator_id: 5, path_trace: [(5, Client), (2, Drone)] }
-Client 5: Received flood request: FloodRequest { flood_id: 1505637804302278152, initiator_id: 8, path_trace: [(8, Server), (2, Drone)] }
-Sent response to 8
-Sent response to 5
-Client 5: Received flood request: FloodRequest { flood_id: 3281652466879463382, initiator_id: 8, path_trace: [(8, Server), (1, Drone)] }
+Client 4: Received flood request: FloodRequest { flood_id: 187000084447348124, initiator_id: 6, path_trace: [(6, Client), (2, Drone)] }
+Client 4 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (3, Drone), (2, Drone)] }
+Server 8 received floodrequest for FloodRequest { flood_id: 14921803900745694004, initiator_id: 5, path_trace: [(5, Client), (3, Drone)] }
+Client 6: Received flood request: FloodRequest { flood_id: 2034403035045039033, initiator_id: 4, path_trace: [(4, Client), (3, Drone)] }
+Server 8 received floodrequest for FloodRequest { flood_id: 2034403035045039033, initiator_id: 4, path_trace: [(4, Client), (1, Drone)] }
+Server 8 received floodrequest for FloodRequest { flood_id: 2034403035045039033, initiator_id: 4, path_trace: [(4, Client), (2, Drone)] }
+Client 6: Received flood request: FloodRequest { flood_id: 18007704237500113926, initiator_id: 7, path_trace: [(7, Client), (3, Drone)] }
+Server 8 received floodrequest for FloodRequest { flood_id: 2034403035045039033, initiator_id: 4, path_trace: [(4, Client), (3, Drone)] }
+Client 6: Received flood request: FloodRequest { flood_id: 14921803900745694004, initiator_id: 5, path_trace: [(5, Client), (1, Drone)] }
+Server 8 received floodrequest for FloodRequest { flood_id: 18007704237500113926, initiator_id: 7, path_trace: [(7, Client), (3, Drone)] }
+Client 6: Received flood request: FloodRequest { flood_id: 14921803900745694004, initiator_id: 5, path_trace: [(5, Client), (2, Drone)] }
+Client 7: Received flood request: FloodRequest { flood_id: 187000084447348124, initiator_id: 6, path_trace: [(6, Client), (3, Drone)] }
+Sent response to 6
+Sent response to 7
+Sent response to 7
+Sent response to 7
+Sent response to 7
+Sent response to 4
+Client 5: Received flood request: FloodRequest { flood_id: 18007704237500113926, initiator_id: 7, path_trace: [(7, Client), (1, Drone)] }
+Client 7 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (2, Drone), (7, Client), (3, Drone)] }
+Client 5: Received flood request: FloodRequest { flood_id: 187000084447348124, initiator_id: 6, path_trace: [(6, Client), (2, Drone)] }
+[Client 7] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 7, 2, 4] }, session_id: 561140851398381182, pack_type: FloodResponse(FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (2, Drone), (7, Client), (3, Drone)] }) }
+Sent response to 6
+Sent response to 7
+Sent response to 7
+Sent response to 7
+Sent response to 7
+Sent response to 4
+Sent response to 4
+Client 7 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (1, Drone), (7, Client), (3, Drone)] }
+Client 6: Received flood request: FloodRequest { flood_id: 18007704237500113926, initiator_id: 7, path_trace: [(7, Client), (2, Drone)] }
+Client 6: Received flood request: FloodRequest { flood_id: 18007704237500113926, initiator_id: 7, path_trace: [(7, Client), (1, Drone)] }
+Client 6 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (1, Drone), (6, Client), (2, Drone)] }
+[Client 6] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 6, 1, 4] }, session_id: 7432492297004776109, pack_type: FloodResponse(FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (1, Drone), (6, Client), (2, Drone)] }) }
+Sent response to 4
+Client 4: Received flood request: FloodRequest { flood_id: 187000084447348124, initiator_id: 6, path_trace: [(6, Client), (3, Drone)] }
+Sent response to 4
+Client 4 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (1, Drone), (3, Drone)] }
+Sent response to 4
+Client 4 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (2, Drone), (4, Client), (3, Drone)] }
+Client 5 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (3, Drone), (2, Drone)] }
+[Client 7] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 7, 1, 4] }, session_id: 7432492297004776109, pack_type: FloodResponse(FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (1, Drone), (7, Client), (3, Drone)] }) }
 Sent response to 2
-Client 5: Received flood request: FloodRequest { flood_id: 3281652466879463382, initiator_id: 8, path_trace: [(8, Server), (1, Drone), (2, Drone)] }
-Sent response to 8
-Server 8 received floodrequest for FloodRequest { flood_id: 7853805352038326837, initiator_id: 5, path_trace: [(5, Client), (3, Drone)] }
-Client 5 received FloodResponse: FloodResponse { flood_id: 7853805352038326837, path_trace: [(5, Client), (2, Drone), (1, Drone)] }
+Client 7 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (2, Drone), (7, Client), (3, Drone)] }
+Server 8 received floodrequest for FloodRequest { flood_id: 14921803900745694004, initiator_id: 5, path_trace: [(5, Client), (2, Drone)] }
+[Client 7] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 7, 2, 5] }, session_id: 17896652646274700825, pack_type: FloodResponse(FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (2, Drone), (7, Client), (3, Drone)] }) }
 Sent response to 5
-Server 8 received floodrequest for FloodRequest { flood_id: 3281652466879463382, initiator_id: 8, path_trace: [(8, Server), (1, Drone), (2, Drone)] }
-Server 8 received floodresponse for FloodResponse { flood_id: 7853805352038326837, path_trace: [(5, Client), (1, Drone), (8, Server), (2, Drone)] }
-Sent response to 8
 Sent response to 5
+[Client 4] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 4, 2, 5] }, session_id: 17896652646274700825, pack_type: FloodResponse(FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (2, Drone), (4, Client), (3, Drone)] }) }
+Sent response to 4
+Client 6 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (3, Drone), (6, Client), (2, Drone)] }
+Client 7 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (1, Drone), (7, Client), (3, Drone)] }
+Sent response to 6
+[Client 7] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 7, 1, 5] }, session_id: 14164923080463199105, pack_type: FloodResponse(FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (1, Drone), (7, Client), (3, Drone)] }) }
+Sent response to 7
+Sent response to 7
+Server 8 received floodrequest for FloodRequest { flood_id: 18007704237500113926, initiator_id: 7, path_trace: [(7, Client), (2, Drone)] }
+Server 8 received floodrequest for FloodRequest { flood_id: 14921803900745694004, initiator_id: 5, path_trace: [(5, Client), (1, Drone)] }
+Server 8 received floodrequest for FloodRequest { flood_id: 18007704237500113926, initiator_id: 7, path_trace: [(7, Client), (1, Drone)] }
+Client 4 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (2, Drone), (4, Client), (3, Drone)] }
+[Client 4] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 4, 2, 7] }, session_id: 1162444520864167555, pack_type: FloodResponse(FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (2, Drone), (4, Client), (3, Drone)] }) }
+Client 5 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (3, Drone), (1, Drone)] }
+Client 5: Received flood request: FloodRequest { flood_id: 187000084447348124, initiator_id: 6, path_trace: [(6, Client), (3, Drone)] }
+Client 5 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (2, Drone), (5, Client), (3, Drone)] }
+Sent response to 4
+[Client 6] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 6, 3, 5] }, session_id: 13176463375167089508, pack_type: FloodResponse(FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (3, Drone), (6, Client), (2, Drone)] }) }
+Client 7 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (3, Drone), (7, Client), (2, Drone)] }
+Client 6 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (1, Drone), (6, Client), (3, Drone)] }
+[Client 7] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 7, 3, 5] }, session_id: 13176463375167089508, pack_type: FloodResponse(FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (3, Drone), (7, Client), (2, Drone)] }) }
+Sent response to 6
+Server 8 received floodrequest for FloodRequest { flood_id: 187000084447348124, initiator_id: 6, path_trace: [(6, Client), (2, Drone)] }
+Client 4 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (3, Drone), (4, Client), (2, Drone)] }
+[Client 4] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 4, 3, 5] }, session_id: 13176463375167089508, pack_type: FloodResponse(FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (3, Drone), (4, Client), (2, Drone)] }) }
+[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 5, 2, 4] }, session_id: 561140851398381182, pack_type: FloodResponse(FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (2, Drone), (5, Client), (3, Drone)] }) }
+Sent response to 5
+Sent response to 7
+Client 5 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (1, Drone), (5, Client), (3, Drone)] }
+Sent response to 7
+[Client 6] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 6, 1, 4] }, session_id: 7432492297004776109, pack_type: FloodResponse(FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (1, Drone), (6, Client), (3, Drone)] }) }
+Client 7 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (1, Drone), (7, Client), (2, Drone)] }
+Sent response to 2
+[Client 7] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 7, 1, 4] }, session_id: 7432492297004776109, pack_type: FloodResponse(FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (1, Drone), (7, Client), (2, Drone)] }) }
+Server 8 received floodrequest for FloodRequest { flood_id: 187000084447348124, initiator_id: 6, path_trace: [(6, Client), (3, Drone)] }
+Client 7 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (3, Drone), (7, Client), (2, Drone)] }
+Client 4 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (3, Drone), (4, Client), (2, Drone)] }
+[Client 7] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 7, 3, 4] }, session_id: 2528880780549172139, pack_type: FloodResponse(FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (3, Drone), (7, Client), (2, Drone)] }) }
+Sent response to 5
+[Client 4] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 4, 3, 7] }, session_id: 894789488116372875, pack_type: FloodResponse(FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (3, Drone), (4, Client), (2, Drone)] }) }
+Client 7 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (1, Drone), (7, Client), (2, Drone)] }
+Sent response to 4
+[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 5, 1, 4] }, session_id: 7432492297004776109, pack_type: FloodResponse(FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (1, Drone), (5, Client), (3, Drone)] }) }
+Client 6 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (3, Drone), (6, Client), (1, Drone)] }
+[Client 6] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 6, 3, 5] }, session_id: 13176463375167089508, pack_type: FloodResponse(FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (3, Drone), (6, Client), (1, Drone)] }) }
+Client 5: Received flood request: FloodRequest { flood_id: 187000084447348124, initiator_id: 6, path_trace: [(6, Client), (1, Drone)] }
+Client 6 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (2, Drone), (6, Client), (3, Drone)] }
+Client 5 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (2, Drone), (5, Client), (1, Drone)] }
+Server 8 received floodrequest for FloodRequest { flood_id: 187000084447348124, initiator_id: 6, path_trace: [(6, Client), (1, Drone)] }
+Sent response to 5
+Sent response to 3
+Client 4 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (1, Drone), (4, Client), (2, Drone)] }
+Sent response to 8
+Sent response to 4
+Sent response to 7
+[Client 6] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 6, 2, 4] }, session_id: 561140851398381182, pack_type: FloodResponse(FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (2, Drone), (6, Client), (3, Drone)] }) }
+[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 5, 2, 4] }, session_id: 561140851398381182, pack_type: FloodResponse(FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (2, Drone), (5, Client), (1, Drone)] }) }
+Client 5 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (2, Drone), (3, Drone)] }
+Client 5 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (1, Drone), (5, Client), (2, Drone)] }
+[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 5, 1, 4] }, session_id: 7432492297004776109, pack_type: FloodResponse(FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (1, Drone), (5, Client), (2, Drone)] }) }
+Client 5 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (3, Drone), (5, Client), (2, Drone)] }
+[Client 7] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 7, 1, 5] }, session_id: 14164923080463199105, pack_type: FloodResponse(FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (1, Drone), (7, Client), (2, Drone)] }) }
+Client 7: Received flood request: FloodRequest { flood_id: 187000084447348124, initiator_id: 6, path_trace: [(6, Client), (1, Drone)] }
+Client 7 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (3, Drone), (7, Client), (1, Drone)] }
+[Client 7] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 7, 3, 5] }, session_id: 13176463375167089508, pack_type: FloodResponse(FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (3, Drone), (7, Client), (1, Drone)] }) }
+Sent response to 8
+[Client 4] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 4, 1, 5] }, session_id: 14164923080463199105, pack_type: FloodResponse(FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (1, Drone), (4, Client), (2, Drone)] }) }
+Sent response to 4
+Server 8 received floodresponse for FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (3, Drone), (8, Server), (2, Drone)] }
+Server 8 forwarding floodresponse to 3
+Server 8 received floodresponse for FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (1, Drone), (8, Server), (2, Drone)] }
 Server 8 forwarding floodresponse to 1
-Client 5 received FloodResponse: FloodResponse { flood_id: 7853805352038326837, path_trace: [(5, Client), (2, Drone), (3, Drone)] }
-Server 8 received floodrequest for FloodRequest { flood_id: 1505637804302278152, initiator_id: 8, path_trace: [(8, Server), (2, Drone), (1, Drone)] }
-Client 5 received FloodResponse: FloodResponse { flood_id: 7853805352038326837, path_trace: [(5, Client), (1, Drone), (2, Drone)] }
-Server 8 received floodresponse for FloodResponse { flood_id: 7853805352038326837, path_trace: [(5, Client), (2, Drone), (8, Server), (1, Drone)] }
+Sent response to 5
+Client 6: Received flood request: FloodRequest { flood_id: 11881917453545781236, initiator_id: 8, path_trace: [(8, Server), (2, Drone)] }
+Client 6 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (3, Drone), (6, Client), (2, Drone)] }
+Client 7 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (2, Drone), (7, Client), (1, Drone)] }
+[Client 6] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 6, 3, 4] }, session_id: 2528880780549172139, pack_type: FloodResponse(FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (3, Drone), (6, Client), (2, Drone)] }) }
+Sent response to 6
+Client 4 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (1, Drone), (4, Client), (3, Drone)] }
+[Client 4] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 4, 1, 5] }, session_id: 14164923080463199105, pack_type: FloodResponse(FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (1, Drone), (4, Client), (3, Drone)] }) }
+Client 4 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (1, Drone), (4, Client), (3, Drone)] }
+Sent response to 4
+Sent response to 4
+Sent response to 6
+Sent response to 8
+Sent response to 8
+Sent response to 5
+Server 8 received floodresponse for FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (1, Drone), (8, Server), (3, Drone)] }
+[Client 7] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 7, 2, 4] }, session_id: 561140851398381182, pack_type: FloodResponse(FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (2, Drone), (7, Client), (1, Drone)] }) }
+Sent response to 5
+Client 7 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (3, Drone), (7, Client), (1, Drone)] }
+[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 5, 3, 4] }, session_id: 2528880780549172139, pack_type: FloodResponse(FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (3, Drone), (5, Client), (2, Drone)] }) }
+[Client 4] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 4, 1, 7] }, session_id: 17505093201760671437, pack_type: FloodResponse(FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (1, Drone), (4, Client), (3, Drone)] }) }
+Client 5 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (3, Drone), (5, Client), (2, Drone)] }
+Sent response to 6
+Server 8 forwarding floodresponse to 1
+Server 8 received floodresponse for FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (2, Drone), (8, Server), (3, Drone)] }
+[Client 7] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 7, 3, 4] }, session_id: 2528880780549172139, pack_type: FloodResponse(FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (3, Drone), (7, Client), (1, Drone)] }) }
+Sent response to 6
 Server 8 forwarding floodresponse to 2
-Client 5 received FloodResponse: FloodResponse { flood_id: 7853805352038326837, path_trace: [(5, Client), (1, Drone), (3, Drone)] }
-Sent response to 3
-Sent response to 1
+[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 5, 3, 7] }, session_id: 894789488116372875, pack_type: FloodResponse(FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (3, Drone), (5, Client), (2, Drone)] }) }
+Sent response to 6
+Sent response to 5
+Server 8 received floodresponse for FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (3, Drone), (8, Server), (2, Drone)] }
+Client 5 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (2, Drone), (1, Drone)] }
+Sent response to 5
+Client 5: Received flood request: FloodRequest { flood_id: 11881917453545781236, initiator_id: 8, path_trace: [(8, Server), (2, Drone)] }
+Client 4 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (3, Drone), (1, Drone)] }
+Client 4 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (1, Drone), (2, Drone)] }
 Sent response to 2
-Sent response to 8
-Sent response to 8
-Sent response to 8
-Sent response to 1
-Server 8 received floodrequest for FloodRequest { flood_id: 1510996182529290683, initiator_id: 8, path_trace: [(8, Server), (3, Drone), (2, Drone)] }
-Sent response to 2
-Sent response to 8
-Client 5: Received flood request: FloodRequest { flood_id: 1505637804302278152, initiator_id: 8, path_trace: [(8, Server), (2, Drone), (1, Drone)] }
-Sent response to 8
+Client 7 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (2, Drone), (3, Drone)] }
 Sent response to 3
-Sent response to 5
-Sent response to 5
-Sent response to 5
-Client 5 received FloodResponse: FloodResponse { flood_id: 1505637804302278152, path_trace: [(8, Server), (2, Drone), (5, Client), (1, Drone)] }
+Sent response to 8
+Server 8 forwarding floodresponse to 3
+Sent response to 6
+Client 5 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (2, Drone), (5, Client), (3, Drone)] }
+Sent response to 6
+Sent response to 1
 Sent response to 8
 Sent response to 8
+Client 6: Received flood request: FloodRequest { flood_id: 2282202463429378510, initiator_id: 8, path_trace: [(8, Server), (3, Drone)] }
+[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 5, 2, 7] }, session_id: 1162444520864167555, pack_type: FloodResponse(FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (2, Drone), (5, Client), (3, Drone)] }) }
+Client 6 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (3, Drone), (6, Client), (2, Drone)] }
+Server 8 received floodresponse for FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (2, Drone), (8, Server), (3, Drone)] }
+Client 5: Received flood request: FloodRequest { flood_id: 2282202463429378510, initiator_id: 8, path_trace: [(8, Server), (3, Drone)] }
+Client 7 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (3, Drone), (2, Drone)] }
+Client 5 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (1, Drone), (3, Drone)] }
+Sent response to 6
+Client 4: Received flood request: FloodRequest { flood_id: 187000084447348124, initiator_id: 6, path_trace: [(6, Client), (1, Drone)] }
+Client 4 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (1, Drone), (4, Client), (2, Drone)] }
+[Client 6] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 6, 3, 7] }, session_id: 894789488116372875, pack_type: FloodResponse(FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (3, Drone), (6, Client), (2, Drone)] }) }
+Server 8 forwarding floodresponse to 2
+Client 6 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (2, Drone), (6, Client), (1, Drone)] }
+Sent response to 7
+Client 7 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (3, Drone), (1, Drone)] }
+[Client 6] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 6, 2, 4] }, session_id: 561140851398381182, pack_type: FloodResponse(FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (2, Drone), (6, Client), (1, Drone)] }) }
+Client 7 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (2, Drone), (7, Client), (1, Drone)] }
+Client 6 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (1, Drone), (6, Client), (3, Drone)] }
+[Client 4] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 4, 1, 7] }, session_id: 17505093201760671437, pack_type: FloodResponse(FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (1, Drone), (4, Client), (2, Drone)] }) }
+Server 8 received floodresponse for FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (2, Drone), (8, Server), (3, Drone)] }
+Server 8 forwarding floodresponse to 2
+Sent response to 8
+Client 4 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (2, Drone), (1, Drone)] }
+[Client 6] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 6, 1, 5] }, session_id: 14164923080463199105, pack_type: FloodResponse(FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (1, Drone), (6, Client), (3, Drone)] }) }
+Sent response to 8
+[Client 7] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 7, 2, 5] }, session_id: 17896652646274700825, pack_type: FloodResponse(FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (2, Drone), (7, Client), (1, Drone)] }) }
+Client 5 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (3, Drone), (5, Client), (1, Drone)] }
+Client 7 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (2, Drone), (7, Client), (3, Drone)] }
+Sent response to 5
+[Client 7] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 7, 2, 6] }, session_id: 4080358663979386812, pack_type: FloodResponse(FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (2, Drone), (7, Client), (3, Drone)] }) }
+Sent response to 4
+Sent response to 7
+Client 4 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (3, Drone), (4, Client), (1, Drone)] }
+Client 6 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (2, Drone), (6, Client), (3, Drone)] }
+Sent response to 8
+[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 5, 3, 4] }, session_id: 2528880780549172139, pack_type: FloodResponse(FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (3, Drone), (5, Client), (1, Drone)] }) }
+Server 8 received floodresponse for FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (1, Drone), (8, Server), (3, Drone)] }
+Server 8 forwarding floodresponse to 1
+Client 5 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (3, Drone), (5, Client), (1, Drone)] }
+Sent response to 8
+Client 7: Received flood request: FloodRequest { flood_id: 11881917453545781236, initiator_id: 8, path_trace: [(8, Server), (2, Drone)] }
+Sent response to 5
+[Client 4] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 4, 3, 5] }, session_id: 13176463375167089508, pack_type: FloodResponse(FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (3, Drone), (4, Client), (1, Drone)] }) }
+[Client 6] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 6, 2, 5] }, session_id: 17896652646274700825, pack_type: FloodResponse(FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (2, Drone), (6, Client), (3, Drone)] }) }
+Client 4 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (3, Drone), (4, Client), (1, Drone)] }
+Sent response to 8
+Server 8 received floodresponse for FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (3, Drone), (8, Server), (2, Drone)] }
+Sent response to 5
+Server 8 forwarding floodresponse to 3
+Sent response to 6
+Client 7 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (2, Drone), (1, Drone)] }
+Sent response to 6
+[Client 4] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 4, 3, 7] }, session_id: 894789488116372875, pack_type: FloodResponse(FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (3, Drone), (4, Client), (1, Drone)] }) }
+Client 4: Received flood request: FloodRequest { flood_id: 11881917453545781236, initiator_id: 8, path_trace: [(8, Server), (2, Drone)] }
+Client 4 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (2, Drone), (4, Client), (1, Drone)] }
+[Client 4] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 4, 2, 5] }, session_id: 17896652646274700825, pack_type: FloodResponse(FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (2, Drone), (4, Client), (1, Drone)] }) }
+Client 4 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (2, Drone), (4, Client), (1, Drone)] }
+Sent response to 8
+[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 5, 3, 7] }, session_id: 894789488116372875, pack_type: FloodResponse(FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (3, Drone), (5, Client), (1, Drone)] }) }
+Server 8 received floodresponse for FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (1, Drone), (8, Server), (3, Drone)] }
+Server 8 forwarding floodresponse to 1
+Server 8 received floodresponse for FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (3, Drone), (8, Server), (1, Drone)] }
+Server 8 forwarding floodresponse to 3
+Server 8 received floodresponse for FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (2, Drone), (8, Server), (3, Drone)] }
+Server 8 forwarding floodresponse to 2
+Server 8 received floodresponse for FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (1, Drone), (8, Server), (3, Drone)] }
+Server 8 forwarding floodresponse to 1
+Server 8 received floodresponse for FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (2, Drone), (8, Server), (1, Drone)] }
+Server 8 forwarding floodresponse to 2
+Server 8 received floodrequest for FloodRequest { flood_id: 11881917453545781236, initiator_id: 8, path_trace: [(8, Server), (2, Drone), (3, Drone)] }
+Sent response to 4
+Client 7: Received flood request: FloodRequest { flood_id: 2282202463429378510, initiator_id: 8, path_trace: [(8, Server), (3, Drone)] }
+Client 6 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (2, Drone), (6, Client), (3, Drone)] }
+[Client 4] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 4, 2, 7] }, session_id: 1162444520864167555, pack_type: FloodResponse(FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (2, Drone), (4, Client), (1, Drone)] }) }
+Client 4: Received flood request: FloodRequest { flood_id: 2282202463429378510, initiator_id: 8, path_trace: [(8, Server), (3, Drone)] }
+Client 4 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (2, Drone), (4, Client), (3, Drone)] }
+Client 5 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (1, Drone), (2, Drone)] }
+Client 5 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (1, Drone), (5, Client), (3, Drone)] }
+Sent response to 1
+Client 7 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (1, Drone), (3, Drone)] }
+[Client 6] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 6, 2, 7] }, session_id: 1162444520864167555, pack_type: FloodResponse(FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (2, Drone), (6, Client), (3, Drone)] }) }
+Server 8 received floodresponse for FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (1, Drone), (8, Server), (2, Drone)] }
+Client 6 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (1, Drone), (6, Client), (2, Drone)] }
+Server 8 forwarding floodresponse to 1
+[Client 6] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 6, 1, 5] }, session_id: 14164923080463199105, pack_type: FloodResponse(FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (1, Drone), (6, Client), (2, Drone)] }) }
+[Client 4] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 4, 2, 6] }, session_id: 4080358663979386812, pack_type: FloodResponse(FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (2, Drone), (4, Client), (3, Drone)] }) }
+Sent response to 8
+[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 5, 1, 7] }, session_id: 17505093201760671437, pack_type: FloodResponse(FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (1, Drone), (5, Client), (3, Drone)] }) }
+Client 7 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (1, Drone), (2, Drone)] }
+Client 5 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (2, Drone), (5, Client), (3, Drone)] }
+Sent response to 7
+Client 6 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (1, Drone), (6, Client), (3, Drone)] }
+Sent response to 6
+Client 4: Received flood request: FloodRequest { flood_id: 4491536837388651373, initiator_id: 8, path_trace: [(8, Server), (1, Drone)] }
+Sent response to 5
+Sent response to 6
+Client 4 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (2, Drone), (4, Client), (1, Drone)] }
+Sent response to 8
+Sent response to 8
+Server 8 received floodresponse for FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (3, Drone), (8, Server), (1, Drone)] }
+Server 8 forwarding floodresponse to 3
+[Client 6] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 6, 1, 7] }, session_id: 17505093201760671437, pack_type: FloodResponse(FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (1, Drone), (6, Client), (3, Drone)] }) }
+Sent response to 4
+Client 6: Received flood request: FloodRequest { flood_id: 4491536837388651373, initiator_id: 8, path_trace: [(8, Server), (1, Drone)] }
+Client 6 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (3, Drone), (6, Client), (1, Drone)] }
+Client 7 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (2, Drone), (7, Client), (1, Drone)] }
+[Client 7] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 7, 2, 6] }, session_id: 4080358663979386812, pack_type: FloodResponse(FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (2, Drone), (7, Client), (1, Drone)] }) }
+Client 7 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (3, Drone), (7, Client), (2, Drone)] }
+[Client 7] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 7, 3, 6] }, session_id: 4474906212124391782, pack_type: FloodResponse(FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (3, Drone), (7, Client), (2, Drone)] }) }
+[Client 4] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 4, 2, 6] }, session_id: 4080358663979386812, pack_type: FloodResponse(FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (2, Drone), (4, Client), (1, Drone)] }) }
+Client 7: Received flood request: FloodRequest { flood_id: 4491536837388651373, initiator_id: 8, path_trace: [(8, Server), (1, Drone)] }
+Client 7 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (3, Drone), (4, Client), (2, Drone)] }
+Client 7: Received flood request: FloodRequest { flood_id: 11881917453545781236, initiator_id: 8, path_trace: [(8, Server), (2, Drone), (3, Drone)] }
+Client 4 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (2, Drone), (7, Client), (3, Drone)] }
+Client 4 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (3, Drone), (7, Client), (2, Drone)] }
+[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 5, 2, 6] }, session_id: 4080358663979386812, pack_type: FloodResponse(FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (2, Drone), (5, Client), (3, Drone)] }) }
+Client 5 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (2, Drone), (5, Client), (1, Drone)] }
+[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 5, 2, 7] }, session_id: 1162444520864167555, pack_type: FloodResponse(FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (2, Drone), (5, Client), (1, Drone)] }) }
+Client 5: Received flood request: FloodRequest { flood_id: 4491536837388651373, initiator_id: 8, path_trace: [(8, Server), (1, Drone)] }
+Sent response to 8
+Server 8 received floodresponse for FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (3, Drone), (8, Server), (1, Drone)] }
+Server 8 forwarding floodresponse to 3
+[Client 6] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 6, 3, 4] }, session_id: 2528880780549172139, pack_type: FloodResponse(FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (3, Drone), (6, Client), (1, Drone)] }) }
+Server 8 received floodresponse for FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (1, Drone), (8, Server), (2, Drone)] }
+Server 8 forwarding floodresponse to 1
+Client 6 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (1, Drone), (6, Client), (2, Drone)] }
+Server 8 received floodrequest for FloodRequest { flood_id: 4491536837388651373, initiator_id: 8, path_trace: [(8, Server), (1, Drone), (3, Drone)] }
+[Client 6] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 6, 1, 7] }, session_id: 17505093201760671437, pack_type: FloodResponse(FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (1, Drone), (6, Client), (2, Drone)] }) }
+Sent response to 7
+Client 7 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (1, Drone), (7, Client), (3, Drone)] }
+[Client 7] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 7, 1, 6] }, session_id: 13378810926537524899, pack_type: FloodResponse(FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (1, Drone), (7, Client), (3, Drone)] }) }
+Client 7 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (3, Drone), (5, Client), (2, Drone)] }
+Client 7 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (3, Drone), (6, Client), (2, Drone)] }
+Client 7: Received flood request: FloodRequest { flood_id: 4491536837388651373, initiator_id: 8, path_trace: [(8, Server), (1, Drone), (3, Drone)] }
+Client 4 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (3, Drone), (4, Client), (2, Drone)] }
+[Client 4] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 4, 3, 6] }, session_id: 4474906212124391782, pack_type: FloodResponse(FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (3, Drone), (4, Client), (2, Drone)] }) }
+Client 4: Received flood request: FloodRequest { flood_id: 11881917453545781236, initiator_id: 8, path_trace: [(8, Server), (2, Drone), (3, Drone)] }
+Client 5 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (1, Drone), (5, Client), (2, Drone)] }
+[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 5, 1, 7] }, session_id: 17505093201760671437, pack_type: FloodResponse(FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (1, Drone), (5, Client), (2, Drone)] }) }
+Client 5 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (3, Drone), (6, Client), (2, Drone)] }
+Client 5 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (3, Drone), (7, Client), (2, Drone)] }
+Client 5 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (3, Drone), (4, Client), (2, Drone)] }
+Client 5 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (3, Drone), (6, Client), (1, Drone)] }
+Client 5 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (1, Drone), (5, Client), (3, Drone)] }
+[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 5, 1, 6] }, session_id: 13378810926537524899, pack_type: FloodResponse(FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (1, Drone), (5, Client), (3, Drone)] }) }
+Client 5: Received flood request: FloodRequest { flood_id: 11881917453545781236, initiator_id: 8, path_trace: [(8, Server), (2, Drone), (3, Drone)] }
+Client 5 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (2, Drone), (7, Client), (3, Drone)] }
+Client 5 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (2, Drone), (4, Client), (3, Drone)] }
+Client 5 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (3, Drone), (7, Client), (1, Drone)] }
+Client 5 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (3, Drone), (8, Server), (2, Drone)] }
+Client 6 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (3, Drone), (2, Drone)] }
+Client 6: Received flood request: FloodRequest { flood_id: 11881917453545781236, initiator_id: 8, path_trace: [(8, Server), (2, Drone), (3, Drone)] }
+Sent response to 4
+Sent response to 4
+Sent response to 6
+Sent response to 7
+Sent response to 5
+Sent response to 8
+Sent response to 6
+Sent response to 7
+Sent response to 5
+Sent response to 6
+Sent response to 4
+Sent response to 8
+Client 7 received FloodResponse: FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (7, Client), (3, Drone)] }
+Client 7 sending server type request to server 8
+Client 4 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (3, Drone), (6, Client), (2, Drone)] }
+Client 4 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (3, Drone), (5, Client), (2, Drone)] }
+Client 4 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (3, Drone), (7, Client), (1, Drone)] }
+Client 4 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (3, Drone), (8, Server), (2, Drone)] }
 Sent response to 5
 Client 5 sending server type request to server 8
-Sent response to 8
-Sent response to 8
 Client 5: Sending text message to server 8
+Sent response to 8
 Sent response to 5
-Server 8 received floodresponse for FloodResponse { flood_id: 7853805352038326837, path_trace: [(5, Client), (3, Drone), (8, Server), (2, Drone)] }
-Server 8 forwarding floodresponse to 3
-[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 1, hops: [] }, session_id: 13117395453841567684, pack_type: MsgFragment(Fragment { fragment_index: 0, total_n_fragments: 1, length: 27, data: [123, 34, 83, 101, 114, 118, 101, 114, 84, 121, 112, 101, 34, 58, 34, 83, 101, 114, 118, 101, 114, 84, 121, 112, 101, 34, 125, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }) }
-Client 5: No path to destination (8) for packet: Packet { routing_header: SourceRoutingHeader { hop_index: 1, hops: [] }, session_id: 13117395453841567684, pack_type: MsgFragment(Fragment { fragment_index: 0, total_n_fragments: 1, length: 27, data: [123, 34, 83, 101, 114, 118, 101, 114, 84, 121, 112, 101, 34, 58, 34, 83, 101, 114, 118, 101, 114, 84, 121, 112, 101, 34, 125, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }) }, current topology: Topology { nodes: [1, 3, 2, 5, 8], edges: {1: {3, 2, 5}, 8: {}, 5: {}, 2: {3, 5, 1}, 3: {2, 5, 1}}, labels: {}, node_types: {8: "Server"} }
-Server 8 received floodrequest for FloodRequest { flood_id: 1505637804302278152, initiator_id: 8, path_trace: [(8, Server), (2, Drone), (3, Drone)] }
-Server 8 received floodrequest for FloodRequest { flood_id: 3281652466879463382, initiator_id: 8, path_trace: [(8, Server), (1, Drone), (3, Drone)] }
 Sent response to 8
-Server 8 received floodrequest for FloodRequest { flood_id: 1510996182529290683, initiator_id: 8, path_trace: [(8, Server), (3, Drone), (1, Drone)] }
+Client 6 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (3, Drone), (6, Client), (1, Drone)] }
 Sent response to 8
-[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 1, hops: [5, 2, 8] }, session_id: 13117395453841567684, pack_type: MsgFragment(Fragment { fragment_index: 0, total_n_fragments: 1, length: 27, data: [123, 34, 83, 101, 114, 118, 101, 114, 84, 121, 112, 101, 34, 58, 34, 83, 101, 114, 118, 101, 114, 84, 121, 112, 101, 34, 125, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }) }
-Server 8 received floodresponse for FloodResponse { flood_id: 7853805352038326837, path_trace: [(5, Client), (3, Drone), (8, Server), (1, Drone)] }
-Server 8 forwarding floodresponse to 3
+Sent response to 5
 Sent response to 8
-Server 8 received floodresponse for FloodResponse { flood_id: 1505637804302278152, path_trace: [(8, Server), (2, Drone), (1, Drone), (8, Server), (2, Drone)] }
+[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 1, hops: [5, 3, 8] }, session_id: 1690918006261349666, pack_type: MsgFragment(Fragment { fragment_index: 0, total_n_fragments: 1, length: 27, data: [123, 34, 83, 101, 114, 118, 101, 114, 84, 121, 112, 101, 34, 58, 34, 83, 101, 114, 118, 101, 114, 84, 121, 112, 101, 34, 125, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }) }
+Sent response to 7
+Client 5 received FloodResponse: FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (5, Client), (3, Drone)] }
 Sent response to 8
-Sent response to 8
-Sent response to 8
-[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 5, 2, 8] }, session_id: 1652833031050890279, pack_type: FloodResponse(FloodResponse { flood_id: 1505637804302278152, path_trace: [(8, Server), (2, Drone), (5, Client), (1, Drone)] }) }
-Server 8 received floodresponse for FloodResponse { flood_id: 7853805352038326837, path_trace: [(5, Client), (1, Drone), (8, Server), (3, Drone)] }
-Server 8 forwarding floodresponse to 1
-Server 8 received floodresponse for FloodResponse { flood_id: 7853805352038326837, path_trace: [(5, Client), (2, Drone), (8, Server), (3, Drone)] }
-Client 5: Received flood request: FloodRequest { flood_id: 1510996182529290683, initiator_id: 8, path_trace: [(8, Server), (3, Drone)] }
+Client 7: Sending text message to server 8
+Sent response to 1
+Server 8 received floodresponse for FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (2, Drone), (8, Server), (1, Drone)] }
 Server 8 forwarding floodresponse to 2
-Server 8 received floodresponse for FloodResponse { flood_id: 3281652466879463382, path_trace: [(8, Server), (1, Drone), (2, Drone), (8, Server), (1, Drone)] }
-Client 5 received FloodResponse: FloodResponse { flood_id: 3281652466879463382, path_trace: [(8, Server), (1, Drone), (5, Client), (2, Drone)] }
+[Client 6] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 6, 3, 7] }, session_id: 894789488116372875, pack_type: FloodResponse(FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (3, Drone), (6, Client), (1, Drone)] }) }
+Server 8 received floodresponse for FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (2, Drone), (8, Server), (1, Drone)] }
+Sent response to 6
+Client 4 sending server type request to 8
+Client 4: Sending text message to server 8
+[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 5, 2, 8] }, session_id: 7263325517014545140, pack_type: FloodResponse(FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (5, Client), (3, Drone)] }) }
+Client 5: Received flood request: FloodRequest { flood_id: 4491536837388651373, initiator_id: 8, path_trace: [(8, Server), (1, Drone), (3, Drone)] }
+[Client 7] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 1, hops: [] }, session_id: 3247562939428386487, pack_type: MsgFragment(Fragment { fragment_index: 0, total_n_fragments: 1, length: 27, data: [123, 34, 83, 101, 114, 118, 101, 114, 84, 121, 112, 101, 34, 58, 34, 83, 101, 114, 118, 101, 114, 84, 121, 112, 101, 34, 125, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }) }
+Client 7: No path to destination (8) for packet: Packet { routing_header: SourceRoutingHeader { hop_index: 1, hops: [] }, session_id: 3247562939428386487, pack_type: MsgFragment(Fragment { fragment_index: 0, total_n_fragments: 1, length: 27, data: [123, 34, 83, 101, 114, 118, 101, 114, 84, 121, 112, 101, 34, 58, 34, 83, 101, 114, 118, 101, 114, 84, 121, 112, 101, 34, 125, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }) }, current topology: Topology { nodes: [2, 3, 1, 4, 7, 5, 6, 8], edges: {5: {2, 3, 1}, 6: {1, 3, 2}, 3: {1, 5, 6, 7, 4, 2}, 4: {2, 3, 1}, 1: {7, 4, 5, 2, 6, 3}, 7: {2, 3, 1}, 8: {}, 2: {6, 4, 1, 7, 3, 5}}, labels: {}, node_types: {8: "Server"} }
 Sent response to 5
-Server 8 received floodresponse for FloodResponse { flood_id: 3281652466879463382, path_trace: [(8, Server), (1, Drone), (2, Drone), (8, Server), (3, Drone)] }
-[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 5, 1, 8] }, session_id: 8736621621284047275, pack_type: FloodResponse(FloodResponse { flood_id: 3281652466879463382, path_trace: [(8, Server), (1, Drone), (5, Client), (2, Drone)] }) }
-Server 8 received floodresponse for FloodResponse { flood_id: 3281652466879463382, path_trace: [(8, Server), (1, Drone), (2, Drone), (3, Drone)] }
+Client 6 received FloodResponse: FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (6, Client), (3, Drone)] }
+[Client 7] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 1, hops: [7, 2, 8] }, session_id: 3247562939428386487, pack_type: MsgFragment(Fragment { fragment_index: 0, total_n_fragments: 1, length: 27, data: [123, 34, 83, 101, 114, 118, 101, 114, 84, 121, 112, 101, 34, 58, 34, 83, 101, 114, 118, 101, 114, 84, 121, 112, 101, 34, 125, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }) }
+[Client 4] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 1, hops: [4, 3, 8] }, session_id: 3598226423905190559, pack_type: MsgFragment(Fragment { fragment_index: 0, total_n_fragments: 1, length: 27, data: [123, 34, 83, 101, 114, 118, 101, 114, 84, 121, 112, 101, 34, 58, 34, 83, 101, 114, 118, 101, 114, 84, 121, 112, 101, 34, 125, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }) }
+Client 5 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (3, Drone), (5, Client), (2, Drone)] }
+Server 8 forwarding floodresponse to 2
+[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 5, 3, 6] }, session_id: 4474906212124391782, pack_type: FloodResponse(FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (3, Drone), (5, Client), (2, Drone)] }) }
+Sent response to 4
+Client 6 sending server type request to 8
+Client 6: Sending text message to server 8
+Sent response to 6
+Sent response to 2
 Sent response to 5
-Server 8 received floodresponse for FloodResponse { flood_id: 1505637804302278152, path_trace: [(8, Server), (2, Drone), (1, Drone), (8, Server), (3, Drone)] }
-Client 5 received FloodResponse: FloodResponse { flood_id: 7853805352038326837, path_trace: [(5, Client), (3, Drone), (1, Drone)] }
-Server 8 received floodresponse for FloodResponse { flood_id: 1510996182529290683, path_trace: [(8, Server), (3, Drone), (2, Drone), (8, Server), (1, Drone)] }
-Client 5: Received flood request: FloodRequest { flood_id: 1510996182529290683, initiator_id: 8, path_trace: [(8, Server), (3, Drone), (2, Drone)] }
-Server 8 received floodresponse for FloodResponse { flood_id: 1510996182529290683, path_trace: [(8, Server), (3, Drone), (2, Drone), (1, Drone)] }
-Client 5 received FloodResponse: FloodResponse { flood_id: 7853805352038326837, path_trace: [(5, Client), (3, Drone), (2, Drone)] }
-Server 8 received floodresponse for FloodResponse { flood_id: 1505637804302278152, path_trace: [(8, Server), (2, Drone), (1, Drone), (3, Drone)] }
-Client 5 received FloodResponse: FloodResponse { flood_id: 3281652466879463382, path_trace: [(8, Server), (1, Drone), (2, Drone), (5, Client), (1, Drone)] }
+[Client 6] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 1, hops: [] }, session_id: 3119891785281421354, pack_type: MsgFragment(Fragment { fragment_index: 0, total_n_fragments: 1, length: 27, data: [123, 34, 83, 101, 114, 118, 101, 114, 84, 121, 112, 101, 34, 58, 34, 83, 101, 114, 118, 101, 114, 84, 121, 112, 101, 34, 125, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }) }
+Client 6: No path to destination (8) for packet: Packet { routing_header: SourceRoutingHeader { hop_index: 1, hops: [] }, session_id: 3119891785281421354, pack_type: MsgFragment(Fragment { fragment_index: 0, total_n_fragments: 1, length: 27, data: [123, 34, 83, 101, 114, 118, 101, 114, 84, 121, 112, 101, 34, 58, 34, 83, 101, 114, 118, 101, 114, 84, 121, 112, 101, 34, 125, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }) }, current topology: Topology { nodes: [3, 1, 2, 4, 6, 5, 7, 8], edges: {6: {2, 1, 3}, 2: {5, 3, 4, 6, 7}, 3: {4, 7, 6, 5, 2}, 1: {7, 6, 5, 4}, 4: {3, 2, 1}, 8: {}, 5: {1, 2, 3}, 7: {2, 1, 3}}, labels: {}, node_types: {8: "Server"} }
+Client 5 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (3, Drone), (4, Client), (1, Drone)] }
+[Client 6] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 1, hops: [6, 2, 8] }, session_id: 3119891785281421354, pack_type: MsgFragment(Fragment { fragment_index: 0, total_n_fragments: 1, length: 27, data: [123, 34, 83, 101, 114, 118, 101, 114, 84, 121, 112, 101, 34, 58, 34, 83, 101, 114, 118, 101, 114, 84, 121, 112, 101, 34, 125, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }) }
+Client 5 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (3, Drone), (8, Server), (1, Drone)] }
+Client 4 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (1, Drone), (4, Client), (3, Drone)] }
+[Client 4] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 4, 1, 6] }, session_id: 13378810926537524899, pack_type: FloodResponse(FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (1, Drone), (4, Client), (3, Drone)] }) }
+Server 8 received floodresponse for FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (3, Drone), (8, Server), (2, Drone)] }
+Sent response to 8
+Client 5 received FloodResponse: FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (5, Client), (3, Drone)] }
+Client 4: Received flood request: FloodRequest { flood_id: 4491536837388651373, initiator_id: 8, path_trace: [(8, Server), (1, Drone), (3, Drone)] }
+Client 4 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (3, Drone), (5, Client), (1, Drone)] }
+Client 4 received FloodResponse: FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (4, Client), (3, Drone)] }
+[Client 4] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 4, 2, 8] }, session_id: 7263325517014545140, pack_type: FloodResponse(FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (4, Client), (3, Drone)] }) }
+Client 4 received FloodResponse: FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (4, Client), (3, Drone)] }
+[Client 7] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 7, 2, 8] }, session_id: 7263325517014545140, pack_type: FloodResponse(FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (7, Client), (3, Drone)] }) }
+[Client 6] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 6, 2, 8] }, session_id: 7263325517014545140, pack_type: FloodResponse(FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (6, Client), (3, Drone)] }) }
+Server 8 forwarding floodresponse to 3
+Sent response to 6
+[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 5, 1, 8] }, session_id: 3639259067753663648, pack_type: FloodResponse(FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (5, Client), (3, Drone)] }) }
+Server 8 received floodresponse for FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (1, Drone), (8, Server), (2, Drone)] }
+Sent response to 7
+[Client 4] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 4, 1, 8] }, session_id: 3639259067753663648, pack_type: FloodResponse(FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (4, Client), (3, Drone)] }) }
+Sent response to 4
+Client 4 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (3, Drone), (8, Server), (1, Drone)] }
+Client 4 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (3, Drone), (6, Client), (1, Drone)] }
+Client 4 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (1, Drone), (6, Client), (2, Drone)] }
+Client 4 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (3, Drone), (4, Client), (1, Drone)] }
+Sent response to 4
+Sent response to 6
+Client 6 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (3, Drone), (1, Drone)] }
+Server 8 forwarding floodresponse to 1
+Client 6: Received flood request: FloodRequest { flood_id: 4491536837388651373, initiator_id: 8, path_trace: [(8, Server), (1, Drone), (3, Drone)] }
+Client 5 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (2, Drone), (5, Client), (1, Drone)] }
+[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 5, 2, 6] }, session_id: 4080358663979386812, pack_type: FloodResponse(FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (2, Drone), (5, Client), (1, Drone)] }) }
+Client 7 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (2, Drone), (4, Client), (3, Drone)] }
+[Client 4] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 4, 3, 6] }, session_id: 4474906212124391782, pack_type: FloodResponse(FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (3, Drone), (4, Client), (1, Drone)] }) }
+Client 7 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (3, Drone), (8, Server), (2, Drone)] }
 Sent response to 5
+Client 7 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (3, Drone), (4, Client), (1, Drone)] }
+Sent response to 3
+Server 8 received floodresponse for FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (2, Drone), (8, Server), (1, Drone)] }
+Server 8 forwarding floodresponse to 2
+Client 6 received FloodResponse: FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (6, Client), (3, Drone)] }
+Sent response to 7
+Client 7 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (3, Drone), (5, Client), (1, Drone)] }
+Sent response to 7
+Sent response to 4
+Client 4 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (1, Drone), (7, Client), (3, Drone)] }
+Sent response to 3
+Client 4 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (2, Drone), (5, Client), (3, Drone)] }
+Sent response to 8
+Client 5 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (1, Drone), (7, Client), (3, Drone)] }
+Client 5 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (1, Drone), (5, Client), (2, Drone)] }
+Server 8 received floodresponse for FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (3, Drone), (8, Server), (1, Drone)] }
+Sent response to 7
+Sent response to 4
+Client 4 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (2, Drone), (6, Client), (3, Drone)] }
+[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 5, 1, 6] }, session_id: 13378810926537524899, pack_type: FloodResponse(FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (1, Drone), (5, Client), (2, Drone)] }) }
+Server 8 forwarding floodresponse to 3
+Client 5 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (3, Drone), (5, Client), (1, Drone)] }
+[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 5, 3, 6] }, session_id: 4474906212124391782, pack_type: FloodResponse(FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (3, Drone), (5, Client), (1, Drone)] }) }
+Server 8 received floodrequest for FloodRequest { flood_id: 2282202463429378510, initiator_id: 8, path_trace: [(8, Server), (3, Drone), (2, Drone)] }
+Client 5: Received flood request: FloodRequest { flood_id: 2282202463429378510, initiator_id: 8, path_trace: [(8, Server), (3, Drone), (2, Drone)] }
+Client 7 received FloodResponse: FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (7, Client), (3, Drone)] }
+Sent response to 8
+[Client 6] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 6, 1, 8] }, session_id: 3639259067753663648, pack_type: FloodResponse(FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (6, Client), (3, Drone)] }) }
+Sent response to 7
+Client 6 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (3, Drone), (7, Client), (2, Drone)] }
+Sent response to 7
+Client 6 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (3, Drone), (4, Client), (2, Drone)] }
 Sent response to 5
-Server 8 received floodresponse for FloodResponse { flood_id: 1510996182529290683, path_trace: [(8, Server), (3, Drone), (2, Drone), (8, Server), (3, Drone)] }
-[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 5, 2, 1, 8] }, session_id: 8736621621284047275, pack_type: FloodResponse(FloodResponse { flood_id: 3281652466879463382, path_trace: [(8, Server), (1, Drone), (2, Drone), (5, Client), (1, Drone)] }) }
-Server 8 received floodresponse for FloodResponse { flood_id: 3281652466879463382, path_trace: [(8, Server), (1, Drone), (3, Drone), (2, Drone)] }
-Server 8 received floodresponse for FloodResponse { flood_id: 1505637804302278152, path_trace: [(8, Server), (2, Drone), (3, Drone), (1, Drone)] }
-Client 5: Received flood request: FloodRequest { flood_id: 1505637804302278152, initiator_id: 8, path_trace: [(8, Server), (2, Drone), (3, Drone)] }
-Server 8 received floodresponse for FloodResponse { flood_id: 1510996182529290683, path_trace: [(8, Server), (3, Drone), (1, Drone), (2, Drone)] }
-Server 8 received floodresponse for FloodResponse { flood_id: 1505637804302278152, path_trace: [(8, Server), (2, Drone), (3, Drone), (8, Server), (1, Drone)] }
+Client 6 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (2, Drone), (6, Client), (1, Drone)] }
+Sent response to 8
+[Client 6] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 6, 2, 5] }, session_id: 17896652646274700825, pack_type: FloodResponse(FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (2, Drone), (6, Client), (1, Drone)] }) }
+Server 8 received floodrequest for FloodRequest { flood_id: 11881917453545781236, initiator_id: 8, path_trace: [(8, Server), (2, Drone), (1, Drone)] }
+Client 5: Received flood request: FloodRequest { flood_id: 11881917453545781236, initiator_id: 8, path_trace: [(8, Server), (2, Drone), (1, Drone)] }
+Client 5 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (1, Drone), (7, Client), (2, Drone)] }
+Client 5 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (1, Drone), (4, Client), (2, Drone)] }
 Sent response to 5
-Client 5: Received flood request: FloodRequest { flood_id: 3281652466879463382, initiator_id: 8, path_trace: [(8, Server), (1, Drone), (3, Drone)] }
+Sent response to 8
+[Client 7] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 7, 1, 8] }, session_id: 3639259067753663648, pack_type: FloodResponse(FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (7, Client), (3, Drone)] }) }
+Sent response to 8
+Client 4 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (2, Drone), (5, Client), (1, Drone)] }
+Client 4 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (1, Drone), (6, Client), (3, Drone)] }
+Sent response to 7
+Client 6 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (2, Drone), (6, Client), (1, Drone)] }
+Sent response to 4
 Sent response to 5
-Server 8 received floodresponse for FloodResponse { flood_id: 1505637804302278152, path_trace: [(8, Server), (2, Drone), (3, Drone), (8, Server), (2, Drone)] }
-Client 5: Received flood request: FloodRequest { flood_id: 1510996182529290683, initiator_id: 8, path_trace: [(8, Server), (3, Drone), (1, Drone)] }
+[Client 6] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 6, 2, 7] }, session_id: 1162444520864167555, pack_type: FloodResponse(FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (2, Drone), (6, Client), (1, Drone)] }) }
+Sent response to 6
+Client 6 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (2, Drone), (3, Drone)] }
+Server 8 received floodrequest for FloodRequest { flood_id: 2282202463429378510, initiator_id: 8, path_trace: [(8, Server), (3, Drone), (1, Drone)] }
+Client 6: Received flood request: FloodRequest { flood_id: 2282202463429378510, initiator_id: 8, path_trace: [(8, Server), (3, Drone), (2, Drone)] }
+Client 7 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (3, Drone), (8, Server), (1, Drone)] }
+Client 7 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (3, Drone), (7, Client), (1, Drone)] }
+[Client 7] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 7, 3, 6] }, session_id: 4474906212124391782, pack_type: FloodResponse(FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (3, Drone), (7, Client), (1, Drone)] }) }
+Client 7 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (1, Drone), (7, Client), (2, Drone)] }
+Sent response to 1
 Sent response to 5
+Client 4 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (1, Drone), (7, Client), (2, Drone)] }
+Sent response to 4
+Client 4: Received flood request: FloodRequest { flood_id: 2282202463429378510, initiator_id: 8, path_trace: [(8, Server), (3, Drone), (2, Drone)] }
+Sent response to 6
+Sent response to 8
+Sent response to 7
+Sent response to 4
 Sent response to 5
-Server 8 received floodresponse for FloodResponse { flood_id: 3281652466879463382, path_trace: [(8, Server), (1, Drone), (3, Drone), (8, Server), (1, Drone)] }
-Client 5 received FloodResponse: FloodResponse { flood_id: 7853805352038326837, path_trace: [(5, Client), (2, Drone), (8, Server), (1, Drone)] }
+Sent response to 6
+Sent response to 2
 Sent response to 5
-Server 8 received floodresponse for FloodResponse { flood_id: 3281652466879463382, path_trace: [(8, Server), (1, Drone), (3, Drone), (8, Server), (2, Drone)] }
-Client 5 received FloodResponse: FloodResponse { flood_id: 1505637804302278152, path_trace: [(8, Server), (2, Drone), (5, Client), (3, Drone)] }
-Server 8 received floodresponse for FloodResponse { flood_id: 1510996182529290683, path_trace: [(8, Server), (3, Drone), (1, Drone), (8, Server), (3, Drone)] }
+Sent response to 4
+Sent response to 6
 Sent response to 5
-[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 5, 2, 8] }, session_id: 1652833031050890279, pack_type: FloodResponse(FloodResponse { flood_id: 1505637804302278152, path_trace: [(8, Server), (2, Drone), (5, Client), (3, Drone)] }) }
-Server 8 received floodresponse for FloodResponse { flood_id: 1510996182529290683, path_trace: [(8, Server), (3, Drone), (1, Drone), (8, Server), (2, Drone)] }
+Sent response to 8
+Sent response to 6
+Sent response to 4
+Client 5: Received flood request: FloodRequest { flood_id: 2282202463429378510, initiator_id: 8, path_trace: [(8, Server), (3, Drone), (1, Drone)] }
+Client 5 received FloodResponse: FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (5, Client), (2, Drone)] }
+[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 5, 3, 8] }, session_id: 16449008476626218085, pack_type: FloodResponse(FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (5, Client), (2, Drone)] }) }
 Server 8 received fragment 0
-Client 5 received FloodResponse: FloodResponse { flood_id: 3281652466879463382, path_trace: [(8, Server), (1, Drone), (5, Client), (3, Drone)] }
 Server 8 send ACK from fragment 0
-[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 5, 1, 8] }, session_id: 8736621621284047275, pack_type: FloodResponse(FloodResponse { flood_id: 3281652466879463382, path_trace: [(8, Server), (1, Drone), (5, Client), (3, Drone)] }) }
-Client 5 received FloodResponse: FloodResponse { flood_id: 3281652466879463382, path_trace: [(8, Server), (1, Drone), (2, Drone), (5, Client), (3, Drone)] }
-[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 5, 2, 1, 8] }, session_id: 8736621621284047275, pack_type: FloodResponse(FloodResponse { flood_id: 3281652466879463382, path_trace: [(8, Server), (1, Drone), (2, Drone), (5, Client), (3, Drone)] }) }
-Client 5 received FloodResponse: FloodResponse { flood_id: 7853805352038326837, path_trace: [(5, Client), (1, Drone), (8, Server), (2, Drone)] }
-Client 5 received FloodResponse: FloodResponse { flood_id: 1505637804302278152, path_trace: [(8, Server), (2, Drone), (1, Drone), (5, Client), (2, Drone)] }
-[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 5, 1, 2, 8] }, session_id: 1652833031050890279, pack_type: FloodResponse(FloodResponse { flood_id: 1505637804302278152, path_trace: [(8, Server), (2, Drone), (1, Drone), (5, Client), (2, Drone)] }) }
-Client 5 received FloodResponse: FloodResponse { flood_id: 1505637804302278152, path_trace: [(8, Server), (2, Drone), (1, Drone), (5, Client), (3, Drone)] }
-[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 5, 1, 2, 8] }, session_id: 1652833031050890279, pack_type: FloodResponse(FloodResponse { flood_id: 1505637804302278152, path_trace: [(8, Server), (2, Drone), (1, Drone), (5, Client), (3, Drone)] }) }
-Client 5 received FloodResponse: FloodResponse { flood_id: 7853805352038326837, path_trace: [(5, Client), (3, Drone), (8, Server), (2, Drone)] }
-Client 5 received FloodResponse: FloodResponse { flood_id: 7853805352038326837, path_trace: [(5, Client), (3, Drone), (8, Server), (1, Drone)] }
-Client 5 received FloodResponse: FloodResponse { flood_id: 7853805352038326837, path_trace: [(5, Client), (1, Drone), (8, Server), (3, Drone)] }
-Client 5 received FloodResponse: FloodResponse { flood_id: 1510996182529290683, path_trace: [(8, Server), (3, Drone), (5, Client), (1, Drone)] }
-[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 5, 3, 8] }, session_id: 3190837285212710107, pack_type: FloodResponse(FloodResponse { flood_id: 1510996182529290683, path_trace: [(8, Server), (3, Drone), (5, Client), (1, Drone)] }) }
-Client 5 received FloodResponse: FloodResponse { flood_id: 7853805352038326837, path_trace: [(5, Client), (2, Drone), (8, Server), (3, Drone)] }
-Client 5 received FloodResponse: FloodResponse { flood_id: 1510996182529290683, path_trace: [(8, Server), (3, Drone), (5, Client), (2, Drone)] }
-[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 5, 3, 8] }, session_id: 3190837285212710107, pack_type: FloodResponse(FloodResponse { flood_id: 1510996182529290683, path_trace: [(8, Server), (3, Drone), (5, Client), (2, Drone)] }) }
-Client 5 received FloodResponse: FloodResponse { flood_id: 1510996182529290683, path_trace: [(8, Server), (3, Drone), (2, Drone), (5, Client), (1, Drone)] }
-[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 5, 2, 3, 8] }, session_id: 3190837285212710107, pack_type: FloodResponse(FloodResponse { flood_id: 1510996182529290683, path_trace: [(8, Server), (3, Drone), (2, Drone), (5, Client), (1, Drone)] }) }
-Client 5 received FloodResponse: FloodResponse { flood_id: 1510996182529290683, path_trace: [(8, Server), (3, Drone), (2, Drone), (5, Client), (3, Drone)] }
-[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 5, 2, 3, 8] }, session_id: 3190837285212710107, pack_type: FloodResponse(FloodResponse { flood_id: 1510996182529290683, path_trace: [(8, Server), (3, Drone), (2, Drone), (5, Client), (3, Drone)] }) }
-Client 5 received FloodResponse: FloodResponse { flood_id: 1505637804302278152, path_trace: [(8, Server), (2, Drone), (3, Drone), (5, Client), (1, Drone)] }
-[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 5, 3, 2, 8] }, session_id: 1652833031050890279, pack_type: FloodResponse(FloodResponse { flood_id: 1505637804302278152, path_trace: [(8, Server), (2, Drone), (3, Drone), (5, Client), (1, Drone)] }) }
-Client 5 received FloodResponse: FloodResponse { flood_id: 1505637804302278152, path_trace: [(8, Server), (2, Drone), (3, Drone), (5, Client), (2, Drone)] }
-[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 5, 3, 2, 8] }, session_id: 1652833031050890279, pack_type: FloodResponse(FloodResponse { flood_id: 1505637804302278152, path_trace: [(8, Server), (2, Drone), (3, Drone), (5, Client), (2, Drone)] }) }
-Client 5 received FloodResponse: FloodResponse { flood_id: 3281652466879463382, path_trace: [(8, Server), (1, Drone), (3, Drone), (5, Client), (1, Drone)] }
-[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 5, 3, 1, 8] }, session_id: 8736621621284047275, pack_type: FloodResponse(FloodResponse { flood_id: 3281652466879463382, path_trace: [(8, Server), (1, Drone), (3, Drone), (5, Client), (1, Drone)] }) }
-Client 5 received FloodResponse: FloodResponse { flood_id: 3281652466879463382, path_trace: [(8, Server), (1, Drone), (3, Drone), (5, Client), (2, Drone)] }
-[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 5, 3, 1, 8] }, session_id: 8736621621284047275, pack_type: FloodResponse(FloodResponse { flood_id: 3281652466879463382, path_trace: [(8, Server), (1, Drone), (3, Drone), (5, Client), (2, Drone)] }) }
-Client 5 received FloodResponse: FloodResponse { flood_id: 1510996182529290683, path_trace: [(8, Server), (3, Drone), (1, Drone), (5, Client), (3, Drone)] }
-[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 5, 1, 3, 8] }, session_id: 3190837285212710107, pack_type: FloodResponse(FloodResponse { flood_id: 1510996182529290683, path_trace: [(8, Server), (3, Drone), (1, Drone), (5, Client), (3, Drone)] }) }
-Client 5 received FloodResponse: FloodResponse { flood_id: 1510996182529290683, path_trace: [(8, Server), (3, Drone), (1, Drone), (5, Client), (2, Drone)] }
-[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 5, 1, 3, 8] }, session_id: 3190837285212710107, pack_type: FloodResponse(FloodResponse { flood_id: 1510996182529290683, path_trace: [(8, Server), (3, Drone), (1, Drone), (5, Client), (2, Drone)] }) }
-COMMAND: Requesting text file 1 from server 8
-Client 5 requesting text file 1 from server 8
-Client 5: Sending text message to server 8
-[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 1, hops: [5, 1, 8] }, session_id: 9236317523673795541, pack_type: MsgFragment(Fragment { fragment_index: 0, total_n_fragments: 1, length: 30, data: [123, 34, 67, 104, 97, 116, 34, 58, 123, 34, 84, 101, 120, 116, 70, 105, 108, 101, 82, 101, 113, 117, 101, 115, 116, 34, 58, 49, 125, 125, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }) }
+Client 5 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (2, Drone), (8, Server), (3, Drone)] }
+Client 4 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (2, Drone), (7, Client), (1, Drone)] }
+Route:[8, 3, 5]
+Client 4 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (2, Drone), (8, Server), (3, Drone)] }
+Sent response to 5
+Client 6 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (2, Drone), (1, Drone)] }
+[Client 7] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 7, 1, 6] }, session_id: 13378810926537524899, pack_type: FloodResponse(FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (1, Drone), (7, Client), (2, Drone)] }) }
+Client 6 received FloodResponse: FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (6, Client), (2, Drone)] }
+Client 5 requested server type from server 8
+[Client 6] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 6, 3, 8] }, session_id: 16449008476626218085, pack_type: FloodResponse(FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (6, Client), (2, Drone)] }) }
+Client 7: Received flood request: FloodRequest { flood_id: 2282202463429378510, initiator_id: 8, path_trace: [(8, Server), (3, Drone), (2, Drone)] }
+Server 8 sending message to 5
+Client 7: Received flood request: FloodRequest { flood_id: 11881917453545781236, initiator_id: 8, path_trace: [(8, Server), (2, Drone), (1, Drone)] }
+Client 6: Received flood request: FloodRequest { flood_id: 11881917453545781236, initiator_id: 8, path_trace: [(8, Server), (2, Drone), (1, Drone)] }
+Sent response to 7
+Client 5 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (2, Drone), (7, Client), (1, Drone)] }
+Sent response to 5
+Client 5: Received flood request: FloodRequest { flood_id: 4491536837388651373, initiator_id: 8, path_trace: [(8, Server), (1, Drone), (2, Drone)] }
+Client 7: Received flood request: FloodRequest { flood_id: 2282202463429378510, initiator_id: 8, path_trace: [(8, Server), (3, Drone), (1, Drone)] }
+Client 5 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (2, Drone), (6, Client), (3, Drone)] }
+Client 6: Received flood request: FloodRequest { flood_id: 2282202463429378510, initiator_id: 8, path_trace: [(8, Server), (3, Drone), (1, Drone)] }
+Sent response to 5
+Client 4 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (1, Drone), (5, Client), (3, Drone)] }
+Sent response to 8
+Sent response to 6
+Sent response to 5
+Client 5 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (2, Drone), (4, Client), (1, Drone)] }
+Server 8 received fragment 0
+Server 8 send ACK from fragment 0
+Route:[8, 3, 4]
+Client 6 received FloodResponse: FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (6, Client), (1, Drone)] }
+[Client 6] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 6, 2, 8] }, session_id: 7263325517014545140, pack_type: FloodResponse(FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (6, Client), (1, Drone)] }) }
+Client 6: Received flood request: FloodRequest { flood_id: 4491536837388651373, initiator_id: 8, path_trace: [(8, Server), (1, Drone), (2, Drone)] }
+Client 6 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (2, Drone), (7, Client), (3, Drone)] }
+Client 6 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (3, Drone), (5, Client), (2, Drone)] }
+Sent response to 6
+Sent response to 8
+Sent response to 7
+Sent response to 6
+Client 5 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (1, Drone), (4, Client), (3, Drone)] }
+Client 4 requested server type from server 8
+Server 8 sending message to 4
+Client 4: Received flood request: FloodRequest { flood_id: 11881917453545781236, initiator_id: 8, path_trace: [(8, Server), (2, Drone), (1, Drone)] }
+Client 6 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (2, Drone), (8, Server), (3, Drone)] }
+Server 8 received floodrequest for FloodRequest { flood_id: 4491536837388651373, initiator_id: 8, path_trace: [(8, Server), (1, Drone), (2, Drone)] }
+Client 6 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (1, Drone), (3, Drone)] }
+Sent response to 8
+Sent response to 4
+Sent response to 7
+Client 5 received FloodResponse: FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (5, Client), (1, Drone)] }
+[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 5, 2, 8] }, session_id: 7263325517014545140, pack_type: FloodResponse(FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (5, Client), (1, Drone)] }) }
+Client 4 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (1, Drone), (5, Client), (2, Drone)] }
+Client 4 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (1, Drone), (8, Server), (2, Drone)] }
+Client 4: Received flood request: FloodRequest { flood_id: 2282202463429378510, initiator_id: 8, path_trace: [(8, Server), (3, Drone), (1, Drone)] }
+Client 7 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (2, Drone), (5, Client), (3, Drone)] }
+Server 8 received floodresponse for FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (3, Drone), (8, Server), (2, Drone)] }
+Client 7 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (3, Drone), (6, Client), (1, Drone)] }
+Client 6 received FloodResponse: FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (6, Client), (1, Drone)] }
+[Client 6] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 6, 3, 8] }, session_id: 16449008476626218085, pack_type: FloodResponse(FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (6, Client), (1, Drone)] }) }
+Sent response to 5
+Sent response to 7
+Sent response to 7
+Sent response to 6
+Sent response to 5
+Sent response to 7
+Sent response to 6
+Sent response to 4
+Sent response to 4
+Client 5 received FloodResponse: FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (5, Client), (1, Drone)] }
+Client 4 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (1, Drone), (4, Client), (2, Drone)] }
+Client 7 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (2, Drone), (8, Server), (3, Drone)] }
+Client 7: Received flood request: FloodRequest { flood_id: 4491536837388651373, initiator_id: 8, path_trace: [(8, Server), (1, Drone), (2, Drone)] }
+Client 7 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (1, Drone), (4, Client), (3, Drone)] }
+Server 8 received floodresponse for FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (3, Drone), (8, Server), (1, Drone)] }
+Sent response to 7
+Sent response to 6
+[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 5, 3, 8] }, session_id: 16449008476626218085, pack_type: FloodResponse(FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (5, Client), (1, Drone)] }) }
+[Client 4] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 4, 1, 6] }, session_id: 13378810926537524899, pack_type: FloodResponse(FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (1, Drone), (4, Client), (2, Drone)] }) }
+Client 7 received FloodResponse: FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (7, Client), (2, Drone)] }
+[Client 7] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 7, 3, 8] }, session_id: 16449008476626218085, pack_type: FloodResponse(FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (7, Client), (2, Drone)] }) }
+Client 4 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (2, Drone), (6, Client), (1, Drone)] }
+Client 4: Received flood request: FloodRequest { flood_id: 4491536837388651373, initiator_id: 8, path_trace: [(8, Server), (1, Drone), (2, Drone)] }
+Client 7 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (2, Drone), (4, Client), (1, Drone)] }
+Client 6 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (3, Drone), (8, Server), (2, Drone)] }
+Server 8 received floodresponse for FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (2, Drone), (8, Server), (3, Drone)] }
+Sent response to 4
+Server 8 received floodresponse for FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (3, Drone), (8, Server), (2, Drone)] }
+Sent response to 6
+Client 5 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (1, Drone), (6, Client), (3, Drone)] }
+Sent response to 4
+Client 5 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (1, Drone), (8, Server), (3, Drone)] }
+Client 5 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (1, Drone), (8, Server), (2, Drone)] }
+Client 5 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (1, Drone), (6, Client), (2, Drone)] }
+Client 4 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (2, Drone), (8, Server), (1, Drone)] }
+Client 6 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (2, Drone), (4, Client), (3, Drone)] }
+Client 6 received FloodResponse: FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (6, Client), (2, Drone)] }
+Client 4 received FloodResponse: FloodResponse { flood_id: 2034403035045039033, path_trace: [(4, Client), (1, Drone), (8, Server), (3, Drone)] }
+Client 4 received FloodResponse: FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (4, Client), (2, Drone)] }
+Server 8 received floodresponse for FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (3, Drone), (8, Server), (1, Drone)] }
+Client 7 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (2, Drone), (6, Client), (3, Drone)] }
+Server 8 received floodresponse for FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (1, Drone), (8, Server), (3, Drone)] }
+Server 8 received floodresponse for FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (5, Client), (3, Drone)] }
+Client 7 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (1, Drone), (4, Client), (2, Drone)] }
+[Client 6] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 6, 1, 8] }, session_id: 3639259067753663648, pack_type: FloodResponse(FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (6, Client), (2, Drone)] }) }
+Client 7 received FloodResponse: FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (7, Client), (1, Drone)] }
+[Client 7] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 7, 2, 8] }, session_id: 7263325517014545140, pack_type: FloodResponse(FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (7, Client), (1, Drone)] }) }
+Client 5 received FloodResponse: FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (2, Drone), (5, Client), (3, Drone)] }
+Client 7 received FloodResponse: FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (7, Client), (2, Drone)] }
+[Client 7] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 7, 1, 8] }, session_id: 3639259067753663648, pack_type: FloodResponse(FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (7, Client), (2, Drone)] }) }
+Server 8 received fragment 0
+Sent response to 8
+Client 7 received FloodResponse: FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (3, Drone), (7, Client), (2, Drone)] }
+[Client 4] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 4, 3, 8] }, session_id: 16449008476626218085, pack_type: FloodResponse(FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (4, Client), (2, Drone)] }) }
+Server 8 send ACK from fragment 0
+Route:[8, 2, 7]
+Client 6 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (3, Drone), (4, Client), (1, Drone)] }
+[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 5, 2, 3, 8] }, session_id: 16449008476626218085, pack_type: FloodResponse(FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (2, Drone), (5, Client), (3, Drone)] }) }
+Sent response to 4
+[Client 7] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 7, 3, 2, 8] }, session_id: 7263325517014545140, pack_type: FloodResponse(FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (3, Drone), (7, Client), (2, Drone)] }) }
+Sent response to 7
+Client 7 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (1, Drone), (8, Server), (3, Drone)] }
+Sent response to 4
+Client 7 received FloodResponse: FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (7, Client), (1, Drone)] }
+[Client 7] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 7, 3, 8] }, session_id: 16449008476626218085, pack_type: FloodResponse(FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (7, Client), (1, Drone)] }) }
+Client 4 received FloodResponse: FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (4, Client), (2, Drone)] }
+[Client 4] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 4, 1, 8] }, session_id: 3639259067753663648, pack_type: FloodResponse(FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (4, Client), (2, Drone)] }) }
+Client 7 requested server type from server 8
+Server 8 sending message to 7
+Client 4 received FloodResponse: FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (4, Client), (1, Drone)] }
+[Client 4] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 4, 2, 8] }, session_id: 7263325517014545140, pack_type: FloodResponse(FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (4, Client), (1, Drone)] }) }
+Client 5 received FloodResponse: FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (5, Client), (2, Drone)] }
+Client 4 received FloodResponse: FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (4, Client), (1, Drone)] }
+[Client 4] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 4, 3, 8] }, session_id: 16449008476626218085, pack_type: FloodResponse(FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (4, Client), (1, Drone)] }) }
+[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 5, 1, 8] }, session_id: 3639259067753663648, pack_type: FloodResponse(FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (5, Client), (2, Drone)] }) }
+Client 7 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (1, Drone), (5, Client), (3, Drone)] }
+Server 8 received fragment 0
+Server 8 send ACK from fragment 0
+Route:[8, 2, 6]
+Client 7 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (1, Drone), (6, Client), (3, Drone)] }
+Client 7 received FloodResponse: FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (3, Drone), (7, Client), (1, Drone)] }
+Client 6 requested server type from server 8
+[Client 7] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 7, 3, 2, 8] }, session_id: 7263325517014545140, pack_type: FloodResponse(FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (3, Drone), (7, Client), (1, Drone)] }) }
+Server 8 sending message to 6
+Client 7 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (2, Drone), (5, Client), (1, Drone)] }
+Client 7 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (1, Drone), (8, Server), (2, Drone)] }
+Client 5 received FloodResponse: FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (1, Drone), (5, Client), (3, Drone)] }
+Client 6 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (2, Drone), (7, Client), (1, Drone)] }
+Client 7 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (1, Drone), (6, Client), (2, Drone)] }
+Client 4 received FloodResponse: FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (3, Drone), (4, Client), (2, Drone)] }
+[Client 4] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 4, 3, 2, 8] }, session_id: 7263325517014545140, pack_type: FloodResponse(FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (3, Drone), (4, Client), (2, Drone)] }) }
+[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 5, 1, 2, 8] }, session_id: 7263325517014545140, pack_type: FloodResponse(FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (1, Drone), (5, Client), (3, Drone)] }) }
+Client 4 received FloodResponse: FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (3, Drone), (4, Client), (2, Drone)] }
+[Client 4] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 4, 3, 1, 8] }, session_id: 3639259067753663648, pack_type: FloodResponse(FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (3, Drone), (4, Client), (2, Drone)] }) }
+Client 5 received FloodResponse: FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (3, Drone), (5, Client), (2, Drone)] }
+Client 4 received FloodResponse: FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (3, Drone), (4, Client), (1, Drone)] }
+[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 5, 3, 2, 8] }, session_id: 7263325517014545140, pack_type: FloodResponse(FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (3, Drone), (5, Client), (2, Drone)] }) }
+Client 6 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (2, Drone), (4, Client), (1, Drone)] }
+Client 5 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (2, Drone), (8, Server), (1, Drone)] }
+Client 6 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (1, Drone), (8, Server), (3, Drone)] }
+[Client 4] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 4, 3, 2, 8] }, session_id: 7263325517014545140, pack_type: FloodResponse(FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (3, Drone), (4, Client), (1, Drone)] }) }
+Client 4 received FloodResponse: FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (3, Drone), (4, Client), (1, Drone)] }
+[Client 4] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 4, 3, 1, 8] }, session_id: 3639259067753663648, pack_type: FloodResponse(FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (3, Drone), (4, Client), (1, Drone)] }) }
+Client 4 received FloodResponse: FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (2, Drone), (4, Client), (1, Drone)] }
+Server 8 received floodresponse for FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (4, Client), (3, Drone)] }
+Server 8 received floodresponse for FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (7, Client), (3, Drone)] }
+Server 8 received floodresponse for FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (6, Client), (3, Drone)] }
+Client 7 received FloodResponse: FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (3, Drone), (7, Client), (2, Drone)] }
+Client 5 received FloodResponse: FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (3, Drone), (5, Client), (2, Drone)] }
+[Client 7] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 7, 3, 1, 8] }, session_id: 3639259067753663648, pack_type: FloodResponse(FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (3, Drone), (7, Client), (2, Drone)] }) }
+Client 7 received FloodResponse: FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (3, Drone), (7, Client), (1, Drone)] }
+Client 6 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (1, Drone), (2, Drone)] }
+[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 5, 3, 1, 8] }, session_id: 3639259067753663648, pack_type: FloodResponse(FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (3, Drone), (5, Client), (2, Drone)] }) }
+Client 5 received FloodResponse: FloodResponse { flood_id: 14921803900745694004, path_trace: [(5, Client), (2, Drone), (6, Client), (1, Drone)] }
+[Client 4] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 4, 2, 3, 8] }, session_id: 16449008476626218085, pack_type: FloodResponse(FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (2, Drone), (4, Client), (1, Drone)] }) }
+Client 4 received FloodResponse: FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (2, Drone), (4, Client), (3, Drone)] }
+[Client 7] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 7, 3, 1, 8] }, session_id: 3639259067753663648, pack_type: FloodResponse(FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (3, Drone), (7, Client), (1, Drone)] }) }
+Client 6 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (3, Drone), (8, Server), (1, Drone)] }
+Client 7 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (2, Drone), (8, Server), (1, Drone)] }
+Client 7 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (1, Drone), (5, Client), (2, Drone)] }
+Client 6 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (3, Drone), (5, Client), (1, Drone)] }
+Client 7 received FloodResponse: FloodResponse { flood_id: 18007704237500113926, path_trace: [(7, Client), (2, Drone), (6, Client), (1, Drone)] }
+Client 7 received FloodResponse: FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (2, Drone), (7, Client), (1, Drone)] }
+Client 6 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (2, Drone), (5, Client), (3, Drone)] }
+Client 6 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (1, Drone), (7, Client), (3, Drone)] }
+Client 6 received FloodResponse: FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (3, Drone), (6, Client), (2, Drone)] }
+[Client 6] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 6, 3, 2, 8] }, session_id: 7263325517014545140, pack_type: FloodResponse(FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (3, Drone), (6, Client), (2, Drone)] }) }
+Client 6 received FloodResponse: FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (3, Drone), (6, Client), (2, Drone)] }
+Server 8 received floodresponse for FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (3, Drone), (1, Drone)] }
+Server 8 received floodresponse for FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (1, Drone), (8, Server), (2, Drone)] }
+Server 8 received floodresponse for FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (5, Client), (3, Drone)] }
+Server 8 received floodresponse for FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (4, Client), (3, Drone)] }
+Server 8 received floodresponse for FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (3, Drone), (2, Drone)] }
+[Client 7] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 7, 2, 3, 8] }, session_id: 16449008476626218085, pack_type: FloodResponse(FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (2, Drone), (7, Client), (1, Drone)] }) }
+Client 7 received FloodResponse: FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (1, Drone), (7, Client), (2, Drone)] }
+[Client 7] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 7, 1, 2, 8] }, session_id: 7263325517014545140, pack_type: FloodResponse(FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (1, Drone), (7, Client), (2, Drone)] }) }
+Client 5 received FloodResponse: FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (1, Drone), (5, Client), (2, Drone)] }
+[Client 4] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 4, 2, 3, 8] }, session_id: 16449008476626218085, pack_type: FloodResponse(FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (2, Drone), (4, Client), (3, Drone)] }) }
+[Client 6] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 6, 3, 1, 8] }, session_id: 3639259067753663648, pack_type: FloodResponse(FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (3, Drone), (6, Client), (2, Drone)] }) }
+Client 6 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (2, Drone), (5, Client), (1, Drone)] }
+Server 8 received floodresponse for FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (2, Drone), (8, Server), (1, Drone)] }
+Client 7 received FloodResponse: FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (1, Drone), (7, Client), (2, Drone)] }
+[Client 7] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 7, 1, 3, 8] }, session_id: 16449008476626218085, pack_type: FloodResponse(FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (1, Drone), (7, Client), (2, Drone)] }) }
+[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 5, 1, 2, 8] }, session_id: 7263325517014545140, pack_type: FloodResponse(FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (1, Drone), (5, Client), (2, Drone)] }) }
+Client 4 received FloodResponse: FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (1, Drone), (4, Client), (2, Drone)] }
+Client 5 received FloodResponse: FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (3, Drone), (5, Client), (1, Drone)] }
+Client 6 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (2, Drone), (8, Server), (1, Drone)] }
+Client 6 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (1, Drone), (5, Client), (3, Drone)] }
+Client 6 received FloodResponse: FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (3, Drone), (6, Client), (1, Drone)] }
+[Client 6] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 6, 3, 2, 8] }, session_id: 7263325517014545140, pack_type: FloodResponse(FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (3, Drone), (6, Client), (1, Drone)] }) }
+Client 6 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (1, Drone), (4, Client), (3, Drone)] }
+Client 6 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (1, Drone), (8, Server), (2, Drone)] }
+Client 6 received FloodResponse: FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (3, Drone), (6, Client), (1, Drone)] }
+Server 8 received floodresponse for FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (6, Client), (3, Drone)] }
+Client 7 received FloodResponse: FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (2, Drone), (7, Client), (3, Drone)] }
+[Client 7] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 7, 2, 3, 8] }, session_id: 16449008476626218085, pack_type: FloodResponse(FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (2, Drone), (7, Client), (3, Drone)] }) }
+[Client 4] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 4, 1, 2, 8] }, session_id: 7263325517014545140, pack_type: FloodResponse(FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (1, Drone), (4, Client), (2, Drone)] }) }
+[Client 6] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 6, 3, 1, 8] }, session_id: 3639259067753663648, pack_type: FloodResponse(FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (3, Drone), (6, Client), (1, Drone)] }) }
+Server 8 received floodresponse for FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (7, Client), (3, Drone)] }
+Client 6 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (1, Drone), (5, Client), (2, Drone)] }
+Server 8 received floodresponse for FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (2, Drone), (3, Drone)] }
+[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 5, 3, 2, 8] }, session_id: 7263325517014545140, pack_type: FloodResponse(FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (3, Drone), (5, Client), (1, Drone)] }) }
+Client 7 received FloodResponse: FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (1, Drone), (7, Client), (3, Drone)] }
+Client 4 received FloodResponse: FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (1, Drone), (4, Client), (2, Drone)] }
+Client 5 received FloodResponse: FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (3, Drone), (5, Client), (1, Drone)] }
+[Client 4] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 4, 1, 3, 8] }, session_id: 16449008476626218085, pack_type: FloodResponse(FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (1, Drone), (4, Client), (2, Drone)] }) }
+Server 8 received floodresponse for FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (1, Drone), (8, Server), (2, Drone)] }
+Client 6 received FloodResponse: FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (2, Drone), (6, Client), (1, Drone)] }
+Client 4: Received ACK for fragment 0
+[Client 7] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 7, 1, 2, 8] }, session_id: 7263325517014545140, pack_type: FloodResponse(FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (1, Drone), (7, Client), (3, Drone)] }) }
+[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 5, 3, 1, 8] }, session_id: 3639259067753663648, pack_type: FloodResponse(FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (3, Drone), (5, Client), (1, Drone)] }) }
+Client 7 received FloodResponse: FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (1, Drone), (7, Client), (3, Drone)] }
+Client 5 received FloodResponse: FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (2, Drone), (5, Client), (1, Drone)] }
+[Client 6] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 6, 2, 3, 8] }, session_id: 16449008476626218085, pack_type: FloodResponse(FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (2, Drone), (6, Client), (1, Drone)] }) }
+Client 4 received FloodResponse: FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (2, Drone), (4, Client), (1, Drone)] }
+Server 8 received floodresponse for FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (1, Drone), (3, Drone)] }
+[Client 4] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 4, 2, 1, 8] }, session_id: 3639259067753663648, pack_type: FloodResponse(FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (2, Drone), (4, Client), (1, Drone)] }) }
+[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 5, 2, 3, 8] }, session_id: 16449008476626218085, pack_type: FloodResponse(FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (2, Drone), (5, Client), (1, Drone)] }) }
+[Client 7] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 7, 1, 3, 8] }, session_id: 16449008476626218085, pack_type: FloodResponse(FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (1, Drone), (7, Client), (3, Drone)] }) }
+Client 4: Received fragment 0
+Client 6 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (1, Drone), (7, Client), (2, Drone)] }
+Server 8 received floodresponse for FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (1, Drone), (8, Server), (3, Drone)] }
+Client 6 received FloodResponse: FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (2, Drone), (6, Client), (3, Drone)] }
+[Client 6] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 6, 2, 3, 8] }, session_id: 16449008476626218085, pack_type: FloodResponse(FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (2, Drone), (6, Client), (3, Drone)] }) }
+Client 5 received FloodResponse: FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (2, Drone), (5, Client), (1, Drone)] }
+Client 6 received FloodResponse: FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (2, Drone), (6, Client), (1, Drone)] }
+Client 7 received FloodResponse: FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (2, Drone), (7, Client), (1, Drone)] }
+[Client 7] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 7, 2, 1, 8] }, session_id: 3639259067753663648, pack_type: FloodResponse(FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (2, Drone), (7, Client), (1, Drone)] }) }
+Client 7: Received ACK for fragment 0
+Server 8 received floodresponse for FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (2, Drone), (8, Server), (1, Drone)] }
+Server 8 received floodresponse for FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (1, Drone), (2, Drone)] }
+Server 8 received floodresponse for FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (5, Client), (2, Drone)] }
+Server 8 received floodresponse for FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (6, Client), (2, Drone)] }
+[Client 6] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 6, 2, 1, 8] }, session_id: 3639259067753663648, pack_type: FloodResponse(FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (2, Drone), (6, Client), (1, Drone)] }) }
+[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [1, 5, 2, 1, 8] }, session_id: 3639259067753663648, pack_type: FloodResponse(FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (2, Drone), (5, Client), (1, Drone)] }) }
+Client 4 received server type: Text from 8
+Client 5 received FloodResponse: FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (1, Drone), (5, Client), (2, Drone)] }
+[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 5, 1, 3, 8] }, session_id: 16449008476626218085, pack_type: FloodResponse(FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (1, Drone), (5, Client), (2, Drone)] }) }
+Client 7 received FloodResponse: FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (2, Drone), (7, Client), (3, Drone)] }
+Client 6 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (3, Drone), (7, Client), (1, Drone)] }
+Client 6 received FloodResponse: FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (1, Drone), (6, Client), (2, Drone)] }
+[Client 6] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 6, 1, 2, 8] }, session_id: 7263325517014545140, pack_type: FloodResponse(FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (1, Drone), (6, Client), (2, Drone)] }) }
+Source_id: 8
+Client 6 received FloodResponse: FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (1, Drone), (6, Client), (2, Drone)] }
+[Client 6] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [2, 6, 1, 3, 8] }, session_id: 16449008476626218085, pack_type: FloodResponse(FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (1, Drone), (6, Client), (2, Drone)] }) }
+Client 6 received FloodResponse: FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (1, Drone), (6, Client), (3, Drone)] }
+[Client 6] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 6, 1, 2, 8] }, session_id: 7263325517014545140, pack_type: FloodResponse(FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (1, Drone), (6, Client), (3, Drone)] }) }
+Client 6 received FloodResponse: FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (1, Drone), (6, Client), (3, Drone)] }
+Client 5 received FloodResponse: FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (1, Drone), (5, Client), (3, Drone)] }
+[Client 7] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 7, 2, 1, 8] }, session_id: 3639259067753663648, pack_type: FloodResponse(FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (2, Drone), (7, Client), (3, Drone)] }) }
+Server 8 received floodresponse for FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (6, Client), (1, Drone)] }
+[Client 4] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 1, hops: [4, 3, 8] }, session_id: 3600703036714343060, pack_type: Ack(Ack { fragment_index: 0 }) }
+[Client 6] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 6, 1, 3, 8] }, session_id: 16449008476626218085, pack_type: FloodResponse(FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (1, Drone), (6, Client), (3, Drone)] }) }
+[Client 5] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 5, 1, 3, 8] }, session_id: 16449008476626218085, pack_type: FloodResponse(FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (1, Drone), (5, Client), (3, Drone)] }) }
+Client 7: Received fragment 0
+Server 8 received floodresponse for FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (5, Client), (1, Drone)] }
+Client 7 received server type: Text from 8
+Source_id: 8
+Client 4 received FloodResponse: FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (1, Drone), (4, Client), (3, Drone)] }
+[Client 7] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 1, hops: [7, 2, 8] }, session_id: 5383216893829677210, pack_type: Ack(Ack { fragment_index: 0 }) }
+Client 6 received FloodResponse: FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (2, Drone), (6, Client), (3, Drone)] }
+[Client 6] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 6, 2, 1, 8] }, session_id: 3639259067753663648, pack_type: FloodResponse(FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (2, Drone), (6, Client), (3, Drone)] }) }
+Server 8 received floodresponse for FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (2, Drone), (1, Drone)] }
+Client 5: Received ACK for fragment 0
+Server 8 received floodresponse for FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (2, Drone), (8, Server), (3, Drone)] }
+Server 8 received floodresponse for FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (6, Client), (2, Drone)] }
+[Client 4] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 4, 1, 2, 8] }, session_id: 7263325517014545140, pack_type: FloodResponse(FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (1, Drone), (4, Client), (3, Drone)] }) }
+Client 4 received FloodResponse: FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (1, Drone), (4, Client), (3, Drone)] }
+Client 5: Received fragment 0
+[Client 4] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 4, 1, 3, 8] }, session_id: 16449008476626218085, pack_type: FloodResponse(FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (1, Drone), (4, Client), (3, Drone)] }) }
+Client 6 received FloodResponse: FloodResponse { flood_id: 187000084447348124, path_trace: [(6, Client), (1, Drone), (4, Client), (2, Drone)] }
+Server 8 received floodresponse for FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (7, Client), (2, Drone)] }
+Client 4 received FloodResponse: FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (2, Drone), (4, Client), (3, Drone)] }
+Server 8 received floodresponse for FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (7, Client), (1, Drone)] }
+[Client 4] Sending packet: Packet { routing_header: SourceRoutingHeader { hop_index: 2, hops: [3, 4, 2, 1, 8] }, session_id: 3639259067753663648, pack_type: FloodResponse(FloodResponse { flood_id: 4491536837388651373, path_trace: [(8, Server), (1, Drone), (2, Drone), (4, Client), (3, Drone)] }) }
+Server 8 received floodresponse for FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (6, Client), (1, Drone)] }
+Server 8 received floodresponse for FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (5, Client), (1, Drone)] }
+Server 8 received floodresponse for FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (7, Client), (2, Drone)] }
+Server 8 received floodresponse for FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (4, Client), (2, Drone)] }
+Server 8 received floodresponse for FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (2, Drone), (5, Client), (3, Drone)] }
+Server 8 received floodresponse for FloodResponse { flood_id: 2282202463429378510, path_trace: [(8, Server), (3, Drone), (7, Client), (1, Drone)] }
+Client 5 received server type: Text from 8
+Client 6: Received ACK for fragment 0
+Server 8 received floodresponse for FloodResponse { flood_id: 11881917453545781236, path_trace: [(8, Server), (2, Drone), (3, Drone), (7, Client), (2, Drone)] }
+Client 6: Received fragment 0
+Source_id: 8
+TEST - Server type Text
+[Client 5] Sending packet: Packet { 
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

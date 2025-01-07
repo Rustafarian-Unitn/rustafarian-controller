@@ -13,9 +13,9 @@ mod chat_test {
     use wg_2024::packet::PacketType;
 
     use crate::simulation_controller::{self, SimulationController, TICKS};
-    use crate::tests::setup;
-    use crossbeam_channel::unbounded;
-    use rustafarian_client::client::Client;
+    // use crate::tests::setup;
+    // use crossbeam_channel::unbounded;
+    // use rustafarian_client::client::Client;
 
     #[test]
     fn initialization_test() {
@@ -204,33 +204,20 @@ mod chat_test {
     }
 
     #[test]
-    fn file_media_test() {
-        
-    }
+    fn file_media_test() {}
 
     #[test]
-    fn file_text_media_test() {
-        
-    }
+    fn file_text_media_test() {}
 
     #[test]
-    fn drop_client_test() {
-        
-    }
+    fn drop_client_test() {}
 
     #[test]
-    fn drop_server_test() {
-        
-    }
+    fn drop_server_test() {}
 
     #[test]
-    fn error_routing_client_test() {
-        
-    }
+    fn error_routing_client_test() {}
 
     #[test]
-    fn error_routing_server_test() {
-        
-    }
-
+    fn error_routing_server_test() {}
 }
