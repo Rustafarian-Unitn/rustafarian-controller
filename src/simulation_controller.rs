@@ -6,7 +6,7 @@ use rand::Error;
 use rustafarian_chat_server::chat_server::ChatServer;
 use rustafarian_client::browser_client::BrowserClient;
 use rustafarian_client::chat_client::ChatClient;
-use rustafarian_client::client::{Client, DEBUG};
+use rustafarian_client::client::Client;
 use rustafarian_content_server::content_server::ContentServer;
 use rustafarian_shared::messages::commander_messages::SimControllerEvent::PacketForwarded;
 use rustafarian_shared::messages::commander_messages::{
@@ -28,7 +28,7 @@ pub const FILE_FOLDER: &str = "resources/files";
 pub const MEDIA_FOLDER: &str = "resources/media";
 
 static INIT: Once = Once::new();
-static mut DEBUG_LEVEL: LogLevel = LogLevel::INFO;
+static mut DEBUG_LEVEL: LogLevel = LogLevel::Info;
 
 ///Internal channel management structures to distribute the channels among the instances of the topology
 #[derive(Debug)]
@@ -62,14 +62,14 @@ type DroneFactory = fn(
 ) -> (Box<dyn Runnable>, String);
 
 /// Used in the log method
-/// * `INFO`: default log level, will always be printed
-/// * `DEBUG`: used only in debug situation, will not print if the debug flag is `false`
-/// * `ERROR`: will print the message to `io::stderr`
+/// * `Info`: default log level, will always be printed
+/// * `Debug`: used only in debug situation, will not print if the debug flag is `false`
+/// * `Error`: will print the message to `io::stderr`
 #[derive(PartialEq)]
 enum LogLevel {
-    INFO,
-    DEBUG,
-    ERROR,
+    Info,
+    Debug,
+    Error,
 }
 
 /// A controller that manages the simulation of a network composed of drones, clients, and servers.
@@ -134,12 +134,12 @@ impl SimulationController {
         }
     }
 
-    fn initialize(debug_mode: bool) {
+    pub fn initialize(debug_mode: bool) {
         INIT.call_once(|| unsafe {
             DEBUG_LEVEL = if debug_mode {
-                LogLevel::DEBUG
+                LogLevel::Debug
             } else {
-                LogLevel::INFO
+                LogLevel::Info
             };
         });
     }
@@ -154,7 +154,7 @@ impl SimulationController {
         // let clients: Vec<ChatClient> = Vec::new();
         // let server: Vec<Server> = Vec::new();
 
-        log("Building the simulation controller", LogLevel::INFO);
+        log("Building the simulation controller", LogLevel::Info);
 
         // Create a factory function for the implementations
         let drone_factories: Vec<DroneFactory> = vec![rustafarian_drone];
@@ -189,6 +189,7 @@ impl SimulationController {
             &mut node_channels,
             &mut drone_channels,
             &mut topology,
+            debug_mode
         );
 
         Self::init_servers(
@@ -209,13 +210,13 @@ impl SimulationController {
         drone_channels: &mut HashMap<NodeId, DroneChannels>,
         topology: &mut Topology,
     ) {
-        log("Initializing the channels", LogLevel::INFO);
+        log("Initializing the channels", LogLevel::Info);
 
-        log("Drone channels", LogLevel::DEBUG);
+        log("Drone channels", LogLevel::Debug);
         for drone_config in config.drone.iter() {
             log(
                 format!("Creating drone channels for node {}", drone_config.id).as_str(),
-                LogLevel::DEBUG,
+                LogLevel::Debug,
             );
 
             let (send_command_channel, receive_command_channel) = unbounded::<DroneCommand>();
@@ -234,23 +235,23 @@ impl SimulationController {
                 },
             );
 
-            log("Adding drone to topology", LogLevel::DEBUG);
+            log("Adding drone to topology", LogLevel::Debug);
             // Build the topology to represent the network in the frontend
             topology.add_node(drone_config.id);
 
-            log("Adding edges to topology", LogLevel::DEBUG);
+            log("Adding edges to topology", LogLevel::Debug);
             drone_config.connected_node_ids.iter().for_each(|node_id| {
                 topology.add_edge(drone_config.id, *node_id);
             });
 
-            log("Setting node type in topology", LogLevel::DEBUG);
+            log("Setting node type in topology", LogLevel::Debug);
             topology.set_node_type(drone_config.id, "drone".to_string());
         }
 
         for client_config in config.client.iter() {
             log(
                 format!("Creating client channels for node {}", client_config.id).as_str(),
-                LogLevel::DEBUG,
+                LogLevel::Debug,
             );
             let (send_command_channel, receive_command_channel) =
                 unbounded::<SimControllerCommand>();
@@ -274,7 +275,7 @@ impl SimulationController {
         for server_config in config.server.iter() {
             log(
                 format!("Creating server channels for node {}", server_config.id).as_str(),
-                LogLevel::DEBUG,
+                LogLevel::Debug,
             );
             let (send_command_channel, receive_command_channel) =
                 unbounded::<SimControllerCommand>();
@@ -313,12 +314,12 @@ impl SimulationController {
         node_channels: &mut HashMap<NodeId, NodeChannels>,
         topology: &mut Topology,
     ) {
-        log("Initializing drones", LogLevel::INFO);
+        log("Initializing drones", LogLevel::Info);
         // For each drone config pick the next factory in a circular fashion to generate a drone instance
         for drone_config in drones_config.iter() {
             log(
                 format!("Creating drone {}", drone_config.id).as_str(),
-                LogLevel::DEBUG,
+                LogLevel::Debug,
             );
             // Get the next drone in line
             let factory = drone_factories.next().unwrap();
@@ -354,12 +355,16 @@ impl SimulationController {
                     name.clone()
                 )
                 .as_str(),
-                LogLevel::DEBUG,
+                LogLevel::Debug,
             );
 
             topology.set_label(drone_config.id, name);
 
             handles.push(Some(thread::spawn(move || drone.run())));
+            log(
+                format!("Drone {} started successfully", drone_config.id).as_str(),
+                LogLevel::Debug,
+            );
         }
     }
 
@@ -372,19 +377,19 @@ impl SimulationController {
     /// * `topology` - A mutable reference to the network topology. This is used to represent the network in the frontend
     /// # Returns
     /// A vector of thread handles for the client instances
-
     fn init_clients(
         handles: &mut Vec<Option<JoinHandle<()>>>,
         clients_config: Vec<ClientConfig>,
         node_channels: &mut HashMap<NodeId, NodeChannels>,
         drone_channels: &mut HashMap<NodeId, DroneChannels>,
         topology: &mut Topology,
+        debug_mode: bool,
     ) {
-        log("Initializing clients", LogLevel::INFO);
+        log("Initializing clients", LogLevel::Info);
         for client_config in clients_config {
             log(
                 format!("Creating client {}", client_config.id).as_str(),
-                LogLevel::DEBUG,
+                LogLevel::Debug,
             );
             // Register assigned neighbouring drones
             let neighbour_drones = drone_channels
@@ -398,14 +403,14 @@ impl SimulationController {
             if client_config.id % 2 == 0 {
                 log(
                     format!("Node {} is a Chat client", client_config.id).as_str(),
-                    LogLevel::DEBUG,
+                    LogLevel::Debug,
                 );
                 topology.set_label(client_config.id, "Chat client".to_string());
                 topology.set_node_type(client_config.id, "chat_client".to_string());
             } else {
                 log(
                     format!("Node {} is a Browser client", client_config.id).as_str(),
-                    LogLevel::DEBUG,
+                    LogLevel::Debug,
                 );
                 topology.set_label(client_config.id, "Browser client".to_string());
                 topology.set_node_type(client_config.id, "browser_client".to_string());
@@ -436,7 +441,7 @@ impl SimulationController {
 
             log(
                 format!("Starting client {}", client_config.id).as_str(),
-                LogLevel::DEBUG,
+                LogLevel::Debug,
             );
             // Start off the client
             handles.push(Some(thread::spawn(move || {
@@ -447,6 +452,7 @@ impl SimulationController {
                         receive_packet_channel,
                         receive_command_channel,
                         send_response_channel,
+                        debug_mode,
                     );
                     client.run(TICKS)
                 } else {
@@ -456,10 +462,15 @@ impl SimulationController {
                         receive_packet_channel,
                         receive_command_channel,
                         send_response_channel,
+                        debug_mode,
                     );
                     client.run(TICKS)
                 }
             })));
+            log(
+                format!("Client {} started successfully", client_config.id).as_str(),
+                LogLevel::Debug,
+            );
         }
     }
 
@@ -481,7 +492,7 @@ impl SimulationController {
         topology: &mut Topology,
         debug_mode: bool,
     ) {
-        log("Initializing servers", LogLevel::INFO);
+        log("Initializing servers", LogLevel::Info);
         // Generate the file and media folders
         let _ = std::fs::create_dir_all(FILE_FOLDER);
         let _ = std::fs::create_dir_all(MEDIA_FOLDER);
@@ -490,7 +501,7 @@ impl SimulationController {
         for server_config in servers_config {
             log(
                 format!("Creating server {}", server_config.id).as_str(),
-                LogLevel::DEBUG,
+                LogLevel::Debug,
             );
 
             let drones = drone_channels
@@ -511,21 +522,21 @@ impl SimulationController {
             if server_config.id % 3 == 0 {
                 log(
                     format!("Node {} is a Chat server", server_config.id).as_str(),
-                    LogLevel::DEBUG,
+                    LogLevel::Debug,
                 );
                 topology.set_label(server_config.id, "Chat server".to_string());
                 topology.set_node_type(server_config.id, "Chat".to_string());
             } else if server_config.id % 3 == 1 {
                 log(
                     format!("Node {} is a Media server", server_config.id).as_str(),
-                    LogLevel::DEBUG,
+                    LogLevel::Debug,
                 );
                 topology.set_label(server_config.id, "Media server".to_string());
                 topology.set_node_type(server_config.id, "Media".to_string());
             } else {
                 log(
                     format!("Node {} is a Text server", server_config.id).as_str(),
-                    LogLevel::DEBUG,
+                    LogLevel::Debug,
                 );
                 topology.set_label(server_config.id, "Text server".to_string());
                 topology.set_node_type(server_config.id, "Text".to_string());
@@ -549,7 +560,7 @@ impl SimulationController {
 
             log(
                 format!("Starting server {}", server_config.id).as_str(),
-                LogLevel::DEBUG,
+                LogLevel::Debug,
             );
             // Start off the server
             handles.push(Some(thread::spawn(move || {
@@ -562,7 +573,6 @@ impl SimulationController {
                         drones,
                         debug_mode,
                     );
-                    println!("Server {} is running", server_config.id);
                     server.run()
                 } else if server_config.id % 3 == 1 {
                     let mut server = ContentServer::new(
@@ -574,11 +584,7 @@ impl SimulationController {
                         FILE_FOLDER,
                         MEDIA_FOLDER,
                         ServerType::Media,
-                    );
-                    println!(
-                        "Server {} of type {:?}is running",
-                        server_config.id,
-                        ServerType::Media
+                        debug_mode,
                     );
 
                     server.run()
@@ -592,16 +598,17 @@ impl SimulationController {
                         FILE_FOLDER,
                         MEDIA_FOLDER,
                         ServerType::Text,
-                    );
-                    println!(
-                        "Server {} of type {:?}is running",
-                        server_config.id,
-                        ServerType::Text
+                        debug_mode,
                     );
 
                     server.run()
                 }
             })));
+
+            log(
+                format!("Server {} started successfully", server_config.id).as_str(),
+                LogLevel::Debug,
+            );
         }
     }
 
@@ -625,11 +632,11 @@ impl SimulationController {
                 {
                     log(
                         "Packet forwarded successfully to destination",
-                        LogLevel::INFO,
+                        LogLevel::Info,
                     );
                     match packet_type {
                         PacketType::MsgFragment(fragment) => {
-                            log("Packet type: MsgFragment", LogLevel::DEBUG);
+                            log("Packet type: MsgFragment", LogLevel::Debug);
                             Ok(PacketForwarded {
                                 session_id,
                                 packet_type: fragment.to_string(),
@@ -638,7 +645,7 @@ impl SimulationController {
                             })
                         }
                         PacketType::Ack(ack) => {
-                            log("Packet type: Ack", LogLevel::DEBUG);
+                            log("Packet type: Ack", LogLevel::Debug);
                             Ok(PacketForwarded {
                                 session_id,
                                 packet_type: ack.to_string(),
@@ -647,7 +654,7 @@ impl SimulationController {
                             })
                         }
                         PacketType::Nack(nack) => {
-                            log("Packet type: Nack", LogLevel::DEBUG);
+                            log("Packet type: Nack", LogLevel::Debug);
                             Ok(PacketForwarded {
                                 session_id,
                                 packet_type: nack.to_string(),
@@ -656,7 +663,7 @@ impl SimulationController {
                             })
                         }
                         PacketType::FloodRequest(flood_request) => {
-                            log("Packet type: FloodRequest", LogLevel::DEBUG);
+                            log("Packet type: FloodRequest", LogLevel::Debug);
                             Ok(PacketForwarded {
                                 session_id,
                                 packet_type: flood_request.to_string(),
@@ -665,7 +672,7 @@ impl SimulationController {
                             })
                         }
                         PacketType::FloodResponse(flood_response) => {
-                            log("Packet type: FloodResponse", LogLevel::DEBUG);
+                            log("Packet type: FloodResponse", LogLevel::Debug);
                             Ok(PacketForwarded {
                                 session_id,
                                 packet_type: flood_response.to_string(),
@@ -676,11 +683,11 @@ impl SimulationController {
                     }
                 }
             } else {
-                log("Failed to send packet", LogLevel::ERROR);
+                log("Failed to send packet", LogLevel::Error);
                 Err(Error::new("Failed to send packet"))
             }
         } else {
-            log("Destination is not a node", LogLevel::ERROR);
+            log("Destination is not a node", LogLevel::Error);
             Err(Error::new("Destination is not a node"))
         }
     }
@@ -691,22 +698,22 @@ impl SimulationController {
 /// # Args
 /// * `log_message: &str` - the message to log
 /// * `log_level: LogLevel` - the level of the log:
-///     * `INFO`: default log level, will always be printed
-///     * `DEBUG`: used only in debug situation, will not print if the debug flag is `false`
-///     * `ERROR`: will print the message to `io::stderr`
+///     * `Info`: default log level, will always be printed
+///     * `Debug`: used only in debug situation, will not print if the debug flag is `false`
+///     * `Error`: will print the message to `io::stderr`
 fn log(log_message: &str, log_level: LogLevel) {
     match log_level {
-        LogLevel::INFO => {
+        LogLevel::Info => {
             print!("LEVEL: INFO >>> [Controller] - ");
             println!("{}", log_message);
         }
-        LogLevel::DEBUG => unsafe {
-            if DEBUG_LEVEL == LogLevel::DEBUG {
+        LogLevel::Debug => unsafe {
+            if DEBUG_LEVEL == LogLevel::Debug {
                 print!("LEVEL: DEBUG >>> [Controller] - ");
                 println!("{}", log_message);
             }
         },
-        LogLevel::ERROR => {
+        LogLevel::Error => {
             eprint!("LEVEL: ERROR >>> [Controller] - ");
             eprintln!("{}", log_message);
         }
@@ -811,6 +818,7 @@ mod tests {
             &mut node_channels,
             &mut drone_channels,
             &mut topology,
+            true
         );
 
         assert_eq!(node_channels.len(), 2);
@@ -839,7 +847,7 @@ mod tests {
             &mut node_channels,
             &mut drone_channels,
             &mut topology,
-            false,
+            true,
         );
 
         assert_eq!(node_channels.len(), 2);
