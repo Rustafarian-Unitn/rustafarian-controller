@@ -15,6 +15,8 @@ mod content_communication {
     use crate::tests::setup;
     use rustafarian_client::client::Client;
 
+    const DEBUG : bool = false;
+
     #[test]
     fn test_server_type_text() {
         let simulation_controller =
@@ -58,7 +60,7 @@ mod content_communication {
     #[test]
     fn test_file_list_from_to_server() {
         let simulation_controller = SimulationController::build(
-            "src/tests/configurations/simple_config_for_content_tests.toml",
+            "src/tests/configurations/simple_config_for_content_tests.toml",DEBUG
         );
         let content_server_id: u8 = 8;
         let client_id: u8 = 5;
@@ -97,7 +99,7 @@ mod content_communication {
                     matches!(
                         response,
                         SimControllerResponseWrapper::Message(
-                            SimControllerMessage::FileListResponse(_, expected_list)
+                            SimControllerMessage::FileListResponse(_, _expected_list)
                         )
                     ),
                     "Expected message received"
@@ -112,7 +114,7 @@ mod content_communication {
     fn test_text_file_request() {
         let simulation_controller = SimulationController::build(
             "src/tests/configurations/simple_config_for_content_tests.toml",
-            false,
+            DEBUG,
         );
 
         let client_id: u8 = 5;
@@ -208,14 +210,14 @@ mod content_communication {
         let res = client_command_channel.send(SimControllerCommand::RequestFileList(3));
         assert!(res.is_ok());
 
-        // Server listen for message from client
-        let message = server_receive_packet_channel.recv().unwrap();
+        // Ignore all messages until FileListResponse is received
+        for message in server_receive_packet_channel.iter() {
+            if let PacketType::MsgFragment(_) = message.pack_type {
+                let ack = drone_receive_event_channel.recv().unwrap();
+                assert!(matches!(ack, DroneEvent::PacketSent(_)));
+            }
+        }
 
-        assert!(matches!(message.pack_type, PacketType::MsgFragment(_)));
-
-        // Listen for ack from drone
-        let ack = drone_receive_event_channel.recv().unwrap();
-        assert!(matches!(ack, DroneEvent::PacketSent(_)));
     }
 
     #[test]

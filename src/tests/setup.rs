@@ -18,7 +18,7 @@ use crate::simulation_controller::DroneChannels;
 use crate::simulation_controller::NodeChannels;
 use crate::simulation_controller::SimulationController;
 use rustafarian_content_server::content_server::ContentServer;
-const CHAT_DEBUG: bool = true;
+const DEBUG: bool = true;
 
 pub fn setup() -> (
     (ChatClient, ChatClient),
@@ -202,6 +202,7 @@ pub fn setup() -> (
         "resources/files",
         "resources/media",
         ServerType::Text,
+        DEBUG,
     );
 
     let mut chat_server = ChatServer::new(
@@ -210,7 +211,7 @@ pub fn setup() -> (
         chat_server_response_channels.0,
         chat_server_packet_channels.1,
         chat_server_neighbors,
-        CHAT_DEBUG,
+        DEBUG,
     );
 
     let mut client = ChatClient::new(
@@ -219,6 +220,7 @@ pub fn setup() -> (
         client_packet_channels.1.clone(),
         client_command_channels.1.clone(),
         client_response_channels.0,
+        DEBUG
     );
 
     let mut client_2 = ChatClient::new(
@@ -227,6 +229,7 @@ pub fn setup() -> (
         client_2_packet_channels.1.clone(),
         client_2_command_channels.1.clone(),
         client_2_response_channels.0,
+        DEBUG
     );
 
     client.topology().add_node(1);

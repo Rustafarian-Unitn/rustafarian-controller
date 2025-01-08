@@ -8,11 +8,7 @@ mod drone_communication_tests {
     use ::wg_2024::network::NodeId;
     use rustafarian_shared::messages::commander_messages::SimControllerCommand;
     use std::thread;
-    use wg_2024::{
-        controller::{DroneCommand, DroneEvent},
-        drone::Drone,
-        packet::PacketType,
-    };
+    use wg_2024::{controller::DroneCommand, drone::Drone};
     const TICKS: u64 = 1000;
     use rustafarian_client::client::Client;
 
@@ -20,15 +16,10 @@ mod drone_communication_tests {
     fn test_set_drone_pdr() {
         let ((mut client, _), _, mut content_server, drones, simulation_controller) =
             setup::setup();
-        let drone_1_id = 2 as NodeId;
+
         let content_server_id = 3 as NodeId;
         let client_id = 1 as NodeId;
-        let drone_receive_event_channel = simulation_controller
-            .drone_channels
-            .get(&drone_1_id)
-            .unwrap()
-            .receive_event_channel
-            .clone();
+
         for mut drone in drones {
             thread::spawn(move || {
                 Drone::run(&mut drone);
@@ -65,14 +56,16 @@ mod drone_communication_tests {
         // ignore messages that are not the file list response
         for message in client_response_channel.iter() {
             if let SimControllerResponseWrapper::Message(SimControllerMessage::FileListResponse(
-               _,_
+                _,
+                _,
             )) = message
             {
                 println!("TEST:received file list response");
                 assert!(matches!(
                     message,
                     SimControllerResponseWrapper::Message(SimControllerMessage::FileListResponse(
-                     _,_
+                        _,
+                        _
                     ))
                 ));
                 break;
