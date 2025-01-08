@@ -452,7 +452,7 @@ impl SimulationController {
                         receive_packet_channel,
                         receive_command_channel,
                         send_response_channel,
-                        debug_mode,
+                        true
                     );
                     client.run(TICKS)
                 } else {
@@ -462,7 +462,7 @@ impl SimulationController {
                         receive_packet_channel,
                         receive_command_channel,
                         send_response_channel,
-                        debug_mode,
+                        true
                     );
                     client.run(TICKS)
                 }
@@ -584,7 +584,12 @@ impl SimulationController {
                         FILE_FOLDER,
                         MEDIA_FOLDER,
                         ServerType::Media,
-                        debug_mode,
+                        debug_mode
+                    );
+                    println!(
+                        "Server {} of type {:?}is running",
+                        server_config.id,
+                        ServerType::Media
                     );
 
                     server.run()
@@ -598,7 +603,12 @@ impl SimulationController {
                         FILE_FOLDER,
                         MEDIA_FOLDER,
                         ServerType::Text,
-                        debug_mode,
+                        debug_mode
+                    );
+                    println!(
+                        "Server {} of type {:?}is running",
+                        server_config.id,
+                        ServerType::Text
                     );
 
                     server.run()
