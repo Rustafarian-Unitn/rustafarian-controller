@@ -700,7 +700,7 @@ impl SimulationController {
             log("Destination is not a node", LogLevel::Error);
             Err(Error::new("Destination is not a node"))
         }
-    }
+    }    
 }
 
 /// Utility method used to cleanly log information, differentiating on three different levels
@@ -711,7 +711,7 @@ impl SimulationController {
 ///     * `Info`: default log level, will always be printed
 ///     * `Debug`: used only in debug situation, will not print if the debug flag is `false`
 ///     * `Error`: will print the message to `io::stderr`
-fn log(log_message: &str, log_level: LogLevel) {
+pub fn log(log_message: &str, log_level: LogLevel) {
     match log_level {
         LogLevel::Info => {
             print!("LEVEL: INFO >>> [Controller] - ");
