@@ -12,4 +12,5 @@ mod tests {
     pub mod drone_communication;
     pub mod setup;
     pub mod topology;
+    pub mod drone_interaction;
 }
