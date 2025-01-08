@@ -14,7 +14,7 @@ mod drone_communication_tests {
 
     #[test]
     fn test_set_drone_pdr() {
-        let ((mut client, _), _, mut content_server, drones, simulation_controller) =
+        let ((mut client, _,_), _, mut content_server, drones, simulation_controller) =
             setup::setup();
 
         let content_server_id = 3 as NodeId;

@@ -88,7 +88,7 @@ mod client_communication {
 
     #[test]
     fn test_client_list() {
-        let ((mut client, mut client_2), _, mut chat_server, drones, simulation_controller) =
+        let ((mut client, mut client_2,_), _, mut chat_server, drones, simulation_controller) =
             setup::setup();
 
         let client_command_channel = simulation_controller
@@ -167,7 +167,7 @@ mod client_communication {
     //Test flood request
     #[test]
     fn test_flood_request() {
-        let ((mut client, _), _, mut server, drones, simulation_controller) = setup::setup();
+        let ((mut client, _,_), _, mut server, drones, simulation_controller) = setup::setup();
 
         let client_command_channel = simulation_controller
             .nodes_channels
@@ -224,7 +224,7 @@ mod client_communication {
     // Test known servers
     #[test]
     fn test_known_servers() {
-        let ((mut client, _), _, mut chat_server, drones, simulation_controller) = setup::setup();
+        let ((mut client,_, _), _, mut chat_server, drones, simulation_controller) = setup::setup();
 
         let client_command_channel = simulation_controller
             .nodes_channels
@@ -281,7 +281,7 @@ mod client_communication {
     // Test registered servers
     #[test]
     fn test_registered_servers() {
-        let ((mut client, _), _, mut chat_server, drones, simulation_controller) = setup::setup();
+        let ((mut client, _,_), _, mut chat_server, drones, simulation_controller) = setup::setup();
 
         let client_command_channel = simulation_controller
             .nodes_channels
@@ -343,7 +343,7 @@ mod client_communication {
     // Test remove sender from server
     #[test]
     fn test_client_remove_senders() {
-        let ((mut client, mut client_2), _, mut chat_server, drones, simulation_controller) =
+        let ((mut client, mut client_2,_), _, mut chat_server, drones, simulation_controller) =
             setup::setup();
 
         let client_command_channel = simulation_controller
@@ -432,7 +432,7 @@ mod client_communication {
     fn test_server_remove_receivers() {
         let server_id = 4;
 
-        let ((mut client, _), _, mut chat_server, drones, simulation_controller) = setup::setup();
+        let ((mut client,_, _), _, mut chat_server, drones, simulation_controller) = setup::setup();
 
         let server_command_channel = simulation_controller
             .nodes_channels

@@ -32,3 +32,11 @@ connected_drone_ids = [ 1, 2, 3 ]
 [[server]]
 id = 8
 connected_drone_ids = [ 1, 2, 3 ]
+
+[[server]]
+id = 9
+connected_drone_ids = [ 1, 2, 3 ]
+
+[[server]]
+id = 10
+connected_drone_ids = [ 1, 2, 3 ]

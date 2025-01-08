@@ -1,8 +1,9 @@
 use std::collections::HashMap;
 
 use ::rustafarian_chat_server::chat_server::ChatServer;
+use ::rustafarian_client::browser_client;
 use crossbeam_channel::unbounded;
-use rustafarian_client::{chat_client::ChatClient, client::Client};
+use rustafarian_client::{browser_client::BrowserClient, chat_client::ChatClient, client::Client};
 use rustafarian_drone::RustafarianDrone;
 use rustafarian_shared::messages::{
     commander_messages::{SimControllerCommand, SimControllerResponseWrapper},
@@ -21,7 +22,7 @@ use rustafarian_content_server::content_server::ContentServer;
 const DEBUG: bool = true;
 
 pub fn setup() -> (
-    (ChatClient, ChatClient),
+    (ChatClient, ChatClient, BrowserClient),
     ContentServer,
     ChatServer,
     Vec<RustafarianDrone>,
@@ -32,6 +33,7 @@ pub fn setup() -> (
     let mut drone_3_neighbors = HashMap::new();
     let mut client_neighbors = HashMap::new();
     let mut client_2_neighbors = HashMap::new();
+    let mut browser_client_neighbors = HashMap::new();
     let mut content_server_neighbors = HashMap::new();
     let mut chat_server_neighbors = HashMap::new();
 
@@ -70,20 +72,28 @@ pub fn setup() -> (
     let chat_server_command_channels = unbounded::<SimControllerCommand>();
     let chat_server_response_channels = unbounded::<SimControllerResponseWrapper>();
 
+    // Browser Client channels
+    let browser_client_packet_channels = unbounded::<Packet>();
+    let browser_client_command_channels = unbounded::<SimControllerCommand>();
+    let browser_client_response_channels = unbounded::<SimControllerResponseWrapper>();
+
     drone_neighbors.insert(1, client_packet_channels.0.clone());
     drone_neighbors.insert(3, content_server_packet_channels.0.clone());
     drone_neighbors.insert(4, chat_server_packet_channels.0.clone());
     drone_neighbors.insert(5, client_2_packet_channels.0.clone());
+    drone_neighbors.insert(8, browser_client_packet_channels.0.clone());
 
     drone_2_neighbors.insert(1, client_packet_channels.0.clone());
     drone_2_neighbors.insert(3, content_server_packet_channels.0.clone());
     drone_2_neighbors.insert(4, chat_server_packet_channels.0.clone());
     drone_2_neighbors.insert(5, client_2_packet_channels.0.clone());
+    drone_2_neighbors.insert(8, browser_client_packet_channels.0.clone());
 
     drone_3_neighbors.insert(1, client_packet_channels.0.clone());
     drone_3_neighbors.insert(3, content_server_packet_channels.0.clone());
     drone_3_neighbors.insert(4, chat_server_packet_channels.0.clone());
     drone_3_neighbors.insert(5, client_2_packet_channels.0.clone());
+    drone_3_neighbors.insert(8, browser_client_packet_channels.0.clone());
 
     // Simulation controller
     let client_channels = NodeChannels {
@@ -102,6 +112,15 @@ pub fn setup() -> (
         receive_command_channel: client_2_command_channels.1.clone(),
         receive_response_channel: client_2_response_channels.1.clone(),
         send_response_channel: client_2_response_channels.0.clone(),
+    };
+
+    let browser_client_channels = NodeChannels {
+        send_packet_channel: browser_client_packet_channels.0.clone(),
+        receive_packet_channel: browser_client_packet_channels.1.clone(),
+        send_command_channel: browser_client_command_channels.0.clone(),
+        receive_command_channel: browser_client_command_channels.1.clone(),
+        receive_response_channel: browser_client_response_channels.1.clone(),
+        send_response_channel: browser_client_response_channels.0.clone(),
     };
 
     let content_server_channels = NodeChannels {
@@ -157,6 +176,10 @@ pub fn setup() -> (
     client_2_neighbors.insert(2, drone_packet_channels.0.clone());
     client_2_neighbors.insert(6, drone_2_packet_channels.0.clone());
     client_2_neighbors.insert(7, drone_3_packet_channels.0.clone());
+
+    browser_client_neighbors.insert(2, drone_packet_channels.0.clone());
+    browser_client_neighbors.insert(6, drone_2_packet_channels.0.clone());
+    browser_client_neighbors.insert(7, drone_3_packet_channels.0.clone());
 
     content_server_neighbors.insert(2, drone_packet_channels.0.clone());
     content_server_neighbors.insert(6, drone_2_packet_channels.0.clone());
@@ -220,7 +243,7 @@ pub fn setup() -> (
         client_packet_channels.1.clone(),
         client_command_channels.1.clone(),
         client_response_channels.0,
-        DEBUG
+        DEBUG,
     );
 
     let mut client_2 = ChatClient::new(
@@ -229,7 +252,16 @@ pub fn setup() -> (
         client_2_packet_channels.1.clone(),
         client_2_command_channels.1.clone(),
         client_2_response_channels.0,
-        DEBUG
+        DEBUG,
+    );
+
+    let mut browser_client = browser_client::BrowserClient::new(
+        8,
+        browser_client_neighbors,
+        browser_client_packet_channels.1.clone(),
+        browser_client_command_channels.1.clone(),
+        browser_client_response_channels.0,
+        DEBUG,
     );
 
     client.topology().add_node(1);
@@ -242,7 +274,6 @@ pub fn setup() -> (
     client.topology().add_edge(1, 2);
     client.topology().add_edge(1, 6);
     client.topology().add_edge(1, 7);
-
     client.topology().add_edge(2, 3);
     client.topology().add_edge(2, 4);
     client.topology().add_edge(2, 5);
@@ -277,9 +308,27 @@ pub fn setup() -> (
     content_server.topology.add_edge(2, 6);
     content_server.topology.add_edge(2, 7);
 
+    browser_client.topology().add_node(1);
+    browser_client.topology().add_node(2);
+    browser_client.topology().add_node(3);
+    browser_client.topology().add_node(4);
+    browser_client.topology().add_node(5);
+    browser_client.topology().add_node(6);
+    browser_client.topology().add_node(7);
+    browser_client.topology().add_node(8);
+    browser_client.topology().add_edge(8, 2);
+    browser_client.topology().add_edge(8, 6);
+    browser_client.topology().add_edge(8, 7);
+    browser_client.topology().add_edge(2, 1);
+    browser_client.topology().add_edge(2, 3);
+    browser_client.topology().add_edge(2, 4);
+    browser_client.topology().add_edge(2, 5);
+    browser_client.topology().add_edge(2, 6);
+    browser_client.topology().add_edge(2, 7);
+
     chat_server.update_topology(
         vec![1, 2, 3, 4, 5, 6, 7],
-        vec![(1, 2), (2, 3), (2, 4), (2, 5), (2, 6), (2, 7)],
+        vec![(1, 2), (2, 3), (2, 4), (2, 5), (2, 6), (2, 7),(2,8)],
     );
 
     let mut drones_channels = HashMap::new();
@@ -292,6 +341,7 @@ pub fn setup() -> (
     nodes_channels.insert(3, content_server_channels);
     nodes_channels.insert(4, chat_server_channels);
     nodes_channels.insert(5, client_2_channels);
+    nodes_channels.insert(8, browser_client_channels);
 
     let simulation_controller = SimulationController::new(
         nodes_channels,
@@ -301,7 +351,7 @@ pub fn setup() -> (
     );
 
     (
-        (client, client_2),
+        (client, client_2, browser_client),
         content_server,
         chat_server,
         vec![drone, drone_2, drone_3],

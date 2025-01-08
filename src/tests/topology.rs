@@ -74,7 +74,7 @@ fn test_simulation_controller_build_complex_topology() {
 fn test_client_topology() {
     use super::setup;
 
-    let ((mut chat_client, _), _, _, _, controller) = setup::setup();
+    let ((mut chat_client, _, _), _, _, _, controller) = setup::setup();
     let client_id = chat_client.client_id();
     let client_channels = controller.nodes_channels.get(&client_id).unwrap();
     let client_send_command_channel = &client_channels.send_command_channel;
@@ -88,12 +88,13 @@ fn test_client_topology() {
     });
     // Wait for the response
     for response in client_channels.receive_response_channel.iter() {
-        if let SimControllerResponseWrapper::Message(msg) = response {
-            if let SimControllerMessage::TopologyResponse(topology) = msg {
-                assert_eq!(topology.nodes().len(), 7);
-                assert_eq!(topology.edges().len(), 7);
-                break;
-            }
+        if let SimControllerResponseWrapper::Message(SimControllerMessage::TopologyResponse(
+            topology,
+        )) = response
+        {
+            assert_eq!(topology.nodes().len(), 7);
+            assert_eq!(topology.edges().len(), 7);
+            break;
         }
     }
 }

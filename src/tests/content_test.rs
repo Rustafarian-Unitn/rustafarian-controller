@@ -161,10 +161,11 @@ mod chat_test {
                 file_ids,
             )) = response
             {
-                assert_eq!(
-                    file_ids.clone().sort(),
-                    vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10].sort()
-                );
+                let mut sorted_file_ids = file_ids.clone();
+                sorted_file_ids.sort();
+                let mut expected_file_ids = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+                expected_file_ids.sort();
+                assert_eq!(sorted_file_ids, expected_file_ids);
                 break;
             }
         }
