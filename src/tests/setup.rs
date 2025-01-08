@@ -202,6 +202,7 @@ pub fn setup() -> (
         "resources/files",
         "resources/media",
         ServerType::Text,
+        true
     );
 
     let mut chat_server = ChatServer::new(
@@ -219,6 +220,7 @@ pub fn setup() -> (
         client_packet_channels.1.clone(),
         client_command_channels.1.clone(),
         client_response_channels.0,
+        false
     );
 
     let mut client_2 = ChatClient::new(
@@ -227,6 +229,7 @@ pub fn setup() -> (
         client_2_packet_channels.1.clone(),
         client_2_command_channels.1.clone(),
         client_2_response_channels.0,
+        false
     );
 
     client.topology().add_node(1);
