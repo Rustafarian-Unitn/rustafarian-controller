@@ -155,7 +155,7 @@ impl SimulationController {
         // let server: Vec<Server> = Vec::new();
 
         log("Building the simulation controller", LogLevel::Info);
-
+        SimulationController::initialize(debug_mode);
         // Create a factory function for the implementations
         let drone_factories: Vec<DroneFactory> = vec![rustafarian_drone];
 
