@@ -66,7 +66,7 @@ type DroneFactory = fn(
 /// * `Debug`: used only in debug situation, will not print if the debug flag is `false`
 /// * `Error`: will print the message to `io::stderr`
 #[derive(PartialEq)]
-enum LogLevel {
+pub enum LogLevel {
     Info,
     Debug,
     Error,
