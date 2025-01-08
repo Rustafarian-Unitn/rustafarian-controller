@@ -89,7 +89,7 @@ mod content_communication {
         // ignore messages until message is received
         for response in client_response_channel.iter() {
             if let SimControllerResponseWrapper::Message(SimControllerMessage::FileListResponse(
-                _,_,
+                _,_
             )) = response
             {
                 println!("TEST - Message received {:?}", response);
@@ -98,7 +98,7 @@ mod content_communication {
                     matches!(
                         response,
                         SimControllerResponseWrapper::Message(
-                            SimControllerMessage::FileListResponse(content_server_id, _expected_list2)
+                            SimControllerMessage::FileListResponse(content_server_id, _)
                         )
                     ),
                     "Expected message received"
