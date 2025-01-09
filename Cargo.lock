@@ -325,22 +325,10 @@ dependencies = [
 [[package]]
 name = "dr_ones"
 version = "0.1.0"
-source = "git+https://github.com/Dr-Ones/drone#3ecd4cfbc614ca14f979358fd3cc7da3f81435d8"
+source = "git+https://github.com/Dr-Ones/drone#417daf0d8a8002fe8e3a68ea5273635d3ac46fbb"
 dependencies = [
  "crossbeam-channel",
  "network_node",
- "rand",
- "rusty_tester",
- "wg_2024",
-]
-
-[[package]]
-name = "drone"
-version = "1.0.0"
-source = "git+https://github.com/Rustbusters/drone.git#334981f11d7b7673a44fc8887633d3cc0e7b9c10"
-dependencies = [
- "crossbeam-channel",
- "log",
  "rand",
  "wg_2024",
 ]
@@ -436,7 +424,7 @@ dependencies = [
  "log",
  "nu-ansi-term",
  "regex",
- "thiserror 2.0.9",
+ "thiserror 2.0.10",
 ]
 
 [[package]]
@@ -1103,10 +1091,10 @@ dependencies = [
 [[package]]
 name = "network_node"
 version = "0.1.0"
-source = "git+https://github.com/Dr-Ones/common.git#10e3a1bbfee63e584c4413ca407139f6401ba273"
+source = "git+https://github.com/Dr-Ones/common.git#6afc389c6c463bccba964bc62f16f92402161132"
 dependencies = [
  "crossbeam-channel",
- "indexmap",
+ "once_cell",
  "rand",
  "serde",
  "wg_2024",
@@ -1362,7 +1350,7 @@ checksum = "2b15c43186be67a4fd63bee50d0303afffcef381492ebe2c5d87f324e1b8815c"
 [[package]]
 name = "rust_do_it"
 version = "0.1.0"
-source = "git+https://github.com/RustDoIt/Drone.git#f888f765347aad4db1b5fad45758f25edec50c60"
+source = "git+https://github.com/RustDoIt/Drone.git#f045852dafe28a82a10652c3befb7e39a6bdfb5b"
 dependencies = [
  "crossbeam-channel",
  "log",
@@ -1387,7 +1375,7 @@ dependencies = [
 [[package]]
 name = "rustafarian-client"
 version = "0.3.0"
-source = "git+https://github.com/Rustafarian-Unitn/rustafarian-client#097ba35ec656a2d1039d6af4dcb8192752ce66ed"
+source = "git+https://github.com/Rustafarian-Unitn/rustafarian-client#a42df1b8a5fde0a854a19977ae9efe84dfbd4d81"
 dependencies = [
  "crossbeam",
  "crossbeam-channel",
@@ -1426,7 +1414,6 @@ dependencies = [
  "crossbeam-channel",
  "d-r-o-n-e_drone",
  "dr_ones",
- "drone",
  "getdroned",
  "image",
  "lockheedrustin-drone",
@@ -1438,6 +1425,7 @@ dependencies = [
  "rustafarian-drone 1.0.0",
  "rustafarian-shared",
  "rustastic-drone",
+ "rustbusters-drone",
  "rusteze_drone",
  "rusty_drones",
  "serde_json",
@@ -1485,7 +1473,7 @@ dependencies = [
 [[package]]
 name = "rustafarian-shared"
 version = "0.1.1"
-source = "git+https://github.com/Rustafarian-Unitn/rustafarian-shared.git#0afab2d9bd366d63d7f3a0885093c44f8ab6d735"
+source = "git+https://github.com/Rustafarian-Unitn/rustafarian-shared.git#8136d73c42c71484848289d911fc56d7bd67f603"
 dependencies = [
  "crossbeam-channel",
  "serde",
@@ -1507,6 +1495,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "rustbusters-drone"
+version = "1.0.0"
+source = "git+https://github.com/Rustbusters/drone.git#5a00f8c5158822783a2efb2c206552c80477bdf2"
+dependencies = [
+ "crossbeam-channel",
+ "log",
+ "rand",
+ "wg_2024",
+]
+
+[[package]]
 name = "rustc-demangle"
 version = "0.1.24"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1524,7 +1523,7 @@ dependencies = [
 [[package]]
 name = "rusteze_drone"
 version = "0.1.0"
-source = "git+https://github.com/Rusteze-AP/drone.git?branch=main#d60caff4bc1ff1f97a72615032acc96f6c33089b"
+source = "git+https://github.com/Rusteze-AP/drone.git?branch=main#934c80dfefc0d41d5b6b406bbbb0382e43b9843e"
 dependencies = [
  "crossbeam",
  "logger",
@@ -1540,15 +1539,6 @@ source = "git+https://github.com/rusty-drone-2024/rusty-drone.git#4bf8bdb9b06c3c
 dependencies = [
  "crossbeam-channel",
  "rand",
- "wg_2024",
-]
-
-[[package]]
-name = "rusty_tester"
-version = "0.0.0"
-source = "git+https://github.com/rusty-drone-2024/rusty-tester.git?branch=main#3337229d1fdfb17fcedff8b2d6ff15e6ecad4d10"
-dependencies = [
- "crossbeam-channel",
  "wg_2024",
 ]
 
@@ -1734,11 +1724,11 @@ dependencies = [
 
 [[package]]
 name = "thiserror"
-version = "2.0.9"
+version = "2.0.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f072643fd0190df67a8bab670c20ef5d8737177d6ac6b2e9a236cb096206b2cc"
+checksum = "a3ac7f54ca534db81081ef1c1e7f6ea8a3ef428d2fc069097c079443d24124d3"
 dependencies = [
- "thiserror-impl 2.0.9",
+ "thiserror-impl 2.0.10",
 ]
 
 [[package]]
@@ -1754,9 +1744,9 @@ dependencies = [
 
 [[package]]
 name = "thiserror-impl"
-version = "2.0.9"
+version = "2.0.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7b50fa271071aae2e6ee85f842e2e28ba8cd2c5fb67f11fcb1fd70b276f9e7d4"
+checksum = "9e9465d30713b56a37ede7185763c3492a91be2f5fa68d958c44e41ab9248beb"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1786,9 +1776,9 @@ dependencies = [
 
 [[package]]
 name = "tokio"
-version = "1.42.0"
+version = "1.43.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5cec9b21b0450273377fc97bd4c33a8acffc8c996c987a7c5b319a0083707551"
+checksum = "3d61fa4ffa3de412bfea335c6ecff681de2b609ba3c77ef3e00e521813a9ed9e"
 dependencies = [
  "backtrace",
  "bytes",
@@ -1804,9 +1794,9 @@ dependencies = [
 
 [[package]]
 name = "tokio-macros"
-version = "2.4.0"
+version = "2.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "693d596312e88961bc67d7f1f97af8a70227d9f90c31bba5806eec004978d752"
+checksum = "6e06d43f1345a3bcd39f6a56dbb7dcab2ba47e68e8ac134855e7e2bdbaf8cab8"
 dependencies = [
  "proc-macro2",
  "quote",

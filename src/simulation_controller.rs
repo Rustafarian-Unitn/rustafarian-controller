@@ -452,7 +452,7 @@ impl SimulationController {
                         receive_packet_channel,
                         receive_command_channel,
                         send_response_channel,
-                        true
+                        debug_mode
                     );
                     client.run(TICKS)
                 } else {
@@ -462,7 +462,7 @@ impl SimulationController {
                         receive_packet_channel,
                         receive_command_channel,
                         send_response_channel,
-                        true
+                        debug_mode
                     );
                     client.run(TICKS)
                 }

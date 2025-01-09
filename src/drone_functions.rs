@@ -3,7 +3,7 @@ use ap2024_unitn_cppenjoyers_drone::CppEnjoyersDrone;
 use crossbeam_channel::{Receiver, Sender};
 use d_r_o_n_e_drone::MyDrone;
 use dr_ones::Drone as DrOne;
-use drone::RustBustersDrone;
+use rustbusters_drone::RustBustersDrone;
 use getdroned::GetDroned;
 use lockheedrustin_drone::LockheedRustin;
 use rust_do_it::RustDoIt;
