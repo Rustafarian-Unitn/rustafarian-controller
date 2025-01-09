@@ -14,8 +14,6 @@ mod chat_test {
     use wg_2024::controller::DroneEvent;
     use wg_2024::packet::PacketType;
 
-    use std::{fs, thread};
-
 
     use crate::simulation_controller::SimulationController;
     // use crate::tests::setup;

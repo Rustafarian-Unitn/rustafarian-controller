@@ -1,5 +1,9 @@
 use crate::config_parser;
-use crate::drone_functions::{cpp_enjoyers_drone, d_r_o_n_e_drone, dr_one_drone, get_droned_drone, lockheed_rustin_drone, rust_busters_drone, rust_do_it_drone, rustafarian_drone, rustastic_drone, rusteze_drone, rusty_drone};
+use crate::drone_functions::{
+    cpp_enjoyers_drone, d_r_o_n_e_drone, dr_one_drone, get_droned_drone, lockheed_rustin_drone,
+    rust_busters_drone, rust_do_it_drone, rustafarian_drone, rustastic_drone, rusteze_drone,
+    rusty_drone,
+};
 use crate::runnable::Runnable;
 use crossbeam_channel::{unbounded, Receiver, Sender};
 use rand::Error;
@@ -157,9 +161,18 @@ impl SimulationController {
         log("Building the simulation controller", LogLevel::Info);
         SimulationController::initialize(debug_mode);
         // Create a factory function for the implementations
-        let drone_factories: Vec<DroneFactory> = vec![cpp_enjoyers_drone,
-        // get_droned_drone,
-         rusteze_drone,dr_one_drone,rust_do_it_drone,rust_busters_drone,rusty_drone,rustastic_drone,lockheed_rustin_drone,d_r_o_n_e_drone];
+        let drone_factories: Vec<DroneFactory> = vec![
+            cpp_enjoyers_drone,
+            // get_droned_drone,
+            rusteze_drone,
+            dr_one_drone,
+            rust_do_it_drone,
+            rust_busters_drone,
+            rusty_drone,
+            rustastic_drone,
+            lockheed_rustin_drone,
+            d_r_o_n_e_drone,
+        ];
 
         let mut drone_factories = drone_factories.into_iter().cycle();
 
@@ -191,7 +204,7 @@ impl SimulationController {
             &mut node_channels,
             &mut drone_channels,
             &mut topology,
-            debug_mode
+            debug_mode,
         );
 
         Self::init_servers(
@@ -454,7 +467,7 @@ impl SimulationController {
                         receive_packet_channel,
                         receive_command_channel,
                         send_response_channel,
-                        debug_mode
+                        debug_mode,
                     );
                     client.run(TICKS)
                 } else {
@@ -464,7 +477,7 @@ impl SimulationController {
                         receive_packet_channel,
                         receive_command_channel,
                         send_response_channel,
-                        debug_mode
+                        debug_mode,
                     );
                     client.run(TICKS)
                 }
@@ -586,7 +599,7 @@ impl SimulationController {
                         FILE_FOLDER,
                         MEDIA_FOLDER,
                         ServerType::Media,
-                        debug_mode
+                        debug_mode,
                     );
                     println!(
                         "Server {} of type {:?}is running",
@@ -605,7 +618,7 @@ impl SimulationController {
                         FILE_FOLDER,
                         MEDIA_FOLDER,
                         ServerType::Text,
-                        debug_mode
+                        debug_mode,
                     );
                     println!(
                         "Server {} of type {:?}is running",
@@ -702,7 +715,7 @@ impl SimulationController {
             log("Destination is not a node", LogLevel::Error);
             Err(Error::new("Destination is not a node"))
         }
-    }    
+    }
 }
 
 /// Utility method used to cleanly log information, differentiating on three different levels
@@ -780,12 +793,25 @@ mod tests {
     #[test]
     fn test_init_drones() {
         let mut handles = Vec::new();
-        let drone_factories: Vec<DroneFactory> = vec![rustafarian_drone];
+        let drone_factories: Vec<DroneFactory> = vec![
+            cpp_enjoyers_drone,
+            get_droned_drone,
+            rusteze_drone,
+            dr_one_drone,
+            rust_do_it_drone,
+            rust_busters_drone,
+            rusty_drone,
+            rustastic_drone,
+            lockheed_rustin_drone,
+            d_r_o_n_e_drone,
+        ];
         let mut drone_factories = drone_factories.into_iter().cycle();
         let mut drone_channels = HashMap::new();
         let mut node_channels = HashMap::new();
         let mut topology = Topology::new();
-        let config = config_parser::parse_config("src/tests/configurations/test_config.toml");
+
+        let config =
+            config_parser::parse_config("src/tests/configurations/topology_20_drones.toml");
         SimulationController::init_channels(
             &config,
             &mut node_channels,
@@ -803,9 +829,9 @@ mod tests {
             &mut topology,
         );
 
-        assert_eq!(drone_channels.len(), 1);
+        assert_eq!(drone_channels.len(), 20);
 
-        assert_eq!(handles.len(), 1);
+        assert_eq!(handles.len(), 20);
     }
 
     #[test]
@@ -830,7 +856,7 @@ mod tests {
             &mut node_channels,
             &mut drone_channels,
             &mut topology,
-            true
+            true,
         );
 
         assert_eq!(node_channels.len(), 2);
@@ -926,13 +952,40 @@ mod tests {
     // test circular drone factory
     #[test]
     fn test_drone_factories_cycle() {
-        let drone_factories: Vec<DroneFactory> = vec![rustafarian_drone];
+        let drone_factories: Vec<DroneFactory> = vec![
+            cpp_enjoyers_drone,
+            get_droned_drone,
+            rusteze_drone,
+            dr_one_drone,
+            rust_do_it_drone,
+            rust_busters_drone,
+            rusty_drone,
+            rustastic_drone,
+            lockheed_rustin_drone,
+            d_r_o_n_e_drone,
+        ];
         let mut drone_factories = drone_factories.into_iter().cycle();
 
         let drone1 = drone_factories.next().unwrap();
         let drone2 = drone_factories.next().unwrap();
         let drone3 = drone_factories.next().unwrap();
         let drone4 = drone_factories.next().unwrap();
+        let drone5 = drone_factories.next().unwrap();
+        let drone6 = drone_factories.next().unwrap();
+        let drone7 = drone_factories.next().unwrap();
+        let drone8 = drone_factories.next().unwrap();
+        let drone9 = drone_factories.next().unwrap();
+        let drone10 = drone_factories.next().unwrap();
+        let drone11 = drone_factories.next().unwrap();
+        let drone12 = drone_factories.next().unwrap();
+        let drone13 = drone_factories.next().unwrap();
+        let drone14 = drone_factories.next().unwrap();
+        let drone15 = drone_factories.next().unwrap();
+        let drone16 = drone_factories.next().unwrap();
+        let drone17 = drone_factories.next().unwrap();
+        let drone18 = drone_factories.next().unwrap();
+        let drone19 = drone_factories.next().unwrap();
+        let drone20 = drone_factories.next().unwrap();
 
         assert_eq!(
             drone1
@@ -944,7 +997,7 @@ mod tests {
                     HashMap<NodeId, Sender<Packet>>,
                     f32,
                 ) -> (Box<dyn Runnable>, String),
-            rustafarian_drone
+                cpp_enjoyers_drone
                 as *const fn(
                     NodeId,
                     Sender<DroneEvent>,
@@ -964,7 +1017,7 @@ mod tests {
                     HashMap<NodeId, Sender<Packet>>,
                     f32,
                 ) -> (Box<dyn Runnable>, String),
-            rustafarian_drone
+                get_droned_drone
                 as *const fn(
                     NodeId,
                     Sender<DroneEvent>,
@@ -984,7 +1037,7 @@ mod tests {
                     HashMap<NodeId, Sender<Packet>>,
                     f32,
                 ) -> (Box<dyn Runnable>, String),
-            rustafarian_drone
+                rusteze_drone
                 as *const fn(
                     NodeId,
                     Sender<DroneEvent>,
@@ -1004,7 +1057,7 @@ mod tests {
                     HashMap<NodeId, Sender<Packet>>,
                     f32,
                 ) -> (Box<dyn Runnable>, String),
-            rustafarian_drone
+                dr_one_drone
                 as *const fn(
                     NodeId,
                     Sender<DroneEvent>,
@@ -1014,5 +1067,66 @@ mod tests {
                     f32,
                 ) -> (Box<dyn Runnable>, String)
         );
+        assert_eq!(
+            drone5
+                as *const fn(
+                    NodeId,
+                    Sender<DroneEvent>,
+                    Receiver<DroneCommand>,
+                    Receiver<Packet>,
+                    HashMap<NodeId, Sender<Packet>>,
+                    f32,
+                ) -> (Box<dyn Runnable>, String),
+            rust_do_it_drone
+                as *const fn(
+                    NodeId,
+                    Sender<DroneEvent>,
+                    Receiver<DroneCommand>,
+                    Receiver<Packet>,
+                    HashMap<NodeId, Sender<Packet>>,
+                    f32,
+                ) -> (Box<dyn Runnable>, String)
+        );
+        assert_eq!(
+            drone6
+                as *const fn(
+                    NodeId,
+                    Sender<DroneEvent>,
+                    Receiver<DroneCommand>,
+                    Receiver<Packet>,
+                    HashMap<NodeId, Sender<Packet>>,
+                    f32,
+                ) -> (Box<dyn Runnable>, String),
+            rust_busters_drone
+                as *const fn(
+                    NodeId,
+                    Sender<DroneEvent>,
+                    Receiver<DroneCommand>,
+                    Receiver<Packet>,
+                    HashMap<NodeId, Sender<Packet>>,
+                    f32,
+                ) -> (Box<dyn Runnable>, String)
+        );
+        assert_eq!(
+            drone7
+                as *const fn(
+                    NodeId,
+                    Sender<DroneEvent>,
+                    Receiver<DroneCommand>,
+                    Receiver<Packet>,
+                    HashMap<NodeId, Sender<Packet>>,
+                    f32,
+                ) -> (Box<dyn Runnable>, String),
+            rusty_drone
+                as *const fn(
+                    NodeId,
+                    Sender<DroneEvent>,
+                    Receiver<DroneCommand>,
+                    Receiver<Packet>,
+                    HashMap<NodeId, Sender<Packet>>,
+                    f32,
+                ) -> (Box<dyn Runnable>, String)
+        );
+        
     }
 }
