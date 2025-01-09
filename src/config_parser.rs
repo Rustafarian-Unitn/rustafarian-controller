@@ -47,6 +47,7 @@ fn validate_config(config: &Config) -> () {
             let mut found = false;
             for client in &config.client {
                 if &client.id == connected_node {
+                    println!("Client {} is connected to drone {}? {}", client.id, drone.id, client.connected_drone_ids.contains(&drone.id));
                     assert!(client.connected_drone_ids.contains(&drone.id), "Client {} must be connected to drone {}", client.id, drone.id);
                     found = true;
                     break;
@@ -71,6 +72,72 @@ fn validate_config(config: &Config) -> () {
             
             if !found {
                 panic!("Drone {} is connected to an inexistent client {}", drone.id, connected_node);
+            }
+        }
+    }
+
+    for client in &config.client {
+        for connected_node in &client.connected_drone_ids {
+            let mut found = false;
+            for drone in &config.drone {
+                if &drone.id == connected_node {
+                    assert!(drone.connected_node_ids.contains(&client.id), "Drone {} must be connected to client {}", drone.id, client.id);
+                    found = true;
+                    break;
+                }
+            }
+
+            for server in &config.server {
+                if &server.id == connected_node {
+                    assert!(server.connected_drone_ids.contains(&client.id), "Server {} must be connected to client {}", server.id, client.id);
+                    found = true;
+                    break;
+                }
+            }
+
+            for other_client in &config.client {
+                if &other_client.id == connected_node {
+                    assert!(other_client.connected_drone_ids.contains(&client.id), "Client {} must be connected to client {}", other_client.id, client.id);
+                    found = true;
+                    break;
+                }
+            }
+
+            if !found {
+                panic!("Client {} is connected to an inexistent drone {}", client.id, connected_node);
+            }
+        }
+    }
+
+    for server in &config.server {
+        for connected_node in &server.connected_drone_ids {
+            let mut found = false;
+            for drone in &config.drone {
+                if &drone.id == connected_node {
+                    assert!(drone.connected_node_ids.contains(&server.id), "Drone {} must be connected to server {}", drone.id, server.id);
+                    found = true;
+                    break;
+                }
+            }
+
+            for client in &config.client {
+                if &client.id == connected_node {
+                    assert!(client.connected_drone_ids.contains(&server.id), "Client {} must be connected to server {}", client.id, server.id);
+                    found = true;
+                    break;
+                }
+            }
+
+            for other_server in &config.server {
+                if &other_server.id == connected_node {
+                    assert!(other_server.connected_drone_ids.contains(&server.id), "Server {} must be connected to server {}", other_server.id, server.id);
+                    found = true;
+                    break;
+                }
+            }
+
+            if !found {
+                panic!("Server {} is connected to an inexistent drone {}", server.id, connected_node);
             }
         }
     }
