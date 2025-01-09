@@ -157,7 +157,9 @@ impl SimulationController {
         log("Building the simulation controller", LogLevel::Info);
         SimulationController::initialize(debug_mode);
         // Create a factory function for the implementations
-        let drone_factories: Vec<DroneFactory> = vec![cpp_enjoyers_drone,get_droned_drone, rusteze_drone,dr_one_drone,rust_do_it_drone,rust_busters_drone,rusty_drone,rustastic_drone,lockheed_rustin_drone,d_r_o_n_e_drone];
+        let drone_factories: Vec<DroneFactory> = vec![cpp_enjoyers_drone,
+        // get_droned_drone,
+         rusteze_drone,dr_one_drone,rust_do_it_drone,rust_busters_drone,rusty_drone,rustastic_drone,lockheed_rustin_drone,d_r_o_n_e_drone];
 
         let mut drone_factories = drone_factories.into_iter().cycle();
 
