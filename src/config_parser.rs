@@ -124,3 +124,34 @@ fn test_validate_large_config() {
 
     assert!(result.is_ok());
 }
+
+
+#[test]
+fn test_validate_config_invalid_drone() {
+    let config_str = "src/tests/configurations/invalid_drone_config.toml";
+
+    let config = parse_config(config_str);
+    let result = std::panic::catch_unwind(|| validate_config(&config));
+
+    assert!(result.is_err());
+}
+
+#[test]
+fn test_validate_config_invalid_client() {
+    let config_str = "src/tests/configurations/invalid_client_config.toml";
+
+    let config = parse_config(config_str);
+    let result = std::panic::catch_unwind(|| validate_config(&config));
+
+    assert!(result.is_err());
+}
+
+#[test]
+fn test_validate_config_invalid_server() {
+    let config_str = "src/tests/configurations/invalid_server_config.toml";
+
+    let config = parse_config(config_str);
+    let result = std::panic::catch_unwind(|| validate_config(&config));
+
+    assert!(result.is_err());
+}
