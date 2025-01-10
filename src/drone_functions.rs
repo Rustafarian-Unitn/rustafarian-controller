@@ -7,7 +7,6 @@ use rustbusters_drone::RustBustersDrone;
 use getdroned::GetDroned;
 use lockheedrustin_drone::LockheedRustin;
 use rust_do_it::RustDoIt;
-use rustafarian_drone::RustafarianDrone;
 use rustastic_drone::RustasticDrone;
 use rusteze_drone::RustezeDrone;
 use rusty_drones::RustyDrone;
@@ -15,27 +14,6 @@ use std::collections::HashMap;
 use wg_2024::controller::{DroneCommand, DroneEvent};
 use wg_2024::drone::Drone;
 use wg_2024::packet::Packet;
-
-pub fn rustafarian_drone(
-    id: u8,
-    controller_send: Sender<DroneEvent>,
-    controller_recv: Receiver<DroneCommand>,
-    packet_recv: Receiver<Packet>,
-    packet_send: HashMap<u8, Sender<Packet>>,
-    pdr: f32,
-) -> (Box<dyn Runnable>, String) {
-    (
-        Box::new(MyDrone::new(
-            id,
-            controller_send,
-            controller_recv,
-            packet_recv,
-            packet_send,
-            pdr,
-        )),
-        "Rustafarian drone".to_string(),
-    )
-}
 
 pub fn d_r_o_n_e_drone(
     id: u8,

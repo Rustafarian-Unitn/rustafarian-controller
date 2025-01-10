@@ -5,10 +5,10 @@ use ::rustafarian_client::browser_client;
 use crossbeam_channel::unbounded;
 use rustafarian_client::{browser_client::BrowserClient, chat_client::ChatClient, client::Client};
 use rustafarian_drone::RustafarianDrone;
-use rustafarian_shared::messages::{
+use rustafarian_shared::{logger::Logger, messages::{
     commander_messages::{SimControllerCommand, SimControllerResponseWrapper},
     general_messages::ServerType,
-};
+}};
 use wg_2024::{
     controller::{DroneCommand, DroneEvent},
     drone::Drone,
@@ -348,6 +348,7 @@ pub fn setup() -> (
         drones_channels,
         Vec::new(),
         client.topology().clone(),
+        Logger::new("SimulationController".to_string(), 0, true),
     );
 
     (

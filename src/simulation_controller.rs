@@ -1,7 +1,7 @@
 use crate::config_parser;
 use crate::drone_functions::{
     cpp_enjoyers_drone, d_r_o_n_e_drone, dr_one_drone, get_droned_drone, lockheed_rustin_drone,
-    rust_busters_drone, rust_do_it_drone, rustafarian_drone, rustastic_drone, rusteze_drone,
+    rust_busters_drone, rust_do_it_drone, rustastic_drone, rusteze_drone,
     rusty_drone,
 };
 use crate::runnable::Runnable;
@@ -12,16 +12,14 @@ use rustafarian_client::browser_client::BrowserClient;
 use rustafarian_client::chat_client::ChatClient;
 use rustafarian_client::client::Client;
 use rustafarian_content_server::content_server::ContentServer;
-use rustafarian_shared::logger::{self, Logger};
-use rustafarian_shared::messages::commander_messages::SimControllerEvent::PacketForwarded;
+use rustafarian_shared::logger::{LogLevel, Logger};
 use rustafarian_shared::messages::commander_messages::{
     SimControllerCommand, SimControllerEvent, SimControllerResponseWrapper,
 };
 use rustafarian_shared::messages::general_messages::ServerType;
 use rustafarian_shared::topology::Topology;
-
+use rustafarian_shared::messages::commander_messages::SimControllerEvent::PacketForwarded;
 use std::collections::HashMap;
-use std::sync::Once;
 use std::thread;
 use std::thread::JoinHandle;
 use wg_2024::config::{Client as ClientConfig, Drone as DroneConfig, Server as ServerConfig};
@@ -129,22 +127,6 @@ impl SimulationController {
         }
     }
 
-    fn set_node_channels(&mut self, node_channels: HashMap<NodeId, NodeChannels>) {
-        self.nodes_channels = node_channels;
-    }
-
-    fn set_drone_channels(&mut self, drone_channels: HashMap<NodeId, DroneChannels>) {
-        self.drone_channels = drone_channels;
-    }
-
-    fn set_handles(&mut self, handles: Vec<Option<JoinHandle<()>>>) {
-        self.handles = handles;
-    }
-
-    fn set_topology(&mut self, topology: Topology) {
-        self.topology = topology;
-    }
-
     /// Builds a simulation controller from a configuration string.
     /// # Arguments
     /// * `config` - A string containing the path to the configuration for the simulation
@@ -154,13 +136,12 @@ impl SimulationController {
         let config = config_parser::parse_config(config);
         let logger = Logger::new("Controller".to_string(), 0, debug_mode);
 
-        logger.log("Building the simulation controller", LogLevel::Info);
-        let mut simulation_controller = SimulationController::default();
+        logger.log("Building the simulation controller", LogLevel::INFO);
 
         // Create a factory function for the implementations
         let drone_factories: Vec<DroneFactory> = vec![
             cpp_enjoyers_drone,
-            // get_droned_drone,
+            get_droned_drone,
             rusteze_drone,
             dr_one_drone,
             rust_do_it_drone,
@@ -227,13 +208,13 @@ impl SimulationController {
         topology: &mut Topology,
         logger: &Logger,
     ) {
-        logger.log("Initializing the channels", LogLevel::Info);
+        logger.log("Initializing the channels", LogLevel::INFO);
 
-        logger.log("Drone channels", LogLevel::Debug);
+        logger.log("Drone channels", LogLevel::DEBUG);
         for drone_config in config.drone.iter() {
             logger.log(
                 format!("Creating drone channels for node {}", drone_config.id).as_str(),
-                LogLevel::Debug,
+                LogLevel::DEBUG,
             );
 
             let (send_command_channel, receive_command_channel) = unbounded::<DroneCommand>();
@@ -252,23 +233,23 @@ impl SimulationController {
                 },
             );
 
-            logger.log("Adding drone to topology", LogLevel::Debug);
+            logger.log("Adding drone to topology", LogLevel::DEBUG);
             // Build the topology to represent the network in the frontend
             topology.add_node(drone_config.id);
 
-            logger.log("Adding edges to topology", LogLevel::Debug);
+            logger.log("Adding edges to topology", LogLevel::DEBUG);
             drone_config.connected_node_ids.iter().for_each(|node_id| {
                 topology.add_edge(drone_config.id, *node_id);
             });
 
-            logger.log("Setting node type in topology", LogLevel::Debug);
+            logger.log("Setting node type in topology", LogLevel::DEBUG);
             topology.set_node_type(drone_config.id, "drone".to_string());
         }
 
         for client_config in config.client.iter() {
             logger.log(
                 format!("Creating client channels for node {}", client_config.id).as_str(),
-                LogLevel::Debug,
+                LogLevel::DEBUG,
             );
             let (send_command_channel, receive_command_channel) =
                 unbounded::<SimControllerCommand>();
@@ -292,7 +273,7 @@ impl SimulationController {
         for server_config in config.server.iter() {
             logger.log(
                 format!("Creating server channels for node {}", server_config.id).as_str(),
-                LogLevel::Debug,
+                LogLevel::DEBUG,
             );
             let (send_command_channel, receive_command_channel) =
                 unbounded::<SimControllerCommand>();
@@ -332,12 +313,12 @@ impl SimulationController {
         topology: &mut Topology,
         logger: &Logger,
     ) {
-        logger.log("Initializing drones", LogLevel::Info);
+        logger.log("Initializing drones", LogLevel::INFO);
         // For each drone config pick the next factory in a circular fashion to generate a drone instance
         for drone_config in drones_config.iter() {
             logger.log(
                 format!("Creating drone {}", drone_config.id).as_str(),
-                LogLevel::Debug,
+                LogLevel::DEBUG,
             );
             // Get the next drone in line
             let factory = drone_factories.next().unwrap();
@@ -373,7 +354,7 @@ impl SimulationController {
                     name.clone()
                 )
                 .as_str(),
-                LogLevel::Debug,
+                LogLevel::DEBUG,
             );
 
             topology.set_label(drone_config.id, name);
@@ -381,7 +362,7 @@ impl SimulationController {
             handles.push(Some(thread::spawn(move || drone.run())));
             logger.log(
                 format!("Drone {} started successfully", drone_config.id).as_str(),
-                LogLevel::Debug,
+                LogLevel::DEBUG,
             );
         }
     }
@@ -404,11 +385,11 @@ impl SimulationController {
         debug_mode: bool,
         logger: &Logger,
     ) {
-        logger.log("Initializing clients", LogLevel::Info);
+        logger.log("Initializing clients", LogLevel::INFO);
         for client_config in clients_config {
             logger.log(
                 format!("Creating client {}", client_config.id).as_str(),
-                LogLevel::Debug,
+                LogLevel::DEBUG,
             );
             // Register assigned neighbouring drones
             let neighbour_drones = drone_channels
@@ -422,14 +403,14 @@ impl SimulationController {
             if client_config.id % 2 == 0 {
                 logger.log(
                     format!("Node {} is a Chat client", client_config.id).as_str(),
-                    LogLevel::Debug,
+                    LogLevel::DEBUG,
                 );
                 topology.set_label(client_config.id, "Chat client".to_string());
                 topology.set_node_type(client_config.id, "chat_client".to_string());
             } else {
                 logger.log(
                     format!("Node {} is a Browser client", client_config.id).as_str(),
-                    LogLevel::Debug,
+                    LogLevel::DEBUG,
                 );
                 topology.set_label(client_config.id, "Browser client".to_string());
                 topology.set_node_type(client_config.id, "browser_client".to_string());
@@ -460,7 +441,7 @@ impl SimulationController {
 
             logger.log(
                 format!("Starting client {}", client_config.id).as_str(),
-                LogLevel::Debug,
+                LogLevel::DEBUG,
             );
             // Start off the client
             handles.push(Some(thread::spawn(move || {
@@ -488,7 +469,7 @@ impl SimulationController {
             })));
             logger.log(
                 format!("Client {} started successfully", client_config.id).as_str(),
-                LogLevel::Debug,
+                LogLevel::DEBUG,
             );
         }
     }
@@ -512,7 +493,7 @@ impl SimulationController {
         debug_mode: bool,
         logger: &Logger,
     ) {
-        logger.log("Initializing servers", LogLevel::Info);
+        logger.log("Initializing servers", LogLevel::INFO);
         // Generate the file and media folders
         let _ = std::fs::create_dir_all(FILE_FOLDER);
         let _ = std::fs::create_dir_all(MEDIA_FOLDER);
@@ -521,7 +502,7 @@ impl SimulationController {
         for server_config in servers_config {
             logger.log(
                 format!("Creating server {}", server_config.id).as_str(),
-                LogLevel::Debug,
+                LogLevel::DEBUG,
             );
 
             let drones = drone_channels
@@ -542,21 +523,21 @@ impl SimulationController {
             if server_config.id % 3 == 0 {
                 logger.log(
                     format!("Node {} is a Chat server", server_config.id).as_str(),
-                    LogLevel::Debug,
+                    LogLevel::DEBUG,
                 );
                 topology.set_label(server_config.id, "Chat server".to_string());
                 topology.set_node_type(server_config.id, "Chat".to_string());
             } else if server_config.id % 3 == 1 {
                 logger.log(
                     format!("Node {} is a Media server", server_config.id).as_str(),
-                    LogLevel::Debug,
+                    LogLevel::DEBUG,
                 );
                 topology.set_label(server_config.id, "Media server".to_string());
                 topology.set_node_type(server_config.id, "Media".to_string());
             } else {
                 logger.log(
                     format!("Node {} is a Text server", server_config.id).as_str(),
-                    LogLevel::Debug,
+                    LogLevel::DEBUG,
                 );
                 topology.set_label(server_config.id, "Text server".to_string());
                 topology.set_node_type(server_config.id, "Text".to_string());
@@ -580,7 +561,7 @@ impl SimulationController {
 
             logger.log(
                 format!("Starting server {}", server_config.id).as_str(),
-                LogLevel::Debug,
+                LogLevel::DEBUG,
             );
             // Start off the server
             handles.push(Some(thread::spawn(move || {
@@ -637,7 +618,7 @@ impl SimulationController {
 
             logger.log(
                 format!("Server {} started successfully", server_config.id).as_str(),
-                LogLevel::Debug,
+                LogLevel::DEBUG,
             );
         }
     }
@@ -662,11 +643,11 @@ impl SimulationController {
                 {
                     self.logger.log(
                         "Packet forwarded successfully to destination",
-                        LogLevel::Info,
+                        LogLevel::INFO,
                     );
                     match packet_type {
                         PacketType::MsgFragment(fragment) => {
-                            logger.log("Packet type: MsgFragment", LogLevel::Debug);
+                            self.logger.log("Packet type: MsgFragment", LogLevel::DEBUG);
                             Ok(PacketForwarded {
                                 session_id,
                                 packet_type: fragment.to_string(),
@@ -675,7 +656,7 @@ impl SimulationController {
                             })
                         }
                         PacketType::Ack(ack) => {
-                            logger.log("Packet type: Ack", LogLevel::Debug);
+                            self.logger.log("Packet type: Ack", LogLevel::DEBUG);
                             Ok(PacketForwarded {
                                 session_id,
                                 packet_type: ack.to_string(),
@@ -684,7 +665,7 @@ impl SimulationController {
                             })
                         }
                         PacketType::Nack(nack) => {
-                            logger.log("Packet type: Nack", LogLevel::Debug);
+                            self.logger.log("Packet type: Nack", LogLevel::DEBUG);
                             Ok(PacketForwarded {
                                 session_id,
                                 packet_type: nack.to_string(),
@@ -693,7 +674,7 @@ impl SimulationController {
                             })
                         }
                         PacketType::FloodRequest(flood_request) => {
-                            logger.log("Packet type: FloodRequest", LogLevel::Debug);
+                            self.logger.log("Packet type: FloodRequest", LogLevel::DEBUG);
                             Ok(PacketForwarded {
                                 session_id,
                                 packet_type: flood_request.to_string(),
@@ -702,7 +683,7 @@ impl SimulationController {
                             })
                         }
                         PacketType::FloodResponse(flood_response) => {
-                            logger.log("Packet type: FloodResponse", LogLevel::Debug);
+                            self.logger.log("Packet type: FloodResponse", LogLevel::DEBUG);
                             Ok(PacketForwarded {
                                 session_id,
                                 packet_type: flood_response.to_string(),
@@ -713,11 +694,11 @@ impl SimulationController {
                     }
                 }
             } else {
-                self.logger.log("Failed to send packet", LogLevel::Error);
+                self.logger.log("Failed to send packet", LogLevel::ERROR);
                 Err(Error::new("Failed to send packet"))
             }
         } else {
-            self.logger.log("Destination is not a node", LogLevel::Error);
+            self.logger.log("Destination is not a node", LogLevel::ERROR);
             Err(Error::new("Destination is not a node"))
         }
     }
@@ -732,7 +713,6 @@ impl SimulationController {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::drone_functions::rustafarian_drone;
     use crate::tests::setup;
     use rustafarian_shared::topology::Topology;
     use std::collections::HashMap;
@@ -759,14 +739,14 @@ mod tests {
 
     #[test]
     fn test_simulation_controller_build() {
-        let config_str = "src/tests/configurations/test_config.toml";
+        let config_str = "src/tests/configurations/topology_1.toml";
 
         let controller = SimulationController::build(config_str, false);
 
-        assert_eq!(controller.drone_channels.len(), 1);
+        assert_eq!(controller.drone_channels.len(), 5);
         assert_eq!(controller.nodes_channels.len(), 2);
-        assert_eq!(controller.handles.len(), 3);
-        assert_eq!(controller.topology.nodes().len(), 3);
+        assert_eq!(controller.handles.len(), 7);
+        assert_eq!(controller.topology.nodes().len(), 7);
     }
 
     #[test]
@@ -819,7 +799,7 @@ mod tests {
     #[test]
     fn test_init_clients() {
         let mut handles = Vec::new();
-        let config = config_parser::parse_config("src/tests/configurations/test_config.toml");
+        let config = config_parser::parse_config("src/tests/configurations/topology_1.toml");
         let mut node_channels = HashMap::new();
         let mut drone_channels = HashMap::new();
         let mut topology = Topology::new();
@@ -851,7 +831,7 @@ mod tests {
     #[test]
     fn test_init_servers() {
         let mut handles = Vec::new();
-        let config = config_parser::parse_config("src/tests/configurations/test_config.toml");
+        let config = config_parser::parse_config("src/tests/configurations/topology_1.toml");
         let mut node_channels = HashMap::new();
         let mut drone_channels = HashMap::new();
         let mut topology = Topology::new();
@@ -966,14 +946,6 @@ mod tests {
         let drone10 = drone_factories.next().unwrap();
         let drone11 = drone_factories.next().unwrap();
         let drone12 = drone_factories.next().unwrap();
-        let drone13 = drone_factories.next().unwrap();
-        let drone14 = drone_factories.next().unwrap();
-        let drone15 = drone_factories.next().unwrap();
-        let drone16 = drone_factories.next().unwrap();
-        let drone17 = drone_factories.next().unwrap();
-        let drone18 = drone_factories.next().unwrap();
-        let drone19 = drone_factories.next().unwrap();
-        let drone20 = drone_factories.next().unwrap();
 
         assert_eq!(
             drone1
@@ -1115,5 +1087,97 @@ mod tests {
                     f32,
                 ) -> (Box<dyn Runnable>, String)
         );
+        assert_eq!(
+            drone8
+                as *const fn(
+                    NodeId,
+                    Sender<DroneEvent>,
+                    Receiver<DroneCommand>,
+                    Receiver<Packet>,
+                    HashMap<NodeId, Sender<Packet>>,
+                    f32,
+                ) -> (Box<dyn Runnable>, String),
+            rustastic_drone
+                as *const fn(
+                    NodeId,
+                    Sender<DroneEvent>,
+                    Receiver<DroneCommand>,
+                    Receiver<Packet>,
+                    HashMap<NodeId, Sender<Packet>>,
+                    f32,
+                ) -> (Box<dyn Runnable>, String)
+        );
+        assert_eq!(
+            drone9
+                as *const fn(
+                    NodeId,
+                    Sender<DroneEvent>,
+                    Receiver<DroneCommand>,
+                    Receiver<Packet>,
+                    HashMap<NodeId, Sender<Packet>>,
+                    f32,
+                ) -> (Box<dyn Runnable>, String),
+            lockheed_rustin_drone
+                as *const fn(
+                    NodeId,
+                    Sender<DroneEvent>,
+                    Receiver<DroneCommand>,
+                    Receiver<Packet>,
+                    HashMap<NodeId, Sender<Packet>>,
+                    f32,
+                ) -> (Box<dyn Runnable>, String)
+        );
+        assert_eq!(
+            drone10
+                as *const fn(
+                    NodeId,
+                    Sender<DroneEvent>,
+                    Receiver<DroneCommand>,
+                    Receiver<Packet>,
+                    HashMap<NodeId, Sender<Packet>>,
+                    f32,
+                ) -> (Box<dyn Runnable>, String),
+            d_r_o_n_e_drone
+                as *const fn(
+                    NodeId,
+                    Sender<DroneEvent>,
+                    Receiver<DroneCommand>,
+                    Receiver<Packet>,
+                    HashMap<NodeId, Sender<Packet>>,
+                    f32,
+                ) -> (Box<dyn Runnable>, String)
+        );
+        assert!(drone11 as *const fn(
+            NodeId,
+            Sender<DroneEvent>,
+            Receiver<DroneCommand>,
+            Receiver<Packet>,
+            HashMap<NodeId, Sender<Packet>>,
+            f32,
+        ) -> (Box<dyn Runnable>, String)
+            == cpp_enjoyers_drone as *const fn(
+                NodeId,
+                Sender<DroneEvent>,
+                Receiver<DroneCommand>,
+                Receiver<Packet>,
+                HashMap<NodeId, Sender<Packet>>,
+                f32,
+            ) -> (Box<dyn Runnable>, String));
+        assert!(drone12 as *const fn(
+            NodeId,
+            Sender<DroneEvent>,
+            Receiver<DroneCommand>,
+            Receiver<Packet>,
+            HashMap<NodeId, Sender<Packet>>,
+            f32,
+        ) -> (Box<dyn Runnable>, String)
+            == get_droned_drone as *const fn(
+                NodeId,
+                Sender<DroneEvent>,
+                Receiver<DroneCommand>,
+                Receiver<Packet>,
+                HashMap<NodeId, Sender<Packet>>,
+                f32,
+            ) -> (Box<dyn Runnable>, String));
     }
 }

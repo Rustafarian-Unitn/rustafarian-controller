@@ -299,6 +299,7 @@ mod chat_test {
         let simulation_controller =
             SimulationController::build("src/tests/configurations/topology_10_nodes.toml", false);
         let client_id: u8 = 4;
+        let server_id= 9;
         let client_command_channel = simulation_controller
             .nodes_channels
             .get(&client_id)
@@ -314,9 +315,9 @@ mod chat_test {
             .clone();
 
         // Wait for flood to finish
-        thread::sleep(std::time::Duration::from_millis(500));
+        thread::sleep(std::time::Duration::from_secs(3));
         // Instruct client to register to server
-        let res = client_command_channel.send(SimControllerCommand::Register(4));
+        let res = client_command_channel.send(SimControllerCommand::Register(server_id));
         assert!(res.is_ok());
 
         // Wait for registration to happen

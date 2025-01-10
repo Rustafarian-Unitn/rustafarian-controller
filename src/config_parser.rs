@@ -145,11 +145,11 @@ fn validate_config(config: &Config) -> () {
 
 #[test]
 fn test_parse_config() {
-    let config_str = "src/tests/configurations/test_config.toml";
+    let config_str = "src/tests/configurations/topology_1.toml";
 
     let config = parse_config(config_str);
     println!("{:?}", config);
-    assert_eq!(config.drone.len(), 1);
+    assert_eq!(config.drone.len(), 5);
     assert_eq!(config.client.len(), 1);
     assert_eq!(config.server.len(), 1);
 }
@@ -174,7 +174,7 @@ fn test_simulation_controller_parse_config_invalid_toml() {
 
 #[test]
 fn test_validate_config() {
-    let config_str = "src/tests/configurations/test_config.toml";
+    let config_str = "src/tests/configurations/topology_1.toml";
 
     let config = parse_config(config_str);
     let result = std::panic::catch_unwind(|| validate_config(&config));

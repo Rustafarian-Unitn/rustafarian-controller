@@ -243,6 +243,7 @@ mod chat_test {
        
         let client_id: u8 = 7;
         let server_id = 10;
+        let media_id = 4;
 
         let client_command_channel = simulation_controller
             .nodes_channels
@@ -260,14 +261,14 @@ mod chat_test {
 
         thread::sleep(std::time::Duration::from_secs(1));    
 
-        let _res = client_command_channel.send(SimControllerCommand::RequestMediaFile(2,server_id));
+        let _res = client_command_channel.send(SimControllerCommand::RequestMediaFile(media_id,server_id));
 
         for response in client_response_channel.iter() {
             if let SimControllerResponseWrapper::Message(SimControllerMessage::MediaFileResponse(
                 _,media
             )) = response
             {
-                match open("resources/media/0002.jpg"){
+                match open("resources/media/0004.jpg"){
                     Ok(image)=>{
                         let mut file_content = Vec::new();
                         image.write_to(&mut Cursor::new(&mut file_content), ImageFormat::Jpeg)
@@ -288,12 +289,12 @@ mod chat_test {
     #[test]
     fn file_text_media_test() {
         let simulation_controller =
-            SimulationController::build("src/tests/configurations/topology_2.toml", false);
+            SimulationController::build("src/tests/configurations/topology_10_nodes.toml", false);
        
-        let client_id: u8 = 7;
-        let server_1_id = 10;
-        let server_2_id = 11;
-
+        let client_id: u8 = 5;
+        let server_1_id = 8;
+        let text_id = 1;
+        let media_id = 4;
         let client_command_channel = simulation_controller
             .nodes_channels
             .get(&client_id)
@@ -307,22 +308,18 @@ mod chat_test {
             .unwrap()
             .receive_response_channel
             .clone();
-
-        thread::sleep(std::time::Duration::from_secs(1));    
-
-        let _rus=client_command_channel.send(SimControllerCommand::RequestServerType(server_1_id));
  
         thread::sleep(std::time::Duration::from_secs(1));  
-        let _res = client_command_channel.send(SimControllerCommand::RequestTextFile(3,server_2_id));
+        let _res = client_command_channel.send(SimControllerCommand::RequestTextFile(text_id,server_1_id));
         
         for response in client_response_channel.iter() {
              
-            
+            println!("Response {:?}",response);
             if let SimControllerResponseWrapper::Message(SimControllerMessage::TextWithReferences(
                 _,text, media_files
             )) = response
             {   
-                let text_content=fs::read_to_string("resources/files/0003.txt").expect("Failed to read file 0003.txt");
+                let text_content=fs::read_to_string("resources/files/0001.txt").expect("Failed to read file 0001.txt");
                 assert_eq!(text,text_content);
                 
                 match open("resources/media/0004.jpg"){
@@ -330,7 +327,7 @@ mod chat_test {
                         let mut file_content = Vec::new();
                         image.write_to(&mut Cursor::new(&mut file_content), ImageFormat::Jpeg)
                         .expect("Failed to convert image to buffer");
-                        assert_eq!(file_content, *media_files.get(&4).unwrap());
+                        assert_eq!(file_content, *media_files.get(&media_id).unwrap());
                         break;
                     }
                     Err(err)=>{
@@ -352,10 +349,10 @@ mod chat_test {
     fn drop_server_test() {
         //set pdr=0.9
         let simulation_controller =
-            SimulationController::build("src/tests/configurations/topology_1.toml", false);
+            SimulationController::build("src/tests/configurations/topology_10_nodes.toml", false);
        
         let client_id: u8 = 7;
-        let server_id = 11;
+        let server_id = 8;
 
         let client_command_channel = simulation_controller
             .nodes_channels
@@ -392,7 +389,7 @@ mod chat_test {
         use crate::simulation_controller::SimulationController;
         use crossbeam_channel::select;
         use rustafarian_shared::messages::commander_messages::{
-            SimControllerCommand, SimControllerEvent, SimControllerMessage, SimControllerResponseWrapper
+            SimControllerCommand, SimControllerMessage, SimControllerResponseWrapper
         };
         use rustafarian_shared::messages::general_messages::ServerType;
         use std::thread;
@@ -616,7 +613,7 @@ mod chat_test {
             );
     
             let client_id: u8 = 5;
-            let server_id = 7;
+            let server_id = 10;
     
             let client_command_channel = simulation_controller
                 .nodes_channels
@@ -635,7 +632,7 @@ mod chat_test {
             // wait for flood to finish
             thread::sleep(std::time::Duration::from_secs(1));
             // Instruct client to request media file
-            let res = client_command_channel.send(SimControllerCommand::RequestMediaFile(1, server_id));
+            let res = client_command_channel.send(SimControllerCommand::RequestMediaFile(4, server_id));
             assert!(res.is_ok());
     
             // Ignore all messages until MediaFileResponse is received
@@ -752,14 +749,9 @@ mod chat_test {
             loop {
                 select! {
                     recv(client_response_channel) -> response => {
-                        if let Ok(SimControllerResponseWrapper::Event(SimControllerEvent::PacketReceived(_))) = response {
+                        if let Ok(SimControllerResponseWrapper::Message(SimControllerMessage::TextFileResponse{..})) = response {
                             println!("TEST - Message received {:?}", response);
-                            assert!(
-                                matches!(
-                                    response.unwrap(),
-                                    SimControllerResponseWrapper::Event(SimControllerEvent::PacketReceived(_))
-                                )
-                            );
+                            assert!(false, "Server should not respond to invalid request");
                         }
                     }
                     default(timeout) => {
@@ -772,11 +764,4 @@ mod chat_test {
             }
         }
     }
-    
-
-    #[test]
-    fn error_routing_client_test() {}
-
-    #[test]
-    fn error_routing_server_test() {}
 }
