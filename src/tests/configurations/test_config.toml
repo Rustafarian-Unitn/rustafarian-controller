@@ -1,7 +1,7 @@
 [[drone]]
 id = 1
 pdr = 0.9
-connected_node_ids = [2]
+connected_node_ids = [2, 3]
 
 [[client]]
 id = 2

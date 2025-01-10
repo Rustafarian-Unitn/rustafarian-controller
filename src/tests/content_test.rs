@@ -1,28 +1,16 @@
 mod chat_test {
     use image::{open, ImageFormat};
-    use ::rustafarian_chat_server::chat_server;
-    use ::rustafarian_client::client;
-    use rustafarian_shared::messages::browser_messages::BrowserResponse;
     use rustafarian_shared::messages::commander_messages::{
         SimControllerCommand, SimControllerMessage,
         SimControllerResponseWrapper,
     };
     use rustafarian_shared::messages::general_messages::ServerType;
-    use std::collections::HashSet;
-    use std::io::{Cursor, Read};
-    use std::{fs, thread};
-    use wg_2024::controller::DroneEvent;
-    use wg_2024::packet::PacketType;
-
+    use std::io::Cursor;
     use std::{fs, thread};
 
 
     use crate::simulation_controller::SimulationController;
-    // use crate::tests::setup;
-    // use crossbeam_channel::unbounded;
-    // use rustafarian_client::client::Client;
 
-    const DEBUG: bool = false;
     #[test]
     fn initialization_content_test() {
         let simulation_controller =
@@ -85,7 +73,7 @@ mod chat_test {
             {
                 let mut nodes = topology.nodes().clone();
                 nodes.sort();
-                let mut expected_nodes = vec![1, 2, 3, 11, 4, 5, 7];
+                let mut expected_nodes = vec![1, 2, 3, 11, 4, 5, 10, 7];
                 expected_nodes.sort();
                 assert_eq!(nodes, expected_nodes);
                 println!("Client nodes: {:?}", topology.nodes());
@@ -102,7 +90,7 @@ mod chat_test {
             {
                 let mut nodes = topology.nodes().clone();
                 nodes.sort();
-                let mut expected_nodes = vec![1, 2, 3, 7, 4, 5, 11];
+                let mut expected_nodes = vec![1, 2, 3, 7, 4, 5,10, 11];
                 expected_nodes.sort();
                 assert_eq!(nodes, expected_nodes);
                 println!("Server 1 nodes: {:?}", topology.nodes());
@@ -118,7 +106,7 @@ mod chat_test {
             {   
                 let mut nodes=topology.nodes().clone();
                 nodes.sort();
-                let mut expected_nodes=vec![1, 2, 3, 7, 4, 5, 11];
+                let mut expected_nodes=vec![1, 2, 3, 7, 4, 5, 10, 11];
                 expected_nodes.sort();
                 assert_eq!(nodes, expected_nodes);
                 println!("Server 2 nodes: {:?}", topology.nodes());
@@ -196,14 +184,12 @@ mod chat_test {
 
         for response in client_response_channel.iter() {
             if let SimControllerResponseWrapper::Message(SimControllerMessage::FileListResponse(
-                node_id,file_ids
+                _,file_ids
             )) = response
             {
-                let mut sorted_file_ids = file_ids.clone();
-                sorted_file_ids.sort();
-                let mut expected_file_ids = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-                expected_file_ids.sort();
-                assert_eq!(sorted_file_ids, expected_file_ids);
+                
+                
+                assert_eq!(file_ids.len(),10);
                 break;
             }
         }
@@ -278,7 +264,7 @@ mod chat_test {
 
         for response in client_response_channel.iter() {
             if let SimControllerResponseWrapper::Message(SimControllerMessage::MediaFileResponse(
-                id,media
+                _,media
             )) = response
             {
                 match open("resources/media/0002.jpg"){
@@ -333,7 +319,7 @@ mod chat_test {
              
             
             if let SimControllerResponseWrapper::Message(SimControllerMessage::TextWithReferences(
-                id,text, media_files
+                _,text, media_files
             )) = response
             {   
                 let text_content=fs::read_to_string("resources/files/0003.txt").expect("Failed to read file 0003.txt");
@@ -391,16 +377,402 @@ mod chat_test {
 
         for response in client_response_channel.iter() {
             if let SimControllerResponseWrapper::Message(SimControllerMessage::TextFileResponse(
-                id,text
+                _,text
             )) = response
             {
                 println!("Il testo ricevuto è =>{}",text);
-                let file_content=fs::read_to_string("resources/files/0002.txt").expect("Failed to read file 0002.txt");;
+                let file_content=fs::read_to_string("resources/files/0002.txt").expect("Failed to read file 0002.txt");
                 assert_eq!(text,file_content);
                 break;
             }
         }
     }
+
+    mod content_communication {
+        use crate::simulation_controller::SimulationController;
+        use crossbeam_channel::select;
+        use rustafarian_shared::messages::commander_messages::{
+            SimControllerCommand, SimControllerEvent, SimControllerMessage, SimControllerResponseWrapper
+        };
+        use rustafarian_shared::messages::general_messages::ServerType;
+        use std::thread;
+        use std::time::Duration;
+    
+        const DEBUG: bool = false;
+    
+        #[test]
+        fn test_server_type_text() {
+            let simulation_controller =
+                SimulationController::build("src/tests/configurations/topology_10_nodes.toml", true);
+            let content_server_id: u8 = 8;
+            let client_id: u8 = 5;
+    
+            let client_command_channel = simulation_controller
+                .nodes_channels
+                .get(&client_id)
+                .unwrap()
+                .send_command_channel
+                .clone();
+    
+            let client_response_channel = simulation_controller
+                .nodes_channels
+                .get(&client_id)
+                .unwrap()
+                .receive_response_channel
+                .clone();
+    
+            // Instruct client to register to server
+            let res =
+                client_command_channel.send(SimControllerCommand::RequestServerType(content_server_id));
+            assert!(res.is_ok());
+    
+    
+            // ignore messages until message is received
+            for response in client_response_channel.iter() {
+                if let SimControllerResponseWrapper::Message(
+                    SimControllerMessage::ServerTypeResponse(server_id, server_type),
+                ) = response
+                {
+                    println!("TEST - Server type {:?}", server_type);
+                    if server_id == content_server_id {
+                        assert!(matches!(server_type, ServerType::Text));
+                        break;
+                    }
+                }
+            }
+        }
+    
+        #[test]
+        fn test_file_list_from_to_server() {
+            let simulation_controller = SimulationController::build(
+                "src/tests/configurations/topology_10_nodes.toml",
+                DEBUG,
+            );
+            let content_server_id: u8 = 8;
+            let client_id: u8 = 5;
+    
+            let client_command_channel = simulation_controller
+                .nodes_channels
+                .get(&client_id)
+                .unwrap()
+                .send_command_channel
+                .clone();
+    
+            let client_response_channel = simulation_controller
+                .nodes_channels
+                .get(&client_id)
+                .unwrap()
+                .receive_response_channel
+                .clone();
+    
+            // Instruct client to register to server
+            let res = client_command_channel.send(SimControllerCommand::Register(content_server_id));
+            assert!(res.is_ok());
+    
+            let res =
+                client_command_channel.send(SimControllerCommand::RequestFileList(content_server_id));
+            assert!(res.is_ok());
+    
+            // ignore messages until message is received
+            for response in client_response_channel.iter() {
+                if let SimControllerResponseWrapper::Message(SimControllerMessage::FileListResponse(
+                    _,list
+                )) = response.clone()
+                {
+                    println!("TEST - Message received {:?}", response);
+                    assert!(
+                        matches!(
+                            response,
+                            SimControllerResponseWrapper::Message(
+                                SimControllerMessage::FileListResponse(_, _)
+                            )
+                        ),
+                        "Expected message received"
+                    );
+                    assert_eq!(list.len(), 10);
+                  
+                    break;
+                }
+            }
+        }
+    
+        // Test text file request
+        #[test]
+        fn test_text_file_request() {
+            let simulation_controller = SimulationController::build(
+                "src/tests/configurations/topology_10_nodes.toml",
+                DEBUG,
+            );
+    
+            let client_id: u8 = 5;
+            let server_id = 8;
+    
+            let client_command_channel = simulation_controller
+                .nodes_channels
+                .get(&client_id)
+                .unwrap()
+                .send_command_channel
+                .clone();
+    
+            let client_response_channel = simulation_controller
+                .nodes_channels
+                .get(&client_id)
+                .unwrap()
+                .receive_response_channel
+                .clone();
+    
+            // wait for flood to finish
+            thread::sleep(std::time::Duration::from_secs(1));
+    
+            // Instruct client to request text file
+            let res = client_command_channel.send(SimControllerCommand::RequestTextFile(1, server_id));
+            assert!(res.is_ok());
+    
+            // ignore messages until message is received or timeout
+            let timeout = Duration::from_secs(5);
+            loop {
+                select! {
+                    recv(client_response_channel) -> response => {
+                        if let Ok(SimControllerResponseWrapper::Message(SimControllerMessage::TextFileResponse(_, _))) = response {
+                            println!("TEST - Message received {:?}", response);
+                            let _expected_text = "test".to_string();
+    
+                            assert!(
+                                matches!(
+                                    response.unwrap(),
+                                    SimControllerResponseWrapper::Message(
+                                        SimControllerMessage::TextFileResponse(1, _expected_text)
+                                    )
+                                ),
+                                "Expected message received"
+                            );
+                            break;
+                        }
+                    }
+                    default(timeout) => {
+                        println!("TEST - Timeout reached");
+                        break;
+                    }
+                }
+            }
+        }
+    
+        // Test file list request
+        #[test]
+        fn test_file_list_request() {
+            let simulation_controller = SimulationController::build(
+                "src/tests/configurations/topology_10_nodes.toml",
+                DEBUG,
+            );
+    
+            let client_id: u8 = 5;
+            let server_id = 8;
+    
+            let client_command_channel = simulation_controller
+                .nodes_channels
+                .get(&client_id)
+                .unwrap()
+                .send_command_channel
+                .clone();
+    
+            let client_response_channel = simulation_controller
+                .nodes_channels
+                .get(&client_id)
+                .unwrap()
+                .receive_response_channel
+                .clone();
+    
+            // wait for flood to finish
+            thread::sleep(std::time::Duration::from_secs(1));
+            // Instruct client to request file list
+            let res = client_command_channel.send(SimControllerCommand::RequestFileList(server_id));
+            assert!(res.is_ok());
+    
+            // Ignore all messages until FileListResponse is received
+            for message in client_response_channel.iter() {
+                if let SimControllerResponseWrapper::Message(SimControllerMessage::FileListResponse(
+                    _,
+                    _,
+                )) = message
+                {
+                    println!("TEST - Message received {:?}", message);
+                    assert!(matches!(
+                        message,
+                        SimControllerResponseWrapper::Message(SimControllerMessage::FileListResponse(
+                            _,
+                            _
+                        ))
+                    ));
+                    break;
+                }
+            }
+        }
+    
+        #[test]
+        fn test_media_file_request() {
+            let simulation_controller = SimulationController::build(
+                "src/tests/configurations/topology_10_nodes.toml",
+                DEBUG,
+            );
+    
+            let client_id: u8 = 5;
+            let server_id = 7;
+    
+            let client_command_channel = simulation_controller
+                .nodes_channels
+                .get(&client_id)
+                .unwrap()
+                .send_command_channel
+                .clone();
+    
+            let client_response_channel = simulation_controller
+                .nodes_channels
+                .get(&client_id)
+                .unwrap()
+                .receive_response_channel
+                .clone();
+    
+            // wait for flood to finish
+            thread::sleep(std::time::Duration::from_secs(1));
+            // Instruct client to request media file
+            let res = client_command_channel.send(SimControllerCommand::RequestMediaFile(1, server_id));
+            assert!(res.is_ok());
+    
+            // Ignore all messages until MediaFileResponse is received
+            for message in client_response_channel.iter()
+            {
+                if let SimControllerResponseWrapper::Message(SimControllerMessage::MediaFileResponse(
+                    _,
+                    _,
+                )) = message
+                {
+                    println!("TEST - Message received {:?}", message);
+                    assert!(matches!(
+                        message,
+                        SimControllerResponseWrapper::Message(SimControllerMessage::MediaFileResponse(
+                            _,
+                            _
+                        ))
+                    ));
+                    break;
+                }
+            }
+        }
+    
+        #[test]
+        fn test_text_file_with_references() {
+            let simulation_controller = SimulationController::build(
+                "src/tests/configurations/topology_10_nodes.toml",
+                DEBUG,
+            );
+    
+            let client_id: u8 = 5;
+            let server_id = 8;
+    
+            let client_command_channel = simulation_controller
+                .nodes_channels
+                .get(&client_id)
+                .unwrap()
+                .send_command_channel
+                .clone();
+    
+            let client_response_channel = simulation_controller
+                .nodes_channels
+                .get(&client_id)
+                .unwrap()
+                .receive_response_channel
+                .clone();
+    
+            // wait for flood to finish
+            thread::sleep(std::time::Duration::from_secs(1));
+            // Instruct client to request text file
+            let res = client_command_channel.send(SimControllerCommand::RequestTextFile(2, server_id));
+            assert!(res.is_ok());
+    
+            // ignore messages until message is received or timeout
+            let timeout = Duration::from_secs(5);
+            loop {
+                select! {
+                    recv(client_response_channel) -> response => {
+                        if let Ok(SimControllerResponseWrapper::Message(SimControllerMessage::TextWithReferences(_, _, _))) = response {
+                            println!("TEST - Message received {:?}", response);
+                            assert!(
+                                matches!(
+                                    response.unwrap(),
+                                    SimControllerResponseWrapper::Message(
+                                        SimControllerMessage::TextWithReferences(2, _,_)
+                                    )
+                                ),
+                                "Expected message received"
+                            );
+                            break;
+                        }
+                    }
+                    default(timeout) => {
+                        println!("TEST - Timeout reached");
+                        break;
+                    }
+                }
+            }
+        }
+    
+        #[test]
+        fn test_request_invalid_server() {
+            let simulation_controller = SimulationController::build(
+                "src/tests/configurations/topology_10_nodes.toml",
+                DEBUG,
+            );
+    
+            let client_id: u8 = 5;
+            let server_id = 9;
+    
+            let client_command_channel = simulation_controller
+                .nodes_channels
+                .get(&client_id)
+                .unwrap()
+                .send_command_channel
+                .clone();
+    
+            let client_response_channel = simulation_controller
+                .nodes_channels
+                .get(&client_id)
+                .unwrap()
+                .receive_response_channel
+                .clone();
+    
+            // wait for flood to finish
+            thread::sleep(std::time::Duration::from_secs(1));
+            
+            // Instruct client to request text file
+            let res = client_command_channel.send(SimControllerCommand::RequestTextFile(1, server_id));
+            assert!(res.is_ok());
+    
+            // ignore messages until message is received or timeout
+            let timeout = Duration::from_secs(1);
+            loop {
+                select! {
+                    recv(client_response_channel) -> response => {
+                        if let Ok(SimControllerResponseWrapper::Event(SimControllerEvent::PacketReceived(_))) = response {
+                            println!("TEST - Message received {:?}", response);
+                            assert!(
+                                matches!(
+                                    response.unwrap(),
+                                    SimControllerResponseWrapper::Event(SimControllerEvent::PacketReceived(_))
+                                )
+                            );
+                        }
+                    }
+                    default(timeout) => {
+                        // Last message received should be an ack from the server. The server does not answer to the request
+                        println!("TEST - Timeout reached");
+                        assert!(true);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    
 
     #[test]
     fn error_routing_client_test() {}

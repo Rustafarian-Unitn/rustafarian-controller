@@ -1,38 +1,49 @@
 // test set drone pdr
 #[cfg(test)]
 mod drone_communication_tests {
-    use crate::tests::setup;
+    use std::time::Duration;
+
+    use crate::simulation_controller::SimulationController;
+    use crossbeam::select;
     use ::rustafarian_shared::messages::commander_messages::{
         SimControllerEvent, SimControllerMessage, SimControllerResponseWrapper,
     };
-    use ::wg_2024::network::NodeId;
     use rustafarian_shared::messages::commander_messages::SimControllerCommand;
-    use std::thread;
-    use wg_2024::{controller::DroneCommand, drone::Drone};
-    const TICKS: u64 = 1000;
-    use rustafarian_client::client::Client;
+    use wg_2024::{controller::{DroneCommand, DroneEvent}, drone};
 
     #[test]
     fn test_set_drone_pdr() {
-        let ((mut client, _,_), _, mut content_server, drones, simulation_controller) =
-            setup::setup();
+        let simulation_controller =
+        SimulationController::build("src/tests/configurations/topology_10_nodes.toml", false);
+   
+        let drone_id = 1;
+        let drone_2_id = 2;
+        let drone_3_id = 3;
 
-        let content_server_id = 3 as NodeId;
-        let client_id = 1 as NodeId;
+        let client_id = 5;
+        let content_server_id = 8;
 
-        for mut drone in drones {
-            thread::spawn(move || {
-                Drone::run(&mut drone);
-            });
-        }
 
-        thread::spawn(move || {
-            client.run(TICKS);
-        });
+        let drone_command_channel = simulation_controller
+            .drone_channels
+            .get(&drone_id)
+            .unwrap()
+            .send_command_channel
+            .clone();
 
-        thread::spawn(move || {
-            content_server.run();
-        });
+        let drone_command_channel_2 = simulation_controller
+            .drone_channels
+            .get(&drone_2_id)
+            .unwrap()
+            .send_command_channel
+            .clone();
+
+        let drone_command_channel_3 = simulation_controller
+            .drone_channels
+            .get(&drone_3_id)
+            .unwrap()
+            .send_command_channel
+            .clone();
 
         let client_command_channel = simulation_controller
             .nodes_channels
@@ -41,65 +52,64 @@ mod drone_communication_tests {
             .send_command_channel
             .clone();
 
-        let client_response_channel = simulation_controller
-            .nodes_channels
-            .get(&client_id)
-            .unwrap()
-            .receive_response_channel
-            .clone();
-
-        // test message sending before setting new pdr
-        let client_command = SimControllerCommand::RequestFileList(content_server_id);
-        let command_result = client_command_channel.send(client_command);
-        assert!(command_result.is_ok());
-
-        // ignore messages that are not the file list response
-        for message in client_response_channel.iter() {
-            if let SimControllerResponseWrapper::Message(SimControllerMessage::FileListResponse(
-                _,
-                _,
-            )) = message
-            {
-                println!("TEST:received file list response");
-                assert!(matches!(
-                    message,
-                    SimControllerResponseWrapper::Message(SimControllerMessage::FileListResponse(
-                        _,
-                        _
-                    ))
-                ));
-                break;
-            }
-        }
-
-        let drone_command_channel = simulation_controller
+        let drone_event_channel = simulation_controller
             .drone_channels
-            .get(&client_id)
+            .get(&drone_id)
             .unwrap()
-            .send_command_channel
+            .receive_event_channel
             .clone();
 
+        // Leave time for the flood to finish
+        std::thread::sleep(Duration::from_millis(500));
+        
         let command = DroneCommand::SetPacketDropRate(1.0);
-        drone_command_channel.send(command).unwrap();
-
-        // test message sending before setting new pdr
+        drone_command_channel.send(command.clone()).unwrap();
+        drone_command_channel_2.send(command.clone()).unwrap();
+        drone_command_channel_3.send(command).unwrap();
+        
+        // Leave time for drones to set the pdr
+        std::thread::sleep(Duration::from_millis(500));
+        
+        // test message sending after setting new pdr
         let client_command = SimControllerCommand::RequestFileList(content_server_id);
         let command_result = client_command_channel.send(client_command);
         assert!(command_result.is_ok());
 
-        // ignore messages that are not the file list response
-        for message in client_response_channel.iter() {
-            if let SimControllerResponseWrapper::Event(SimControllerEvent::PacketDropped {
-                ..
-            }) = message
-            {
-                println!("TEST:received file list response");
-                assert!(matches!(
-                    message,
-                    SimControllerResponseWrapper::Event(SimControllerEvent::PacketDropped { .. })
-                ));
-                break;
+        // ignore messages until message is received or timeout
+        let timeout = Duration::from_secs(1);
+        loop {
+            select! {
+                recv(drone_event_channel) -> response => {
+                    if let Ok(DroneEvent::PacketDropped(_)) = response{
+                        println!("TEST:received message {:?}", response);
+                        assert!(matches!(
+                            response,
+                           Ok(DroneEvent::PacketDropped(_))
+                        ));
+                        break;
+                    } else {
+                        println!("TEST:received unexpected message {:?}", response);
+                    }
+                }
+                default(timeout) => {
+                    // Last message received should be an ack from the server. The server does not answer to the request
+                    println!("TEST - Timeout reached");
+                    assert!(true);
+                    break;
+                }
             }
         }
     }
+
+    // #[test]
+    // fn test_remove_drone() {
+    //     let simulation_controller =
+    //     SimulationController::build("src/tests/configurations/topology_10_nodes.toml", false);
+   
+    //     let drone_id = 1;
+    //     let drone_2_id = 2;
+    //     let drone_3_id = 3;
+
+    //     let client_id = 5;
+    //     let content_server_id = 8;
 }

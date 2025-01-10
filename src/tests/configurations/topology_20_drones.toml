@@ -1,0 +1,141 @@
+[[drone]]
+id = 1
+pdr = 0.0
+connected_node_ids = [2, 3, 4, 5, 15, 20, 26, 27, 28]
+
+[[drone]]
+id = 2
+pdr = 0.0
+connected_node_ids = [1, 3, 6, 7, 16, 26, 29]
+
+[[drone]]
+id = 3
+pdr = 0.0
+connected_node_ids = [1, 2, 8, 9, 17, 27, 30]
+
+[[drone]]
+id = 4
+pdr = 0.0
+connected_node_ids = [1, 5, 10, 11, 18, 28, 31]
+
+[[drone]]
+id = 5
+pdr = 0.0
+connected_node_ids = [1, 4, 12, 13, 19, 29, 32]
+
+[[drone]]
+id = 6
+pdr = 0.0
+connected_node_ids = [2, 7, 14, 15, 20, 30, 33]
+
+[[drone]]
+id = 7
+pdr = 0.0
+connected_node_ids = [2, 6, 16, 17, 31, 34]
+
+[[drone]]
+id = 8
+pdr = 0.0
+connected_node_ids = [3, 9, 18, 19, 32, 35]
+
+[[drone]]
+id = 9
+pdr = 0.0
+connected_node_ids = [3, 8, 20, 33]
+
+[[drone]]
+id = 10
+pdr = 0.0
+connected_node_ids = [4, 11, 34]
+
+[[drone]]
+id = 11
+pdr = 0.0
+connected_node_ids = [4, 10, 15, 16, 35]
+
+[[drone]]
+id = 12
+pdr = 0.0
+connected_node_ids = [5, 13, 17, 18]
+
+[[drone]]
+id = 13
+pdr = 0.0
+connected_node_ids = [5, 12, 19, 20]
+
+[[drone]]
+id = 14
+pdr = 0.0
+connected_node_ids = [6, 15]
+
+[[drone]]
+id = 15
+pdr = 0.0
+connected_node_ids = [1, 6, 11, 14]
+
+[[drone]]
+id = 16
+pdr = 0.0
+connected_node_ids = [2, 7, 11, 17]
+
+[[drone]]
+id = 17
+pdr = 0.0
+connected_node_ids = [3, 7, 12, 16]
+
+[[drone]]
+id = 18
+pdr = 0.0
+connected_node_ids = [4, 8, 12, 19]
+
+[[drone]]
+id = 19
+pdr = 0.0
+connected_node_ids = [5, 8, 13, 18]
+
+[[drone]]
+id = 20
+pdr = 0.0
+connected_node_ids = [1, 6, 9, 13]
+
+# Clients with max 2 drone connections
+[[client]]
+id = 26
+connected_drone_ids = [1, 2]
+
+[[client]]
+id = 27
+connected_drone_ids = [1, 3]
+
+[[client]]
+id = 28
+connected_drone_ids = [1, 4]
+
+[[client]]
+id = 29
+connected_drone_ids = [2, 5]
+
+[[client]]
+id = 30
+connected_drone_ids = [3, 6]
+
+[[client]]
+id = 31
+connected_drone_ids = [4, 7]
+
+[[client]]
+id = 32
+connected_drone_ids = [5, 8]
+
+# Servers with max 2 drone connections
+[[server]]
+id = 33
+connected_drone_ids = [6, 9]
+
+[[server]]
+id = 34
+connected_drone_ids = [7, 10]
+
+[[server]]
+id = 35
+connected_drone_ids = [8, 11]
