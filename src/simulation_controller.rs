@@ -718,7 +718,7 @@ mod tests {
     use std::collections::HashMap;
     use wg_2024::{
         network::SourceRoutingHeader,
-        packet::{Fragment, Packet, PacketType},
+        packet::{Ack, FloodRequest, FloodResponse, Fragment, Nack, NackType, NodeType, Packet, PacketType},
     };
 
     #[test]
@@ -892,6 +892,91 @@ mod tests {
         assert!(matches!(message.pack_type, PacketType::MsgFragment(_)));
         assert!(result.is_ok());
         assert!(matches!(result.unwrap(), PacketForwarded { .. }));
+    }
+
+    #[test]
+    fn test_handle_controller_shortcuts() {
+        let (_, _, _, _, controller) = setup::setup();
+
+        let packet = Packet {
+            pack_type: PacketType::MsgFragment(Fragment {
+                fragment_index: 0,
+                total_n_fragments: 2,
+                length: 3,
+                data: [0; 128],
+            }),
+            session_id: 1,
+            routing_header: SourceRoutingHeader {
+                hops: vec![1, 2, 3],
+                hop_index: 1,
+            },
+        };
+
+        let result = controller.handle_controller_shortcut(packet);
+
+        assert!(result.is_ok());
+        let event = result.unwrap();
+        assert!(matches!(event, PacketForwarded { .. }));
+
+        let packet = Packet {
+            pack_type: PacketType::Ack(Ack{fragment_index: 1}),
+            session_id: 1,
+            routing_header: SourceRoutingHeader {
+                hops: vec![1, 2, 3],
+                hop_index: 1,
+            },
+        };
+
+        let result = controller.handle_controller_shortcut(packet);
+
+        assert!(result.is_ok());
+        let event = result.unwrap();
+        assert!(matches!(event, PacketForwarded { .. }));
+
+        let packet = Packet {
+            pack_type: PacketType::Nack(Nack{fragment_index: 1, nack_type: NackType::ErrorInRouting(1)}),
+            session_id: 1,
+            routing_header: SourceRoutingHeader {
+                hops: vec![1, 2, 3],
+                hop_index: 1,
+            },
+        };
+
+        let result = controller.handle_controller_shortcut(packet);
+
+        assert!(result.is_ok());
+        let event = result.unwrap();
+        assert!(matches!(event, PacketForwarded { .. }));
+
+        let packet = Packet {
+            pack_type: PacketType::FloodRequest(FloodRequest{flood_id: 1, initiator_id:1,  path_trace: vec![(1 as NodeId, NodeType::Drone)]}),
+            session_id: 1,
+            routing_header: SourceRoutingHeader {
+                hops: vec![1, 2, 3],
+                hop_index: 1,
+            },
+        };
+
+        let result = controller.handle_controller_shortcut(packet);
+
+        assert!(result.is_ok());
+        let event = result.unwrap();
+        assert!(matches!(event, PacketForwarded { .. }));
+
+        let packet = Packet {
+            pack_type: PacketType::FloodResponse(FloodResponse{flood_id:1,path_trace: vec![(1 as NodeId, NodeType::Drone)]}),
+            session_id: 1,
+            routing_header: SourceRoutingHeader {
+                hops: vec![1, 2, 3],
+                hop_index: 1,
+            },
+        };
+
+        let result = controller.handle_controller_shortcut(packet);
+
+        assert!(result.is_ok());
+        let event = result.unwrap();
+        assert!(matches!(event, PacketForwarded { .. }));
     }
 
     #[test]

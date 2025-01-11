@@ -1,9 +1,8 @@
 use std::{collections::{HashMap, HashSet}, thread};
 use crate::simulation_controller::SimulationController;
-use rustafarian_client::client::Client;
-use rustafarian_shared::{messages::commander_messages::{
+use rustafarian_shared::messages::commander_messages::{
     SimControllerCommand, SimControllerMessage, SimControllerResponseWrapper,
-}, topology::Topology};
+};
 use wg_2024::network::NodeId;
 
 #[test]

@@ -5,11 +5,9 @@ mod drone_communication_tests {
 
     use crate::simulation_controller::SimulationController;
     use crossbeam::select;
-    use ::rustafarian_shared::messages::commander_messages::{
-        SimControllerEvent, SimControllerMessage, SimControllerResponseWrapper,
-    };
+ 
     use rustafarian_shared::messages::commander_messages::SimControllerCommand;
-    use wg_2024::{controller::{DroneCommand, DroneEvent}, drone};
+    use wg_2024::controller::{DroneCommand, DroneEvent};
 
     #[test]
     fn test_set_drone_pdr() {
@@ -101,15 +99,4 @@ mod drone_communication_tests {
         }
     }
 
-    // #[test]
-    // fn test_remove_drone() {
-    //     let simulation_controller =
-    //     SimulationController::build("src/tests/configurations/topology_10_nodes.toml", false);
-   
-    //     let drone_id = 1;
-    //     let drone_2_id = 2;
-    //     let drone_3_id = 3;
-
-    //     let client_id = 5;
-    //     let content_server_id = 8;
 }

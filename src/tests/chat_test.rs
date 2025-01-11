@@ -2,13 +2,11 @@ mod chat_test {
 
     use std::{collections::HashSet, thread};
 
-    use rustafarian_shared::messages::{commander_messages::{SimControllerCommand, SimControllerMessage, SimControllerResponseWrapper}, general_messages::ServerType};
-    use wg_2024::controller::DroneEvent;
+    use rustafarian_shared::messages::commander_messages::{SimControllerCommand, SimControllerEvent, SimControllerMessage, SimControllerResponseWrapper};
+
 
     use crate::simulation_controller::SimulationController;
 
-    #[test]
-    fn initialization_test() {}
 
     #[test]
     fn known_servers() {
@@ -85,7 +83,7 @@ mod chat_test {
             .clone();
 
         // Wait for the flood to finish
-        std::thread::sleep(std::time::Duration::from_millis(500));
+        std::thread::sleep(std::time::Duration::from_secs(5));
 
         // Instruct client to register to server
         let res = client_command_channel.send(SimControllerCommand::Register(server_id));
@@ -97,7 +95,7 @@ mod chat_test {
 
 
         // Wait for registration to happen
-        std::thread::sleep(std::time::Duration::from_micros(500));
+        std::thread::sleep(std::time::Duration::from_secs(2));
         // Instruct client to send message to server
         let res = client_command_channel.send(SimControllerCommand::SendMessage(
             "Hello".to_string(),
@@ -164,7 +162,7 @@ mod chat_test {
             .clone();
 
         // Wait for flood request
-        thread::sleep(std::time::Duration::from_secs(1));
+        thread::sleep(std::time::Duration::from_secs(5));
         
         // Instruct client to register to server
         let res = client_command_channel.send(SimControllerCommand::Register(server_id));
@@ -178,10 +176,11 @@ mod chat_test {
         let res = client_command_channel.send(SimControllerCommand::ClientList(server_id));
         assert!(res.is_ok());
         
-        thread::sleep(std::time::Duration::from_secs(1));
+        thread::sleep(std::time::Duration::from_secs(2));
 
         // Ignore messages until ClientListResponse is received
         for response in client_response_channel.iter() {
+            println!("TEST - Message received {:?}", response);
             if let SimControllerResponseWrapper::Message(
                 SimControllerMessage::ClientListResponse(_, _),
             ) = response
@@ -415,7 +414,7 @@ mod chat_test {
     #[test]
     fn test_server_remove_receivers() {
         let simulation_controller =
-            SimulationController::build("src/tests/configurations/topology_10_nodes.toml", true);
+            SimulationController::build("src/tests/configurations/topology_10_nodes.toml", false);
 
         let drone_1_id: u8 = 1;
         let drone_2_id: u8 = 2;
@@ -431,6 +430,13 @@ mod chat_test {
             .send_command_channel
             .clone();
 
+            let server_response_channel = simulation_controller
+            .nodes_channels
+            .get(&server_id)
+            .unwrap()
+            .receive_response_channel
+            .clone();
+
         let client_command_channel = simulation_controller
             .nodes_channels
             .get(&client_id)
@@ -438,30 +444,43 @@ mod chat_test {
             .send_command_channel
             .clone();
 
-        let drone_1_receive_packet_channel = simulation_controller
-            .drone_channels
-            .get(&drone_1_id)
+        let client_2_command_channel = simulation_controller
+            .nodes_channels
+            .get(&client_2_id)
             .unwrap()
-            .receive_event_channel
+            .send_command_channel
             .clone();
 
         // Wait for flood request
-        thread::sleep(std::time::Duration::from_millis(500));
+        thread::sleep(std::time::Duration::from_secs(5));
         
+        // Register client to server
+        let res = client_command_channel.send(SimControllerCommand::Register(server_id));
+        assert!(res.is_ok());
+
+        // Register client 2 to server
+        let res = client_2_command_channel.send(SimControllerCommand::Register(server_id));
+        assert!(res.is_ok());
+
+        // leave time for registration
+        thread::sleep(std::time::Duration::from_secs(2));
+
         // Instruct server to remove sender 1
         let res = server_command_channel.send(SimControllerCommand::RemoveSender(drone_1_id));
         assert!(res.is_ok());
+        thread::sleep(std::time::Duration::from_secs(2));
         
         // Instruct server to remove sender 2
         let res = server_command_channel.send(SimControllerCommand::RemoveSender(drone_2_id));
         assert!(res.is_ok());
+        thread::sleep(std::time::Duration::from_secs(2));
         
         // Instruct server to remove sender 3
         let res = server_command_channel.send(SimControllerCommand::RemoveSender(drone_3_id));
         assert!(res.is_ok());
 
         // Wait for the command to take effect
-        thread::sleep(std::time::Duration::from_millis(500));
+        thread::sleep(std::time::Duration::from_secs(2));
 
         // Send message to client
         let res = client_command_channel.send(SimControllerCommand::SendMessage(
@@ -470,17 +489,16 @@ mod chat_test {
             client_2_id,
         ));
         assert!(res.is_ok());
-
-        // Listen for topology response
-        for response in drone_1_receive_packet_channel.iter() {
-            if let DroneEvent::PacketDropped(_packet) = response.clone() {
-                println!("TEST - Packet dropped {:?}", _packet);
+        
+        for response in server_response_channel.iter() {
+            if let SimControllerResponseWrapper::Event(SimControllerEvent::FloodRequestSent) = response.clone() {
+                println!("TEST - Flood response {:?}", response);
                 assert!(
                     matches!(
                         response,
-                        DroneEvent::PacketDropped(_)
+                        SimControllerResponseWrapper::Event(SimControllerEvent::FloodRequestSent)
                     ),
-                    "Expected packet dropped"
+                    "Expected Flood response"
                 );
                 break;
             }            

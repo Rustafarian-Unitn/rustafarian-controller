@@ -1,0 +1,242 @@
+[Controller 0] - LEVEL: INFO >>> Building the simulation controller
+[Controller 0] - LEVEL: INFO >>> Initializing the channels
+[Controller 0] - LEVEL: INFO >>> Initializing drones
+[Controller 0] - LEVEL: INFO >>> Initializing clients
+[ChatClient 4] - LEVEL: INFO >>> Client running
+[BrowserClient 5] - LEVEL: INFO >>> Client running
+[Controller 0] - LEVEL: INFO >>> Initializing servers
+[ChatClient 6] - LEVEL: INFO >>> Client running
+[BrowserClient 7] - LEVEL: INFO >>> Client running
+[Chat Server 9] - LEVEL: INFO >>> Starting a new flooding
+Server 8 of type Textis running
+[Content Server 8] - LEVEL: INFO >>> Server 8 is running
+
+[Content Server 8] - LEVEL: INFO >>> Server 8 send flood request
+
+Server 10 of type Mediais running
+[Content Server 10] - LEVEL: INFO >>> Server 10 is running
+
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodRequest { flood_id: 15180970542768451443, initiator_id: 4, path_trace: [(4, Client), (1, Drone)] }]
+[Content Server 10] - LEVEL: INFO >>> Server 10 send flood request
+
+[Chat Server 9] - LEVEL: INFO >>> <- Flood request received from node [1]
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodRequest { flood_id: 8009236494458431989, initiator_id: 5, path_trace: [(5, Client), (1, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- Flood request received from node [1]
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodRequest { flood_id: 8009236494458431989, initiator_id: 5, path_trace: [(5, Client), (3, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- Flood request received from node [3]
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodRequest { flood_id: 15180970542768451443, initiator_id: 4, path_trace: [(4, Client), (2, Drone), (3, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- Flood request received from node [3]
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodRequest { flood_id: 7973757090593428608, initiator_id: 7, path_trace: [(7, Client), (1, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- Flood request received from node [1]
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodRequest { flood_id: 14378942025777262050, initiator_id: 6, path_trace: [(6, Client), (2, Drone), (1, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- Flood request received from node [1]
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodRequest { flood_id: 14378942025777262050, initiator_id: 6, path_trace: [(6, Client), (3, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- Flood request received from node [3]
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodResponse { flood_id: 8009236494458431989, path_trace: [(5, Client), (3, Drone), (9, Server), (1, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- Received a flood response, but the server is not the initiator.Updating the topology and sending it along the network
+[Chat Server 9] - LEVEL: INFO >>> -> Sending a new packet with session [1]
+[Chat Server 9] - LEVEL: INFO >>> -> Packet with session [1] sent correctly to node [3]
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodResponse { flood_id: 15180970542768451443, path_trace: [(4, Client), (2, Drone), (3, Drone), (9, Server), (1, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- Received a flood response, but the server is not the initiator.Updating the topology and sending it along the network
+[Chat Server 9] - LEVEL: INFO >>> -> Sending a new packet with session [1]
+[Chat Server 9] - LEVEL: INFO >>> -> Packet with session [1] sent correctly to node [3]
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodResponse { flood_id: 14378942025777262050, path_trace: [(6, Client), (3, Drone), (9, Server), (1, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- Received a flood response, but the server is not the initiator.Updating the topology and sending it along the network
+[Chat Server 9] - LEVEL: INFO >>> -> Sending a new packet with session [1]
+[Chat Server 9] - LEVEL: INFO >>> -> Packet with session [1] sent correctly to node [3]
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodRequest { flood_id: 7973757090593428608, initiator_id: 7, path_trace: [(7, Client), (2, Drone), (3, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- Flood request received from node [3]
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodResponse { flood_id: 15180970542768451443, path_trace: [(4, Client), (1, Drone), (9, Server), (3, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- Received a flood response, but the server is not the initiator.Updating the topology and sending it along the network
+[Chat Server 9] - LEVEL: INFO >>> -> Sending a new packet with session [1]
+[Chat Server 9] - LEVEL: INFO >>> -> Packet with session [1] sent correctly to node [1]
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodResponse { flood_id: 8009236494458431989, path_trace: [(5, Client), (1, Drone), (9, Server), (3, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- Received a flood response, but the server is not the initiator.Updating the topology and sending it along the network
+[Chat Server 9] - LEVEL: INFO >>> -> Sending a new packet with session [1]
+[Chat Server 9] - LEVEL: INFO >>> -> Packet with session [1] sent correctly to node [1]
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodRequest { flood_id: 1005404040524707707, initiator_id: 8, path_trace: [(8, Server), (2, Drone), (1, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- Flood request received from node [1]
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodRequest { flood_id: 11880359454922108740, initiator_id: 8, path_trace: [(8, Server), (3, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- Flood request received from node [3]
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodRequest { flood_id: 16878474696278536970, initiator_id: 10, path_trace: [(10, Server), (2, Drone), (1, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- Flood request received from node [1]
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodResponse { flood_id: 7973757090593428608, path_trace: [(7, Client), (2, Drone), (3, Drone), (9, Server), (1, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- Received a flood response, but the server is not the initiator.Updating the topology and sending it along the network
+[Chat Server 9] - LEVEL: INFO >>> -> Sending a new packet with session [1]
+[Chat Server 9] - LEVEL: INFO >>> -> Packet with session [1] sent correctly to node [3]
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodResponse { flood_id: 7973757090593428608, path_trace: [(7, Client), (1, Drone), (9, Server), (3, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- Received a flood response, but the server is not the initiator.Updating the topology and sending it along the network
+[Chat Server 9] - LEVEL: INFO >>> -> Sending a new packet with session [1]
+[Chat Server 9] - LEVEL: INFO >>> -> Packet with session [1] sent correctly to node [1]
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodRequest { flood_id: 14044656136110070951, initiator_id: 10, path_trace: [(10, Server), (3, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- Flood request received from node [3]
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodResponse { flood_id: 14378942025777262050, path_trace: [(6, Client), (2, Drone), (1, Drone), (9, Server), (3, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- Received a flood response, but the server is not the initiator.Updating the topology and sending it along the network
+[Chat Server 9] - LEVEL: INFO >>> -> Sending a new packet with session [1]
+[Chat Server 9] - LEVEL: INFO >>> -> Packet with session [1] sent correctly to node [1]
+[Content Server 10] - LEVEL: INFO >>> Client 7 requested server type from server 10
+
+[Content Server 10] - LEVEL: INFO >>> Server 10 sending message to 7
+
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodRequest { flood_id: 11880359454922108740, initiator_id: 8, path_trace: [(8, Server), (3, Drone), (1, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- Flood request received from node [1]
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodResponse { flood_id: 11880359454922108740, path_trace: [(8, Server), (3, Drone), (9, Server), (1, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- Received a flood response, but the server is not the initiator.Updating the topology and sending it along the network
+[Chat Server 9] - LEVEL: INFO >>> -> Sending a new packet with session [1]
+[Chat Server 9] - LEVEL: INFO >>> -> Packet with session [1] sent correctly to node [3]
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodRequest { flood_id: 14044656136110070951, initiator_id: 10, path_trace: [(10, Server), (3, Drone), (1, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- Flood request received from node [1]
+[Content Server 10] - LEVEL: INFO >>> Client 4 requested server type from server 10
+
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodResponse { flood_id: 16249130091628729667, path_trace: [(9, Server), (1, Drone), (3, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- New flood response received, updating topology
+[Content Server 10] - LEVEL: INFO >>> Server 10 sending message to 4
+
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodResponse { flood_id: 14044656136110070951, path_trace: [(10, Server), (3, Drone), (9, Server), (1, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- Received a flood response, but the server is not the initiator.Updating the topology and sending it along the network
+[Chat Server 9] - LEVEL: INFO >>> -> Sending a new packet with session [1]
+[Chat Server 9] - LEVEL: INFO >>> -> Packet with session [1] sent correctly to node [3]
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [Fragment { index: 1 out of 1, data: 0x7b2253657276657254797065223a225365727665... + other 7 bytes }]
+[Content Server 10] - LEVEL: INFO >>> Client 6 requested server type from server 10
+
+[Chat Server 9] - LEVEL: INFO >>> <- New message fragment received - [Node: 7, Session: 5581053054875115990, Fragment: 0]
+[Chat Server 9] - LEVEL: INFO >>> -> Sending an ACK to node [7] for fragment [0]
+[Content Server 10] - LEVEL: INFO >>> Server 10 sending message to 6
+
+[Content Server 8] - LEVEL: INFO >>> Client 7 requested server type from server 8
+
+[Content Server 8] - LEVEL: INFO >>> Server 8 sending message to 7
+
+[Chat Server 9] - LEVEL: INFO >>> -> Sending a new packet with session [5581053054875115990]
+[Content Server 8] - LEVEL: INFO >>> Client 4 requested server type from server 8
+
+[Chat Server 9] - LEVEL: INFO >>> -> Packet with session [5581053054875115990] sent correctly to node [3]
+[Content Server 8] - LEVEL: INFO >>> Server 8 sending message to 4
+
+[Chat Server 9] - LEVEL: INFO >>> Handling server type request
+[Chat Server 9] - LEVEL: INFO >>> -> Sending a new message to node [7]
+[Chat Server 9] - LEVEL: INFO >>> -> Sending a new packet with session [5581053054875115990]
+[Chat Server 9] - LEVEL: INFO >>> -> Packet with session [5581053054875115990] sent correctly to node [3]
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodResponse { flood_id: 16249130091628729667, path_trace: [(9, Server), (1, Drone), (7, Client), (2, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- New flood response received, updating topology
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [Fragment { index: 1 out of 1, data: 0x7b2253657276657254797065223a225365727665... + other 7 bytes }]
+[Chat Server 9] - LEVEL: INFO >>> <- New message fragment received - [Node: 4, Session: 14125255062995415859, Fragment: 0]
+[Chat Server 9] - LEVEL: INFO >>> -> Sending an ACK to node [4] for fragment [0]
+[Chat Server 9] - LEVEL: INFO >>> -> Sending a new packet with session [14125255062995415859]
+[Chat Server 9] - LEVEL: INFO >>> -> Packet with session [14125255062995415859] sent correctly to node [3]
+[Chat Server 9] - LEVEL: INFO >>> Handling server type request
+[Chat Server 9] - LEVEL: INFO >>> -> Sending a new message to node [4]
+[Chat Server 9] - LEVEL: INFO >>> -> Sending a new packet with session [14125255062995415859]
+[Chat Server 9] - LEVEL: INFO >>> -> Packet with session [14125255062995415859] sent correctly to node [3]
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodResponse { flood_id: 16249130091628729667, path_trace: [(9, Server), (1, Drone), (4, Client), (2, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- New flood response received, updating topology
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodRequest { flood_id: 1005404040524707707, initiator_id: 8, path_trace: [(8, Server), (2, Drone), (3, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- Flood request received from node [3]
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodRequest { flood_id: 16878474696278536970, initiator_id: 10, path_trace: [(10, Server), (2, Drone), (3, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- Flood request received from node [3]
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodResponse { flood_id: 16249130091628729667, path_trace: [(9, Server), (1, Drone), (2, Drone), (3, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- New flood response received, updating topology
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodResponse { flood_id: 1005404040524707707, path_trace: [(8, Server), (2, Drone), (1, Drone), (9, Server), (3, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- Received a flood response, but the server is not the initiator.Updating the topology and sending it along the network
+[Chat Server 9] - LEVEL: INFO >>> -> Sending a new packet with session [1]
+[Chat Server 9] - LEVEL: INFO >>> -> Packet with session [1] sent correctly to node [1]
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodResponse { flood_id: 16249130091628729667, path_trace: [(9, Server), (3, Drone), (2, Drone)] }]
+[Content Server 8] - LEVEL: INFO >>> Client 6 requested server type from server 8
+
+[Chat Server 9] - LEVEL: INFO >>> <- New flood response received, updating topology
+[Content Server 8] - LEVEL: INFO >>> Server 8 sending message to 6
+
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodResponse { flood_id: 16878474696278536970, path_trace: [(10, Server), (2, Drone), (1, Drone), (9, Server), (3, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- Received a flood response, but the server is not the initiator.Updating the topology and sending it along the network
+[Chat Server 9] - LEVEL: INFO >>> -> Sending a new packet with session [1]
+[Chat Server 9] - LEVEL: INFO >>> -> Packet with session [1] sent correctly to node [1]
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodResponse { flood_id: 16249130091628729667, path_trace: [(9, Server), (3, Drone), (1, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- New flood response received, updating topology
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodResponse { flood_id: 16249130091628729667, path_trace: [(9, Server), (3, Drone), (8, Server), (2, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- New flood response received, updating topology
+[Content Server 8] - LEVEL: INFO >>> Client 5 requested server type from server 8
+
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodResponse { flood_id: 16249130091628729667, path_trace: [(9, Server), (1, Drone), (2, Drone), (7, Client), (1, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- New flood response received, updating topology
+[Content Server 8] - LEVEL: INFO >>> Server 8 sending message to 5
+
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodResponse { flood_id: 16249130091628729667, path_trace: [(9, Server), (1, Drone), (2, Drone), (4, Client), (1, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- New flood response received, updating topology
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodResponse { flood_id: 16249130091628729667, path_trace: [(9, Server), (1, Drone), (2, Drone), (6, Client), (3, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- New flood response received, updating topology
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodResponse { flood_id: 16249130091628729667, path_trace: [(9, Server), (1, Drone), (5, Client), (3, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- New flood response received, updating topology
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [Fragment { index: 1 out of 1, data: 0x7b2253657276657254797065223a225365727665... + other 7 bytes }]
+[Chat Server 9] - LEVEL: INFO >>> <- New message fragment received - [Node: 6, Session: 580183276647293085, Fragment: 0]
+[Chat Server 9] - LEVEL: INFO >>> -> Sending an ACK to node [6] for fragment [0]
+[Chat Server 9] - LEVEL: INFO >>> -> Sending a new packet with session [580183276647293085]
+[Chat Server 9] - LEVEL: INFO >>> -> Packet with session [580183276647293085] sent correctly to node [3]
+[Chat Server 9] - LEVEL: INFO >>> Handling server type request
+[Chat Server 9] - LEVEL: INFO >>> -> Sending a new message to node [6]
+[Content Server 10] - LEVEL: INFO >>> Client 5 requested server type from server 10
+
+[Chat Server 9] - LEVEL: INFO >>> -> Sending a new packet with session [580183276647293085]
+[Content Server 10] - LEVEL: INFO >>> Server 10 sending message to 5
+
+[Chat Server 9] - LEVEL: INFO >>> -> Packet with session [580183276647293085] sent correctly to node [3]
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodResponse { flood_id: 16249130091628729667, path_trace: [(9, Server), (3, Drone), (6, Client), (2, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- New flood response received, updating topology
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodResponse { flood_id: 16249130091628729667, path_trace: [(9, Server), (1, Drone), (2, Drone), (10, Server), (3, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- New flood response received, updating topology
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodResponse { flood_id: 16249130091628729667, path_trace: [(9, Server), (1, Drone), (2, Drone), (8, Server), (3, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- New flood response received, updating topology
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodResponse { flood_id: 16249130091628729667, path_trace: [(9, Server), (3, Drone), (10, Server), (2, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- New flood response received, updating topology
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [Fragment { index: 1 out of 1, data: 0x7b2253657276657254797065223a225365727665... + other 7 bytes }]
+[Chat Server 9] - LEVEL: INFO >>> <- New message fragment received - [Node: 5, Session: 10416992641366165134, Fragment: 0]
+[Chat Server 9] - LEVEL: INFO >>> -> Sending an ACK to node [5] for fragment [0]
+[Chat Server 9] - LEVEL: INFO >>> -> Sending a new packet with session [10416992641366165134]
+[Chat Server 9] - LEVEL: INFO >>> -> Packet with session [10416992641366165134] sent correctly to node [3]
+[Chat Server 9] - LEVEL: INFO >>> Handling server type request
+[Chat Server 9] - LEVEL: INFO >>> -> Sending a new message to node [5]
+[Chat Server 9] - LEVEL: INFO >>> -> Sending a new packet with session [10416992641366165134]
+[Chat Server 9] - LEVEL: INFO >>> -> Packet with session [10416992641366165134] sent correctly to node [3]
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodResponse { flood_id: 16249130091628729667, path_trace: [(9, Server), (3, Drone), (5, Client), (1, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- New flood response received, updating topology
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodResponse { flood_id: 1005404040524707707, path_trace: [(8, Server), (2, Drone), (3, Drone), (9, Server), (1, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- Received a flood response, but the server is not the initiator.Updating the topology and sending it along the network
+[Chat Server 9] - LEVEL: INFO >>> -> Sending a new packet with session [1]
+[Chat Server 9] - LEVEL: INFO >>> -> Packet with session [1] sent correctly to node [3]
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodResponse { flood_id: 16878474696278536970, path_trace: [(10, Server), (2, Drone), (3, Drone), (9, Server), (1, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- Received a flood response, but the server is not the initiator.Updating the topology and sending it along the network
+[Chat Server 9] - LEVEL: INFO >>> -> Sending a new packet with session [1]
+[Chat Server 9] - LEVEL: INFO >>> -> Packet with session [1] sent correctly to node [3]
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodResponse { flood_id: 11880359454922108740, path_trace: [(8, Server), (3, Drone), (1, Drone), (9, Server), (3, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- Received a flood response, but the server is not the initiator.Updating the topology and sending it along the network
+[Chat Server 9] - LEVEL: INFO >>> -> Sending a new packet with session [1]
+[Chat Server 9] - LEVEL: INFO >>> -> Packet with session [1] sent correctly to node [1]
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [FloodResponse { flood_id: 14044656136110070951, path_trace: [(10, Server), (3, Drone), (1, Drone), (9, Server), (3, Drone)] }]
+[Chat Server 9] - LEVEL: INFO >>> <- Received a flood response, but the server is not the initiator.Updating the topology and sending it along the network
+[Chat Server 9] - LEVEL: INFO >>> -> Sending a new packet with session [1]
+[Chat Server 9] - LEVEL: INFO >>> -> Packet with session [1] sent correctly to node [1]
+[BrowserClient 7] - LEVEL: ERROR >>> Server type 'Chat' not added to available servers: Chat
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [Nack { fragment_index: 0, nack_type: Dropped }]
+[Chat Server 9] - LEVEL: INFO >>> Received NACK from node [3], nack type [Dropped]
+[Chat Server 9] - LEVEL: INFO >>> -> Sending a new packet with session [580183276647293085]
+[Chat Server 9] - LEVEL: INFO >>> -> Packet with session [580183276647293085] sent correctly to node [3]
+[BrowserClient 5] - LEVEL: ERROR >>> Server type 'Chat' not added to available servers: Chat
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [Ack(0)]
+[Chat Server 9] - LEVEL: INFO >>> Received ACK from node [7]
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [Ack(0)]
+[Chat Server 9] - LEVEL: INFO >>> Received ACK from node [4]
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [Nack { fragment_index: 0, nack_type: Dropped }]
+[Chat Server 9] - LEVEL: INFO >>> Received NACK from node [3], nack type [Dropped]
+[Chat Server 9] - LEVEL: INFO >>> -> Sending a new packet with session [580183276647293085]
+[Chat Server 9] - LEVEL: INFO >>> -> Packet with session [580183276647293085] sent correctly to node [3]
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [Ack(0)]
+[Chat Server 9] - LEVEL: INFO >>> Received ACK from node [5]
+[Chat Server 9] - LEVEL: INFO >>> <- Received new packet of type [Ack(0)]
+[Chat Server 9] - LEVEL: INFO >>> Received ACK from node [6]
+[Content Server 10] - LEVEL: INFO >>> Client 5 requested a media file from server 10
+
+[Content Server 10] - LEVEL: INFO >>> Server 10 sending message to 5
+
+thread '<unnamed>' panicked at /home/ulises/.cargo/git/checkouts/rustafarian-content_server-68ae9efe085b2178/853f5c4/src/content_server.rs:563:82:
+called `Option::unwrap()` on a `None` value
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+^C
