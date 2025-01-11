@@ -94,7 +94,8 @@ These events are emitted when nodes perform actions in the network:
 
 | Event | Description |
 |-------|-------------|
-| `MessageSent(server_id: NodeId, node_to: NodeId, message: String)` | Triggered when a message is sent through a server to another node |
+| `MessageSent(session_id: u64)` | Triggered when a message is sent through a server to another node |
+| `ChatMessageSent(server_id: NodeId, node_to: NodeId, message: String)` | Triggered when a message is sent through a Chat client send the message to another node |
 | `FloodRequestSent` | Triggered when a node initiates a flood request |
 | `PacketForwarded` | Triggered when a node forwards a packet in the network |
 
