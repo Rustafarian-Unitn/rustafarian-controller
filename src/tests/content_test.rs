@@ -365,9 +365,9 @@ mod content_test {
             .receive_response_channel
             .clone();
 
-        thread::sleep(std::time::Duration::from_secs(5));
-
+        
         let _res = client_command_channel.send(SimControllerCommand::RequestTextFile(2, server_id));
+        thread::sleep(std::time::Duration::from_secs(3));
 
         for response in client_response_channel.iter() {
             if let SimControllerResponseWrapper::Message(SimControllerMessage::TextFileResponse(
@@ -376,7 +376,7 @@ mod content_test {
             )) = response
             {
                 println!("Il testo ricevuto è =>{}", text);
-                let file_content = fs::read_to_string("resources/files/0002.txt")
+                let file_content:String = fs::read_to_string("resources/files/0002.txt")
                     .expect("Failed to read file 0002.txt");
                 assert_eq!(text, file_content);
                 break;
