@@ -131,7 +131,12 @@ impl SimulationController {
     /// * `config` - A string containing the path to the configuration for the simulation
     /// # Returns
     /// A `SimulationController` instance with the network topology and channels set up.
-    pub fn build(config: &str, debug_mode: bool) -> Self {
+    pub fn build(
+        config: &str,
+        media_folder: String,
+        file_folder: String,
+        debug_mode: bool,
+    ) -> Self {
         let config = config_parser::parse_config(config);
         let logger = Logger::new("Controller".to_string(), 0, debug_mode);
 
@@ -193,6 +198,8 @@ impl SimulationController {
             &mut node_channels,
             &mut drone_channels,
             &mut topology,
+            media_folder,
+            file_folder,
             debug_mode,
             &logger,
         );
@@ -489,6 +496,8 @@ impl SimulationController {
         node_channels: &mut HashMap<NodeId, NodeChannels>,
         drone_channels: &mut HashMap<NodeId, DroneChannels>,
         topology: &mut Topology,
+        file_folder: String,
+        media_folder: String,
         debug_mode: bool,
         logger: &Logger,
     ) {
@@ -499,6 +508,9 @@ impl SimulationController {
 
         // For each drone config pick the next factory in a circular fashion to generate a drone instance
         for server_config in servers_config {
+            let media_folder = media_folder.clone();
+            let file_folder = file_folder.clone();
+
             logger.log(
                 format!("Creating server {}", server_config.id).as_str(),
                 LogLevel::DEBUG,
@@ -581,8 +593,8 @@ impl SimulationController {
                         receive_packet_channel,
                         receive_command_channel,
                         send_response_channel,
-                        FILE_FOLDER,
-                        MEDIA_FOLDER,
+                        file_folder.as_str(),
+                        media_folder.as_str(),
                         ServerType::Media,
                         debug_mode,
                     );
@@ -600,8 +612,8 @@ impl SimulationController {
                         receive_packet_channel,
                         receive_command_channel,
                         send_response_channel,
-                        FILE_FOLDER,
-                        MEDIA_FOLDER,
+                        file_folder.as_str(),
+                        media_folder.as_str(),
                         ServerType::Text,
                         debug_mode,
                     );
@@ -717,7 +729,7 @@ mod tests {
     use super::*;
     use crate::tests::setup;
     use rustafarian_shared::topology::Topology;
-    use std::collections::HashMap;
+    use std::{collections::HashMap, fs::File};
     use wg_2024::{
         network::SourceRoutingHeader,
         packet::{
@@ -751,7 +763,12 @@ mod tests {
     fn test_simulation_controller_build() {
         let config_str = "src/tests/configurations/topology_1.toml";
 
-        let controller = SimulationController::build(config_str, false);
+        let controller = SimulationController::build(
+            config_str,
+            MEDIA_FOLDER.to_string(),
+            FILE_FOLDER.to_string(),
+            false,
+        );
 
         assert_eq!(controller.drone_channels.len(), 5);
         assert_eq!(controller.nodes_channels.len(), 2);
@@ -860,6 +877,8 @@ mod tests {
             &mut node_channels,
             &mut drone_channels,
             &mut topology,
+            MEDIA_FOLDER.to_string(),
+            FILE_FOLDER.to_string(),
             true,
             &logger,
         );
