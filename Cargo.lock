@@ -1375,7 +1375,7 @@ dependencies = [
 [[package]]
 name = "rustafarian-client"
 version = "0.3.0"
-source = "git+https://github.com/Rustafarian-Unitn/rustafarian-client?branch=test%2FdelayedFlood#c3715f28b667ad0b35f1e75e830a0070766425df"
+source = "git+https://github.com/Rustafarian-Unitn/rustafarian-client#826cb647bdaf02e9fd53147556e35c29d81745bb"
 dependencies = [
  "crossbeam",
  "crossbeam-channel",
