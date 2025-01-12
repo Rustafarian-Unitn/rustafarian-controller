@@ -1,7 +1,7 @@
 use crate::config_parser;
 use crate::drone_functions::{
-    cpp_enjoyers_drone, d_r_o_n_e_drone, dr_one_drone, get_droned_drone, rust_busters_drone,
-    rust_do_it_drone, rusteze_drone, rusty_drone,
+    cpp_enjoyers_drone, d_r_o_n_e_drone, dr_one_drone, get_droned_drone, lockheed_rustin_drone,
+    rust_busters_drone, rust_do_it_drone, rustastic_drone, rusteze_drone, rusty_drone,
 };
 use crate::runnable::Runnable;
 use crossbeam_channel::{unbounded, Receiver, Sender};
@@ -146,8 +146,8 @@ impl SimulationController {
             rust_do_it_drone,
             rust_busters_drone,
             rusty_drone,
-            // rustastic_drone,
-            // lockheed_rustin_drone,
+            rustastic_drone,
+            lockheed_rustin_drone,
             d_r_o_n_e_drone,
         ];
 
@@ -1042,10 +1042,13 @@ mod tests {
         let drone5 = drone_factories.next().unwrap();
         let drone6 = drone_factories.next().unwrap();
         let drone7 = drone_factories.next().unwrap();
+        let drone8 = drone_factories.next().unwrap();
+        let drone9 = drone_factories.next().unwrap();
         let drone10 = drone_factories.next().unwrap();
         let drone11 = drone_factories.next().unwrap();
         let drone12 = drone_factories.next().unwrap();
 
+        
         assert_eq!(
             drone1
                 as *const fn(
@@ -1177,6 +1180,46 @@ mod tests {
                     f32,
                 ) -> (Box<dyn Runnable>, String),
             rusty_drone
+                as *const fn(
+                    NodeId,
+                    Sender<DroneEvent>,
+                    Receiver<DroneCommand>,
+                    Receiver<Packet>,
+                    HashMap<NodeId, Sender<Packet>>,
+                    f32,
+                ) -> (Box<dyn Runnable>, String)
+        );
+        assert_eq!(
+            drone8
+                as *const fn(
+                    NodeId,
+                    Sender<DroneEvent>,
+                    Receiver<DroneCommand>,
+                    Receiver<Packet>,
+                    HashMap<NodeId, Sender<Packet>>,
+                    f32,
+                ) -> (Box<dyn Runnable>, String),
+            rustastic_drone
+                as *const fn(
+                    NodeId,
+                    Sender<DroneEvent>,
+                    Receiver<DroneCommand>,
+                    Receiver<Packet>,
+                    HashMap<NodeId, Sender<Packet>>,
+                    f32,
+                ) -> (Box<dyn Runnable>, String)
+        );
+        assert_eq!(
+            drone9
+                as *const fn(
+                    NodeId,
+                    Sender<DroneEvent>,
+                    Receiver<DroneCommand>,
+                    Receiver<Packet>,
+                    HashMap<NodeId, Sender<Packet>>,
+                    f32,
+                ) -> (Box<dyn Runnable>, String),
+            lockheed_rustin_drone
                 as *const fn(
                     NodeId,
                     Sender<DroneEvent>,
