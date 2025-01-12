@@ -5,9 +5,7 @@ use d_r_o_n_e_drone::MyDrone;
 use dr_ones::Drone as DrOne;
 use rustbusters_drone::RustBustersDrone;
 use getdroned::GetDroned;
-use lockheedrustin_drone::LockheedRustin;
 use rust_do_it::RustDoIt;
-use rustastic_drone::RustasticDrone;
 use rusteze_drone::RustezeDrone;
 use rusty_drones::RustyDrone;
 use std::collections::HashMap;
@@ -159,48 +157,6 @@ pub fn dr_one_drone(
             pdr,
         )),
         "Dr One drone".to_string(),
-    )
-}
-
-pub fn rustastic_drone(
-    id: u8,
-    controller_send: Sender<DroneEvent>,
-    controller_recv: Receiver<DroneCommand>,
-    packet_recv: Receiver<Packet>,
-    packet_send: HashMap<u8, Sender<Packet>>,
-    pdr: f32,
-) -> (Box<dyn Runnable>, String) {
-    (
-        Box::new(RustasticDrone::new(
-            id,
-            controller_send,
-            controller_recv,
-            packet_recv,
-            packet_send,
-            pdr,
-        )),
-        "Rustastic drone".to_string(),
-    )
-}
-
-pub fn lockheed_rustin_drone(
-    id: u8,
-    controller_send: Sender<DroneEvent>,
-    controller_recv: Receiver<DroneCommand>,
-    packet_recv: Receiver<Packet>,
-    packet_send: HashMap<u8, Sender<Packet>>,
-    pdr: f32,
-) -> (Box<dyn Runnable>, String) {
-    (
-        Box::new(LockheedRustin::new(
-            id,
-            controller_send,
-            controller_recv,
-            packet_recv,
-            packet_send,
-            pdr,
-        )),
-        "Lockheed Rustin drone".to_string(),
     )
 }
 
