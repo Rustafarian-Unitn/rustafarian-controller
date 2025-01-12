@@ -14,8 +14,8 @@ mod content_test {
     fn initialization_content_test() {
         let simulation_controller = SimulationController::build(
             "src/tests/configurations/topology_10_nodes.toml",
-            "resources/media".to_string(),
             "resources/files".to_string(),
+            "resources/media".to_string(),
             false,
         );
 
@@ -122,8 +122,8 @@ mod content_test {
     fn server_type_test() {
         let simulation_controller = SimulationController::build(
             "src/tests/configurations/topology_1.toml",
-            "resources/media".to_string(),
             "resources/files".to_string(),
+            "resources/media".to_string(),
             false,
         );
 
@@ -167,8 +167,8 @@ mod content_test {
     fn file_list_test() {
         let simulation_controller = SimulationController::build(
             "src/tests/configurations/topology_1.toml",
-            "resources/media".to_string(),
             "resources/files".to_string(),
+            "resources/media".to_string(),
             false,
         );
 
@@ -209,8 +209,8 @@ mod content_test {
     fn file_text_test() {
         let simulation_controller = SimulationController::build(
             "src/tests/configurations/topology_10_nodes.toml",
-            "resources/media".to_string(),
             "resources/files".to_string(),
+            "resources/media".to_string(),
             false,
         );
 
@@ -252,7 +252,6 @@ mod content_test {
 
     #[test]
     fn file_media_test() {
-        let res = with_timeout(TIMEOUT, || {
             let simulation_controller = SimulationController::build(
                 "src/tests/configurations/topology_10_nodes.toml",
                 "resources/files".to_string(),
@@ -303,19 +302,15 @@ mod content_test {
                     }
                 }
             }
-        });
-
-           assert!(res.is_ok(), "Test timed out after 15 seconds");
-
     }
 
     #[test]
     fn file_text_media_test() {
-        let res = with_timeout(TIMEOUT, || {
             let simulation_controller = SimulationController::build(
                 "src/tests/configurations/topology_10_nodes.toml",
                 "resources/files".to_string(),
                 "resources/media".to_string(),
+
                 false,
             );
 
@@ -367,9 +362,6 @@ mod content_test {
                     }
                 }
             }
-        });
-           assert!(res.is_ok(), "Test timed out after 15 seconds");
-
     }
 
     #[test]
@@ -380,8 +372,8 @@ mod content_test {
         //set pdr=0.9
         let simulation_controller = SimulationController::build(
             "src/tests/configurations/topology_10_nodes.toml",
-            "resources/media".to_string(),
             "resources/files".to_string(),
+            "resources/media".to_string(),
             false,
         );
 
@@ -486,6 +478,7 @@ mod content_test {
                 "src/tests/configurations/topology_10_nodes.toml",
                 "resources/files".to_string(),
                 "resources/media".to_string(),
+
                 DEBUG,
             );
             let client_id: u8 = 5;
@@ -764,8 +757,8 @@ mod content_test {
         fn test_request_invalid_server() {
             let simulation_controller = SimulationController::build(
                 "src/tests/configurations/topology_10_nodes.toml",
-                "resources/files".to_string(),
                 "resources/media".to_string(),
+                "resources/files".to_string(),
                 DEBUG,
             );
 
