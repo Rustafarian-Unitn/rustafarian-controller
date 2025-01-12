@@ -496,8 +496,8 @@ impl SimulationController {
         node_channels: &mut HashMap<NodeId, NodeChannels>,
         drone_channels: &mut HashMap<NodeId, DroneChannels>,
         topology: &mut Topology,
-        media_folder: String,
         file_folder: String,
+        media_folder: String,
         debug_mode: bool,
         logger: &Logger,
     ) {
@@ -593,8 +593,8 @@ impl SimulationController {
                         receive_packet_channel,
                         receive_command_channel,
                         send_response_channel,
-                        media_folder.as_str(),
                         file_folder.as_str(),
+                        media_folder.as_str(),
                         ServerType::Media,
                         debug_mode,
                     );
@@ -612,8 +612,8 @@ impl SimulationController {
                         receive_packet_channel,
                         receive_command_channel,
                         send_response_channel,
-                        media_folder.as_str(),
                         file_folder.as_str(),
+                        media_folder.as_str(),
                         ServerType::Text,
                         debug_mode,
                     );

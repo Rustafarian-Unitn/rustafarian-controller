@@ -15,8 +15,8 @@ mod chat_test {
 
         let simulation_controller = SimulationController::build(
             "src/tests/configurations/topology_10_nodes.toml",
-            "resources/media".to_string(),
             "resources/files".to_string(),
+            "resources/media".to_string(),
             false,
         );
 
@@ -60,8 +60,8 @@ mod chat_test {
     fn test_message_from_client_to_server() {
         let controller = SimulationController::build(
             "src/tests/configurations/topology_10_nodes.toml",
-            "resources/media".to_string(),
             "resources/files".to_string(),
+            "resources/media".to_string(),
             false,
         );
         let client_id: u8 = 4;
@@ -141,8 +141,8 @@ mod chat_test {
     fn test_client_list() {
         let simulation_controller = SimulationController::build(
             "src/tests/configurations/topology_10_nodes.toml",
-            "resources/media".to_string(),
             "resources/files".to_string(),
+            "resources/media".to_string(),
             true,
         );
         let client_id: u8 = 4;
@@ -215,8 +215,8 @@ mod chat_test {
     fn test_flood_request() {
         let simulation_controller = SimulationController::build(
             "src/tests/configurations/topology_10_nodes.toml",
-            "resources/media".to_string(),
             "resources/files".to_string(),
+            "resources/media".to_string(),
             false,
         );
 
@@ -265,8 +265,8 @@ mod chat_test {
     fn test_known_servers() {
         let simulation_controller = SimulationController::build(
             "src/tests/configurations/topology_10_nodes.toml",
-            "resources/media".to_string(),
             "resources/files".to_string(),
+            "resources/media".to_string(),
             false,
         );
         let client_id: u8 = 4;
@@ -314,8 +314,8 @@ mod chat_test {
     fn test_registered_servers() {
         let simulation_controller = SimulationController::build(
             "src/tests/configurations/topology_10_nodes.toml",
-            "resources/media".to_string(),
             "resources/files".to_string(),
+            "resources/media".to_string(),
             false,
         );
         let client_id: u8 = 4;
@@ -373,8 +373,8 @@ mod chat_test {
     fn test_client_remove_senders() {
         let simulation_controller = SimulationController::build(
             "src/tests/configurations/topology_10_nodes.toml",
-            "resources/media".to_string(),
             "resources/files".to_string(),
+            "resources/media".to_string(),
             false,
         );
         let drone_1_id: u8 = 1;
@@ -440,8 +440,8 @@ mod chat_test {
     fn test_server_remove_receivers() {
         let simulation_controller = SimulationController::build(
             "src/tests/configurations/topology_10_nodes.toml",
-            "resources/media".to_string(),
             "resources/files".to_string(),
+            "resources/media".to_string(),
             false,
         );
 
@@ -540,8 +540,8 @@ mod chat_test {
     fn test_topology_using_config_file_setup() {
         let simulation_controller = SimulationController::build(
             "src/tests/configurations/topology_10_nodes.toml",
-            "resources/media".to_string(),
             "resources/files".to_string(),
+            "resources/media".to_string(),
             false,
         );
 

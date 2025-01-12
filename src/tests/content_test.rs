@@ -255,8 +255,8 @@ mod content_test {
         let res = with_timeout(TIMEOUT, || {
             let simulation_controller = SimulationController::build(
                 "src/tests/configurations/topology_10_nodes.toml",
-                "resources/media".to_string(),
                 "resources/files".to_string(),
+                "resources/media".to_string(),
                 false,
             );
 
@@ -314,8 +314,8 @@ mod content_test {
         let res = with_timeout(TIMEOUT, || {
             let simulation_controller = SimulationController::build(
                 "src/tests/configurations/topology_10_nodes.toml",
-                "resources/media".to_string(),
                 "resources/files".to_string(),
+                "resources/media".to_string(),
                 false,
             );
 
@@ -436,8 +436,8 @@ mod content_test {
         fn test_server_type_text() {
             let simulation_controller = SimulationController::build(
                 "src/tests/configurations/topology_10_nodes.toml",
-                "resources/media".to_string(),
                 "resources/files".to_string(),
+                "resources/media".to_string(),
                 true,
             );
             let content_server_id: u8 = 8;
@@ -484,8 +484,8 @@ mod content_test {
         fn test_file_list_from_to_server() {
             let simulation_controller = SimulationController::build(
                 "src/tests/configurations/topology_10_nodes.toml",
-                "resources/media".to_string(),
                 "resources/files".to_string(),
+                "resources/media".to_string(),
                 DEBUG,
             );
             let client_id: u8 = 5;
@@ -539,8 +539,8 @@ mod content_test {
         fn test_text_file_request() {
             let simulation_controller = SimulationController::build(
                 "src/tests/configurations/topology_10_nodes.toml",
-                "resources/media".to_string(),
                 "resources/files".to_string(),
+                "resources/media".to_string(),
                 DEBUG,
             );
 
@@ -603,8 +603,8 @@ mod content_test {
         fn test_file_list_request() {
             let simulation_controller = SimulationController::build(
                 "src/tests/configurations/topology_10_nodes.toml",
-                "resources/media".to_string(),
                 "resources/files".to_string(),
+                "resources/media".to_string(),
                 DEBUG,
             );
 
@@ -653,8 +653,8 @@ mod content_test {
         fn test_media_file_request() {
             let simulation_controller = SimulationController::build(
                 "src/tests/configurations/topology_10_nodes.toml",
-                "resources/media".to_string(),
                 "resources/files".to_string(),
+                "resources/media".to_string(),
                 DEBUG,
             );
 
@@ -704,8 +704,8 @@ mod content_test {
         fn test_text_file_with_references() {
             let simulation_controller = SimulationController::build(
                 "src/tests/configurations/topology_10_nodes.toml",
-                "resources/media".to_string(),
                 "resources/files".to_string(),
+                "resources/media".to_string(),
                 DEBUG,
             );
 
@@ -764,8 +764,8 @@ mod content_test {
         fn test_request_invalid_server() {
             let simulation_controller = SimulationController::build(
                 "src/tests/configurations/topology_10_nodes.toml",
-                "resources/media".to_string(),
                 "resources/files".to_string(),
+                "resources/media".to_string(),
                 DEBUG,
             );
 

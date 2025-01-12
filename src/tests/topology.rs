@@ -17,8 +17,8 @@ fn test_simulation_controller_build_complex_topology() {
     );
     let controller = SimulationController::build(
         config_str,
+        "resources/files".to_string(), 
         "resources/media".to_string(),
-        "resources/files".to_string(),
         false,
     );
     thread::sleep(std::time::Duration::from_millis(500));
@@ -43,8 +43,8 @@ fn test_client_topology() {
     );
     let controller = SimulationController::build(
         config_str,
+        "resources/files".to_string(), 
         "resources/media".to_string(),
-        "resources/files".to_string(),
         false,
     );
 

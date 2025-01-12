@@ -13,8 +13,8 @@ mod drone_communication_tests {
     fn test_set_drone_pdr() {
         let simulation_controller = SimulationController::build(
             "src/tests/configurations/topology_10_nodes.toml",
-            "resources/media".to_string(),
             "resources/files".to_string(),
+            "resources/media".to_string(),
             false,
         );
 
