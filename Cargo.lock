@@ -1424,7 +1424,6 @@ dependencies = [
  "rustafarian-content-server",
  "rustafarian-drone 1.0.0",
  "rustafarian-shared",
- "rustastic-drone",
  "rustbusters-drone",
  "rusteze_drone",
  "rusty_drones",
@@ -1479,19 +1478,6 @@ dependencies = [
  "rand",
  "serde",
  "serde_json",
- "wg_2024",
-]
-
-[[package]]
-name = "rustastic-drone"
-version = "0.1.0"
-source = "git+https://github.com/Rustastic/RustasticDrone.git#288bbb4117046108bf5723e4181acfcb8d2eee4d"
-dependencies = [
- "colored",
- "crossbeam-channel",
- "log",
- "rand",
- "toml",
  "wg_2024",
 ]
 
