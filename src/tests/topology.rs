@@ -1,7 +1,10 @@
-use std::{collections::{HashMap, HashSet}, thread};
 use crate::simulation_controller::SimulationController;
 use rustafarian_shared::messages::commander_messages::{
     SimControllerCommand, SimControllerMessage, SimControllerResponseWrapper,
+};
+use std::{
+    collections::{HashMap, HashSet},
+    thread,
 };
 use wg_2024::network::NodeId;
 
@@ -12,7 +15,12 @@ fn test_simulation_controller_build_complex_topology() {
         std::path::Path::new(config_str).exists(),
         "Config file does not exist at the specified path"
     );
-    let controller = SimulationController::build(config_str, false);
+    let controller = SimulationController::build(
+        config_str,
+        "resources/media".to_string(),
+        "resources/files".to_string(),
+        false,
+    );
     thread::sleep(std::time::Duration::from_millis(500));
 
     assert_eq!(controller.drone_channels.len(), 3);
@@ -28,13 +36,17 @@ fn test_simulation_controller_build_complex_topology() {
 
 #[test]
 fn test_client_topology() {
-
     let config_str = "src/tests/configurations/topology_10_nodes.toml";
     assert!(
         std::path::Path::new(config_str).exists(),
         "Config file does not exist at the specified path"
     );
-    let controller = SimulationController::build(config_str, false);
+    let controller = SimulationController::build(
+        config_str,
+        "resources/media".to_string(),
+        "resources/files".to_string(),
+        false,
+    );
 
     thread::sleep(std::time::Duration::from_millis(500));
     let client_id = 4;
@@ -56,63 +68,61 @@ fn test_client_topology() {
             break;
         }
     }
-
 }
 
-fn assert_topology(edges:  &HashMap<NodeId, HashSet<NodeId>>) {
- 
-        assert!(edges.len() == 10);
-        assert!(edges.get(&1).unwrap().contains(&2));
-        assert!(edges.get(&1).unwrap().contains(&3));
-        assert!(edges.get(&1).unwrap().contains(&4));
-        assert!(edges.get(&1).unwrap().contains(&5));
-        assert!(edges.get(&1).unwrap().contains(&7));
-        assert!(edges.get(&1).unwrap().contains(&9));
-        assert_eq!(edges.get(&1).unwrap().len(),6);
-        
-        assert!(edges.get(&2).unwrap().contains(&1));
-        assert!(edges.get(&2).unwrap().contains(&3));
-        assert!(edges.get(&2).unwrap().contains(&4));
-        assert!(edges.get(&2).unwrap().contains(&6));
-        assert!(edges.get(&2).unwrap().contains(&7));
-        assert!(edges.get(&2).unwrap().contains(&8));
-        assert!(edges.get(&2).unwrap().contains(&10));
-        assert_eq!(edges.get(&2).unwrap().len(),7);
-        
-        assert!(edges.get(&3).unwrap().contains(&1));
-        assert!(edges.get(&3).unwrap().contains(&2));
-        assert!(edges.get(&3).unwrap().contains(&5));
-        assert!(edges.get(&3).unwrap().contains(&6));
-        assert!(edges.get(&3).unwrap().contains(&8));
-        assert!(edges.get(&3).unwrap().contains(&9));
-        assert!(edges.get(&3).unwrap().contains(&10));
-        assert_eq!(edges.get(&3).unwrap().len(),7);
-        
-        assert!(edges.get(&4).unwrap().contains(&1));
-        assert!(edges.get(&4).unwrap().contains(&2));
-        assert_eq!(edges.get(&4).unwrap().len(),2);
-        
-        assert!(edges.get(&5).unwrap().contains(&1));
-        assert!(edges.get(&5).unwrap().contains(&3));
-        assert_eq!(edges.get(&5).unwrap().len(),2);
-        
-        assert!(edges.get(&6).unwrap().contains(&2));
-        assert!(edges.get(&6).unwrap().contains(&3));
-        assert_eq!(edges.get(&6).unwrap().len(),2);
-        
-        assert!(edges.get(&7).unwrap().contains(&1));
-        assert!(edges.get(&7).unwrap().contains(&2));
-        assert_eq!(edges.get(&7).unwrap().len(),2);
-        
-        assert!(edges.get(&8).unwrap().contains(&2));
-        assert!(edges.get(&8).unwrap().contains(&3));
-        assert_eq!(edges.get(&8).unwrap().len(),2);
-        
-        assert!(edges.get(&9).unwrap().contains(&1));
-        assert!(edges.get(&9).unwrap().contains(&3));
-        assert_eq!(edges.get(&9).unwrap().len(),2);
-        
-        assert!(edges.get(&10).unwrap().contains(&2));
-        assert!(edges.get(&10).unwrap().contains(&3));
-        assert_eq!(edges.get(&10).unwrap().len(),2);
-    }
+fn assert_topology(edges: &HashMap<NodeId, HashSet<NodeId>>) {
+    assert!(edges.len() == 10);
+    assert!(edges.get(&1).unwrap().contains(&2));
+    assert!(edges.get(&1).unwrap().contains(&3));
+    assert!(edges.get(&1).unwrap().contains(&4));
+    assert!(edges.get(&1).unwrap().contains(&5));
+    assert!(edges.get(&1).unwrap().contains(&7));
+    assert!(edges.get(&1).unwrap().contains(&9));
+    assert_eq!(edges.get(&1).unwrap().len(), 6);
+
+    assert!(edges.get(&2).unwrap().contains(&1));
+    assert!(edges.get(&2).unwrap().contains(&3));
+    assert!(edges.get(&2).unwrap().contains(&4));
+    assert!(edges.get(&2).unwrap().contains(&6));
+    assert!(edges.get(&2).unwrap().contains(&7));
+    assert!(edges.get(&2).unwrap().contains(&8));
+    assert!(edges.get(&2).unwrap().contains(&10));
+    assert_eq!(edges.get(&2).unwrap().len(), 7);
+
+    assert!(edges.get(&3).unwrap().contains(&1));
+    assert!(edges.get(&3).unwrap().contains(&2));
+    assert!(edges.get(&3).unwrap().contains(&5));
+    assert!(edges.get(&3).unwrap().contains(&6));
+    assert!(edges.get(&3).unwrap().contains(&8));
+    assert!(edges.get(&3).unwrap().contains(&9));
+    assert!(edges.get(&3).unwrap().contains(&10));
+    assert_eq!(edges.get(&3).unwrap().len(), 7);
+
+    assert!(edges.get(&4).unwrap().contains(&1));
+    assert!(edges.get(&4).unwrap().contains(&2));
+    assert_eq!(edges.get(&4).unwrap().len(), 2);
+
+    assert!(edges.get(&5).unwrap().contains(&1));
+    assert!(edges.get(&5).unwrap().contains(&3));
+    assert_eq!(edges.get(&5).unwrap().len(), 2);
+
+    assert!(edges.get(&6).unwrap().contains(&2));
+    assert!(edges.get(&6).unwrap().contains(&3));
+    assert_eq!(edges.get(&6).unwrap().len(), 2);
+
+    assert!(edges.get(&7).unwrap().contains(&1));
+    assert!(edges.get(&7).unwrap().contains(&2));
+    assert_eq!(edges.get(&7).unwrap().len(), 2);
+
+    assert!(edges.get(&8).unwrap().contains(&2));
+    assert!(edges.get(&8).unwrap().contains(&3));
+    assert_eq!(edges.get(&8).unwrap().len(), 2);
+
+    assert!(edges.get(&9).unwrap().contains(&1));
+    assert!(edges.get(&9).unwrap().contains(&3));
+    assert_eq!(edges.get(&9).unwrap().len(), 2);
+
+    assert!(edges.get(&10).unwrap().contains(&2));
+    assert!(edges.get(&10).unwrap().contains(&3));
+    assert_eq!(edges.get(&10).unwrap().len(), 2);
+}

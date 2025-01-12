@@ -2,26 +2,31 @@ mod chat_test {
 
     use std::{collections::HashSet, thread};
 
-    use rustafarian_shared::messages::commander_messages::{SimControllerCommand, SimControllerEvent, SimControllerMessage, SimControllerResponseWrapper};
-
+    use rustafarian_shared::messages::commander_messages::{
+        SimControllerCommand, SimControllerEvent, SimControllerMessage,
+        SimControllerResponseWrapper,
+    };
 
     use crate::simulation_controller::SimulationController;
-
 
     #[test]
     fn known_servers() {
         let chat_client_id = 4;
 
-        let simulation_controller =
-            SimulationController::build("src/tests/configurations/topology_10_nodes.toml", false);
-        
+        let simulation_controller = SimulationController::build(
+            "src/tests/configurations/topology_10_nodes.toml",
+            "resources/media".to_string(),
+            "resources/files".to_string(),
+            false,
+        );
+
         let client_command_channel = simulation_controller
             .nodes_channels
             .get(&chat_client_id)
             .unwrap()
             .send_command_channel
             .clone();
-        
+
         let client_response_channel = simulation_controller
             .nodes_channels
             .get(&chat_client_id)
@@ -34,7 +39,7 @@ mod chat_test {
         //send known servers request
         let res = client_command_channel.send(SimControllerCommand::KnownServers);
         assert!(res.is_ok());
-        
+
         // Listen for response
         for response in client_response_channel.iter() {
             if let SimControllerResponseWrapper::Message(SimControllerMessage::KnownServers(
@@ -45,7 +50,6 @@ mod chat_test {
                     assert!(known_servers.get(&9).is_some());
                 } else {
                     assert!(true);
-
                 }
                 break;
             }
@@ -56,6 +60,8 @@ mod chat_test {
     fn test_message_from_client_to_server() {
         let controller = SimulationController::build(
             "src/tests/configurations/topology_10_nodes.toml",
+            "resources/media".to_string(),
+            "resources/files".to_string(),
             false,
         );
         let client_id: u8 = 4;
@@ -92,7 +98,6 @@ mod chat_test {
         // Instruct client 2 to register to server
         let res = client_2_command_channel.send(SimControllerCommand::Register(server_id));
         assert!(res.is_ok());
-
 
         // Wait for registration to happen
         std::thread::sleep(std::time::Duration::from_secs(2));
@@ -134,8 +139,12 @@ mod chat_test {
 
     #[test]
     fn test_client_list() {
-        let simulation_controller =
-            SimulationController::build("src/tests/configurations/topology_10_nodes.toml", true);
+        let simulation_controller = SimulationController::build(
+            "src/tests/configurations/topology_10_nodes.toml",
+            "resources/media".to_string(),
+            "resources/files".to_string(),
+            true,
+        );
         let client_id: u8 = 4;
         let client_2_id: u8 = 6;
         let server_id = 9;
@@ -163,19 +172,19 @@ mod chat_test {
 
         // Wait for flood request
         thread::sleep(std::time::Duration::from_secs(5));
-        
+
         // Instruct client to register to server
         let res = client_command_channel.send(SimControllerCommand::Register(server_id));
         assert!(res.is_ok());
-        
+
         // Instruction client 2 to register to server
         let res = client_2_command_channel.send(SimControllerCommand::Register(server_id));
         assert!(res.is_ok());
-        
+
         // Instruct client to request client list
         let res = client_command_channel.send(SimControllerCommand::ClientList(server_id));
         assert!(res.is_ok());
-        
+
         thread::sleep(std::time::Duration::from_secs(2));
 
         // Ignore messages until ClientListResponse is received
@@ -204,8 +213,12 @@ mod chat_test {
     //Test flood request
     #[test]
     fn test_flood_request() {
-        let simulation_controller =
-            SimulationController::build("src/tests/configurations/topology_10_nodes.toml", false);
+        let simulation_controller = SimulationController::build(
+            "src/tests/configurations/topology_10_nodes.toml",
+            "resources/media".to_string(),
+            "resources/files".to_string(),
+            false,
+        );
 
         let client_id: u8 = 4;
 
@@ -250,8 +263,12 @@ mod chat_test {
     // Test known servers
     #[test]
     fn test_known_servers() {
-        let simulation_controller =
-            SimulationController::build("src/tests/configurations/topology_10_nodes.toml", false);
+        let simulation_controller = SimulationController::build(
+            "src/tests/configurations/topology_10_nodes.toml",
+            "resources/media".to_string(),
+            "resources/files".to_string(),
+            false,
+        );
         let client_id: u8 = 4;
 
         let client_command_channel = simulation_controller
@@ -295,10 +312,14 @@ mod chat_test {
     // Test registered servers
     #[test]
     fn test_registered_servers() {
-        let simulation_controller =
-            SimulationController::build("src/tests/configurations/topology_10_nodes.toml", false);
+        let simulation_controller = SimulationController::build(
+            "src/tests/configurations/topology_10_nodes.toml",
+            "resources/media".to_string(),
+            "resources/files".to_string(),
+            false,
+        );
         let client_id: u8 = 4;
-        let server_id= 9;
+        let server_id = 9;
         let client_command_channel = simulation_controller
             .nodes_channels
             .get(&client_id)
@@ -350,8 +371,12 @@ mod chat_test {
     // Test remove sender from server
     #[test]
     fn test_client_remove_senders() {
-        let simulation_controller =
-            SimulationController::build("src/tests/configurations/topology_10_nodes.toml", false);
+        let simulation_controller = SimulationController::build(
+            "src/tests/configurations/topology_10_nodes.toml",
+            "resources/media".to_string(),
+            "resources/files".to_string(),
+            false,
+        );
         let drone_1_id: u8 = 1;
         let drone_2_id: u8 = 2;
         let drone_3_id: u8 = 3;
@@ -413,8 +438,12 @@ mod chat_test {
     // Test remove sender from server
     #[test]
     fn test_server_remove_receivers() {
-        let simulation_controller =
-            SimulationController::build("src/tests/configurations/topology_10_nodes.toml", false);
+        let simulation_controller = SimulationController::build(
+            "src/tests/configurations/topology_10_nodes.toml",
+            "resources/media".to_string(),
+            "resources/files".to_string(),
+            false,
+        );
 
         let drone_1_id: u8 = 1;
         let drone_2_id: u8 = 2;
@@ -430,7 +459,7 @@ mod chat_test {
             .send_command_channel
             .clone();
 
-            let server_response_channel = simulation_controller
+        let server_response_channel = simulation_controller
             .nodes_channels
             .get(&server_id)
             .unwrap()
@@ -453,7 +482,7 @@ mod chat_test {
 
         // Wait for flood request
         thread::sleep(std::time::Duration::from_secs(5));
-        
+
         // Register client to server
         let res = client_command_channel.send(SimControllerCommand::Register(server_id));
         assert!(res.is_ok());
@@ -469,12 +498,12 @@ mod chat_test {
         let res = server_command_channel.send(SimControllerCommand::RemoveSender(drone_1_id));
         assert!(res.is_ok());
         thread::sleep(std::time::Duration::from_secs(2));
-        
+
         // Instruct server to remove sender 2
         let res = server_command_channel.send(SimControllerCommand::RemoveSender(drone_2_id));
         assert!(res.is_ok());
         thread::sleep(std::time::Duration::from_secs(2));
-        
+
         // Instruct server to remove sender 3
         let res = server_command_channel.send(SimControllerCommand::RemoveSender(drone_3_id));
         assert!(res.is_ok());
@@ -489,9 +518,11 @@ mod chat_test {
             client_2_id,
         ));
         assert!(res.is_ok());
-        
+
         for response in server_response_channel.iter() {
-            if let SimControllerResponseWrapper::Event(SimControllerEvent::FloodRequestSent) = response.clone() {
+            if let SimControllerResponseWrapper::Event(SimControllerEvent::FloodRequestSent) =
+                response.clone()
+            {
                 println!("TEST - Flood response {:?}", response);
                 assert!(
                     matches!(
@@ -501,14 +532,18 @@ mod chat_test {
                     "Expected Flood response"
                 );
                 break;
-            }            
+            }
         }
     }
 
     #[test]
     fn test_topology_using_config_file_setup() {
-        let simulation_controller =
-            SimulationController::build("src/tests/configurations/topology_10_nodes.toml", false);
+        let simulation_controller = SimulationController::build(
+            "src/tests/configurations/topology_10_nodes.toml",
+            "resources/media".to_string(),
+            "resources/files".to_string(),
+            false,
+        );
 
         let client_id = 4;
 
@@ -537,7 +572,7 @@ mod chat_test {
             )) = response
             {
                 println!("TEST - Topology response {:?}", topology);
-                let expected_response = vec![1,2];
+                let expected_response = vec![1, 2];
                 let expected_response: HashSet<_> = expected_response.into_iter().collect();
                 assert_eq!(topology.edges().get(&client_id), Some(&expected_response));
                 break;

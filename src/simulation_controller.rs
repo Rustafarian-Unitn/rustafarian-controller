@@ -1,8 +1,7 @@
 use crate::config_parser;
 use crate::drone_functions::{
     cpp_enjoyers_drone, d_r_o_n_e_drone, dr_one_drone, get_droned_drone, lockheed_rustin_drone,
-    rust_busters_drone, rust_do_it_drone, rustastic_drone, rusteze_drone,
-    rusty_drone,
+    rust_busters_drone, rust_do_it_drone, rustastic_drone, rusteze_drone, rusty_drone,
 };
 use crate::runnable::Runnable;
 use crossbeam_channel::{unbounded, Receiver, Sender};
@@ -13,12 +12,12 @@ use rustafarian_client::chat_client::ChatClient;
 use rustafarian_client::client::Client;
 use rustafarian_content_server::content_server::ContentServer;
 use rustafarian_shared::logger::{LogLevel, Logger};
+use rustafarian_shared::messages::commander_messages::SimControllerEvent::PacketForwarded;
 use rustafarian_shared::messages::commander_messages::{
     SimControllerCommand, SimControllerEvent, SimControllerResponseWrapper,
 };
 use rustafarian_shared::messages::general_messages::ServerType;
 use rustafarian_shared::topology::Topology;
-use rustafarian_shared::messages::commander_messages::SimControllerEvent::PacketForwarded;
 use std::collections::HashMap;
 use std::thread;
 use std::thread::JoinHandle;
@@ -132,7 +131,12 @@ impl SimulationController {
     /// * `config` - A string containing the path to the configuration for the simulation
     /// # Returns
     /// A `SimulationController` instance with the network topology and channels set up.
-    pub fn build(config: &str, debug_mode: bool) -> Self {
+    pub fn build(
+        config: &str,
+        media_folder: String,
+        file_folder: String,
+        debug_mode: bool,
+    ) -> Self {
         let config = config_parser::parse_config(config);
         let logger = Logger::new("Controller".to_string(), 0, debug_mode);
 
@@ -166,7 +170,7 @@ impl SimulationController {
             &mut node_channels,
             &mut drone_channels,
             &mut topology,
-            &logger
+            &logger,
         );
 
         Self::init_drones(
@@ -176,7 +180,7 @@ impl SimulationController {
             &mut drone_channels,
             &mut node_channels,
             &mut topology,
-            &logger
+            &logger,
         );
         Self::init_clients(
             &mut handles,
@@ -185,7 +189,7 @@ impl SimulationController {
             &mut drone_channels,
             &mut topology,
             debug_mode,
-            &logger
+            &logger,
         );
 
         Self::init_servers(
@@ -194,8 +198,10 @@ impl SimulationController {
             &mut node_channels,
             &mut drone_channels,
             &mut topology,
+            media_folder,
+            file_folder,
             debug_mode,
-            &logger
+            &logger,
         );
 
         SimulationController::new(node_channels, drone_channels, handles, topology, logger)
@@ -490,6 +496,8 @@ impl SimulationController {
         node_channels: &mut HashMap<NodeId, NodeChannels>,
         drone_channels: &mut HashMap<NodeId, DroneChannels>,
         topology: &mut Topology,
+        media_folder: String,
+        file_folder: String,
         debug_mode: bool,
         logger: &Logger,
     ) {
@@ -500,6 +508,9 @@ impl SimulationController {
 
         // For each drone config pick the next factory in a circular fashion to generate a drone instance
         for server_config in servers_config {
+            let media_folder = media_folder.clone();
+            let file_folder = file_folder.clone();
+
             logger.log(
                 format!("Creating server {}", server_config.id).as_str(),
                 LogLevel::DEBUG,
@@ -582,8 +593,8 @@ impl SimulationController {
                         receive_packet_channel,
                         receive_command_channel,
                         send_response_channel,
-                        FILE_FOLDER,
-                        MEDIA_FOLDER,
+                        media_folder.as_str(),
+                        file_folder.as_str(),
                         ServerType::Media,
                         debug_mode,
                     );
@@ -601,8 +612,8 @@ impl SimulationController {
                         receive_packet_channel,
                         receive_command_channel,
                         send_response_channel,
-                        FILE_FOLDER,
-                        MEDIA_FOLDER,
+                        media_folder.as_str(),
+                        file_folder.as_str(),
                         ServerType::Text,
                         debug_mode,
                     );
@@ -674,7 +685,8 @@ impl SimulationController {
                             })
                         }
                         PacketType::FloodRequest(flood_request) => {
-                            self.logger.log("Packet type: FloodRequest", LogLevel::DEBUG);
+                            self.logger
+                                .log("Packet type: FloodRequest", LogLevel::DEBUG);
                             Ok(PacketForwarded {
                                 session_id,
                                 packet_type: flood_request.to_string(),
@@ -683,7 +695,8 @@ impl SimulationController {
                             })
                         }
                         PacketType::FloodResponse(flood_response) => {
-                            self.logger.log("Packet type: FloodResponse", LogLevel::DEBUG);
+                            self.logger
+                                .log("Packet type: FloodResponse", LogLevel::DEBUG);
                             Ok(PacketForwarded {
                                 session_id,
                                 packet_type: flood_response.to_string(),
@@ -698,7 +711,8 @@ impl SimulationController {
                 Err(Error::new("Failed to send packet"))
             }
         } else {
-            self.logger.log("Destination is not a node", LogLevel::ERROR);
+            self.logger
+                .log("Destination is not a node", LogLevel::ERROR);
             Err(Error::new("Destination is not a node"))
         }
     }
@@ -715,10 +729,13 @@ mod tests {
     use super::*;
     use crate::tests::setup;
     use rustafarian_shared::topology::Topology;
-    use std::collections::HashMap;
+    use std::{collections::HashMap, fs::File};
     use wg_2024::{
         network::SourceRoutingHeader,
-        packet::{Ack, FloodRequest, FloodResponse, Fragment, Nack, NackType, NodeType, Packet, PacketType},
+        packet::{
+            Ack, FloodRequest, FloodResponse, Fragment, Nack, NackType, NodeType, Packet,
+            PacketType,
+        },
     };
 
     #[test]
@@ -728,8 +745,13 @@ mod tests {
         let handles = Vec::new();
         let logger = Logger::new("Controller".to_string(), 0, false);
 
-        let controller =
-            SimulationController::new(nodes_channels, drone_channels, handles, Topology::new(),logger);
+        let controller = SimulationController::new(
+            nodes_channels,
+            drone_channels,
+            handles,
+            Topology::new(),
+            logger,
+        );
 
         assert!(controller.topology.nodes().is_empty());
         assert!(controller.nodes_channels.is_empty());
@@ -741,7 +763,12 @@ mod tests {
     fn test_simulation_controller_build() {
         let config_str = "src/tests/configurations/topology_1.toml";
 
-        let controller = SimulationController::build(config_str, false);
+        let controller = SimulationController::build(
+            config_str,
+            MEDIA_FOLDER.to_string(),
+            FILE_FOLDER.to_string(),
+            false,
+        );
 
         assert_eq!(controller.drone_channels.len(), 5);
         assert_eq!(controller.nodes_channels.len(), 2);
@@ -852,6 +879,8 @@ mod tests {
             &mut node_channels,
             &mut drone_channels,
             &mut topology,
+            MEDIA_FOLDER.to_string(),
+            FILE_FOLDER.to_string(),
             true,
             &logger,
         );
@@ -919,7 +948,7 @@ mod tests {
         assert!(matches!(event, PacketForwarded { .. }));
 
         let packet = Packet {
-            pack_type: PacketType::Ack(Ack{fragment_index: 1}),
+            pack_type: PacketType::Ack(Ack { fragment_index: 1 }),
             session_id: 1,
             routing_header: SourceRoutingHeader {
                 hops: vec![1, 2, 3],
@@ -934,7 +963,10 @@ mod tests {
         assert!(matches!(event, PacketForwarded { .. }));
 
         let packet = Packet {
-            pack_type: PacketType::Nack(Nack{fragment_index: 1, nack_type: NackType::ErrorInRouting(1)}),
+            pack_type: PacketType::Nack(Nack {
+                fragment_index: 1,
+                nack_type: NackType::ErrorInRouting(1),
+            }),
             session_id: 1,
             routing_header: SourceRoutingHeader {
                 hops: vec![1, 2, 3],
@@ -949,7 +981,11 @@ mod tests {
         assert!(matches!(event, PacketForwarded { .. }));
 
         let packet = Packet {
-            pack_type: PacketType::FloodRequest(FloodRequest{flood_id: 1, initiator_id:1,  path_trace: vec![(1 as NodeId, NodeType::Drone)]}),
+            pack_type: PacketType::FloodRequest(FloodRequest {
+                flood_id: 1,
+                initiator_id: 1,
+                path_trace: vec![(1 as NodeId, NodeType::Drone)],
+            }),
             session_id: 1,
             routing_header: SourceRoutingHeader {
                 hops: vec![1, 2, 3],
@@ -964,7 +1000,10 @@ mod tests {
         assert!(matches!(event, PacketForwarded { .. }));
 
         let packet = Packet {
-            pack_type: PacketType::FloodResponse(FloodResponse{flood_id:1,path_trace: vec![(1 as NodeId, NodeType::Drone)]}),
+            pack_type: PacketType::FloodResponse(FloodResponse {
+                flood_id: 1,
+                path_trace: vec![(1 as NodeId, NodeType::Drone)],
+            }),
             session_id: 1,
             routing_header: SourceRoutingHeader {
                 hops: vec![1, 2, 3],
@@ -1232,37 +1271,45 @@ mod tests {
                     f32,
                 ) -> (Box<dyn Runnable>, String)
         );
-        assert!(drone11 as *const fn(
-            NodeId,
-            Sender<DroneEvent>,
-            Receiver<DroneCommand>,
-            Receiver<Packet>,
-            HashMap<NodeId, Sender<Packet>>,
-            f32,
-        ) -> (Box<dyn Runnable>, String)
-            == cpp_enjoyers_drone as *const fn(
-                NodeId,
-                Sender<DroneEvent>,
-                Receiver<DroneCommand>,
-                Receiver<Packet>,
-                HashMap<NodeId, Sender<Packet>>,
-                f32,
-            ) -> (Box<dyn Runnable>, String));
-        assert!(drone12 as *const fn(
-            NodeId,
-            Sender<DroneEvent>,
-            Receiver<DroneCommand>,
-            Receiver<Packet>,
-            HashMap<NodeId, Sender<Packet>>,
-            f32,
-        ) -> (Box<dyn Runnable>, String)
-            == get_droned_drone as *const fn(
-                NodeId,
-                Sender<DroneEvent>,
-                Receiver<DroneCommand>,
-                Receiver<Packet>,
-                HashMap<NodeId, Sender<Packet>>,
-                f32,
-            ) -> (Box<dyn Runnable>, String));
+        assert!(
+            drone11
+                as *const fn(
+                    NodeId,
+                    Sender<DroneEvent>,
+                    Receiver<DroneCommand>,
+                    Receiver<Packet>,
+                    HashMap<NodeId, Sender<Packet>>,
+                    f32,
+                ) -> (Box<dyn Runnable>, String)
+                == cpp_enjoyers_drone
+                    as *const fn(
+                        NodeId,
+                        Sender<DroneEvent>,
+                        Receiver<DroneCommand>,
+                        Receiver<Packet>,
+                        HashMap<NodeId, Sender<Packet>>,
+                        f32,
+                    ) -> (Box<dyn Runnable>, String)
+        );
+        assert!(
+            drone12
+                as *const fn(
+                    NodeId,
+                    Sender<DroneEvent>,
+                    Receiver<DroneCommand>,
+                    Receiver<Packet>,
+                    HashMap<NodeId, Sender<Packet>>,
+                    f32,
+                ) -> (Box<dyn Runnable>, String)
+                == get_droned_drone
+                    as *const fn(
+                        NodeId,
+                        Sender<DroneEvent>,
+                        Receiver<DroneCommand>,
+                        Receiver<Packet>,
+                        HashMap<NodeId, Sender<Packet>>,
+                        f32,
+                    ) -> (Box<dyn Runnable>, String)
+        );
     }
 }
