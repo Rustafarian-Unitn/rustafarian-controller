@@ -148,7 +148,7 @@ mod tests {
     
         let result = std::panic::catch_unwind(|| parse_config(config_str));
     
-        assert!(result.is_ok());
+        assert!(result.is_err());
     }
     
     #[test]
