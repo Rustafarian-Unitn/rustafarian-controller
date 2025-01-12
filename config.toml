@@ -1,2 +1,1020 @@
-[net]
-git-fetch-with-cli = true
+[[drone]]
+id = 0
+pdr = 0.9
+connected_node_ids = [11, 6, 38, 188, 207, 101, 143, 150, 155]
+[[drone]]
+id = 1
+pdr = 0.07
+connected_node_ids = [52, 48, 5, 33, 177, 245, 79, 143]
+[[drone]]
+id = 2
+pdr = 0.59
+connected_node_ids = [39, 38, 28, 191, 213, 226, 70, 139, 142, 145, 160, 161]
+[[drone]]
+id = 3
+pdr = 0.84
+connected_node_ids = [43, 10, 23, 48, 63, 163, 206, 110]
+[[drone]]
+id = 4
+pdr = 0.04
+connected_node_ids = [67, 21, 13, 19, 190, 199, 95, 139]
+[[drone]]
+id = 5
+pdr = 0.1
+connected_node_ids = [1, 34, 162, 229, 102, 129, 134, 145, 159]
+[[drone]]
+id = 6
+pdr = 0.57
+connected_node_ids = [0, 14, 47, 39, 53, 181, 197, 236, 237, 108, 110, 115, 136]
+[[drone]]
+id = 7
+pdr = 0.92
+connected_node_ids = [49, 29, 40, 96, 97, 114]
+[[drone]]
+id = 8
+pdr = 0.18
+connected_node_ids = [28, 29, 51, 57, 60, 172, 211, 240, 72, 88, 91, 92, 94]
+[[drone]]
+id = 9
+pdr = 0.66
+connected_node_ids = [52, 45, 198, 232, 252, 253, 81, 103, 118]
+[[drone]]
+id = 10
+pdr = 0.81
+connected_node_ids = [3, 57, 61, 184, 223, 99]
+[[drone]]
+id = 11
+pdr = 0.6
+connected_node_ids = [0, 47, 26, 33, 50, 62, 168, 180, 182, 205, 215, 99, 121, 129]
+[[drone]]
+id = 12
+pdr = 0.42
+connected_node_ids = [64, 62, 21, 56, 164, 205, 215, 216, 77, 101, 139]
+[[drone]]
+id = 13
+pdr = 0.81
+connected_node_ids = [4, 21, 20, 200, 73, 85, 93, 117, 119, 125, 159]
+[[drone]]
+id = 14
+pdr = 0.19
+connected_node_ids = [6, 38, 19, 17, 26, 28, 30, 66, 173, 193, 228, 127, 160]
+[[drone]]
+id = 15
+pdr = 0.32
+connected_node_ids = [48, 40, 35, 50, 169, 192, 236, 74, 80, 83, 88, 153]
+[[drone]]
+id = 16
+pdr = 0.2
+connected_node_ids = [29, 59, 196, 231, 251, 97, 109]
+[[drone]]
+id = 17
+pdr = 0.8
+connected_node_ids = [14, 42, 54, 163, 75, 77, 81, 91, 113, 142]
+[[drone]]
+id = 18
+pdr = 0.35
+connected_node_ids = [21, 51, 42, 172, 178, 201, 244, 90, 93, 97, 125, 149, 150, 157]
+[[drone]]
+id = 19
+pdr = 0.58
+connected_node_ids = [14, 38, 4, 47, 55, 207, 70, 77, 79, 144, 147]
+[[drone]]
+id = 20
+pdr = 0.35
+connected_node_ids = [13, 47, 24, 223, 73, 85, 91, 98, 107, 111]
+[[drone]]
+id = 21
+pdr = 0.9
+connected_node_ids = [4, 13, 18, 58, 12, 56, 217, 149]
+[[drone]]
+id = 22
+pdr = 0.8
+connected_node_ids = [46, 35, 23, 25, 34, 69, 178, 71, 99, 109, 123, 125, 154, 157, 159]
+[[drone]]
+id = 23
+pdr = 0.09
+connected_node_ids = [3, 22, 43, 44, 192, 217, 219, 227, 239, 252, 86, 104, 105, 111, 132, 136, 160]
+[[drone]]
+id = 24
+pdr = 0.47
+connected_node_ids = [20, 34, 49, 175, 179, 117, 138]
+[[drone]]
+id = 25
+pdr = 0.68
+connected_node_ids = [40, 22, 48, 187, 194, 203, 100, 146]
+[[drone]]
+id = 26
+pdr = 0.92
+connected_node_ids = [11, 67, 14, 240, 75, 127, 132, 154]
+[[drone]]
+id = 27
+pdr = 0.37
+connected_node_ids = [66, 53, 58, 59, 63, 242, 247, 94, 96, 105, 106, 134, 153]
+[[drone]]
+id = 28
+pdr = 0.26
+connected_node_ids = [8, 14, 2, 250, 104, 114, 124]
+[[drone]]
+id = 29
+pdr = 0.85
+connected_node_ids = [7, 8, 16, 48, 61, 47, 230, 235, 90, 91, 119, 134, 140, 153, 156]
+[[drone]]
+id = 30
+pdr = 0.58
+connected_node_ids = [50, 14, 174, 110, 122, 125]
+[[drone]]
+id = 31
+pdr = 0.56
+connected_node_ids = [33, 41, 183, 238]
+[[drone]]
+id = 32
+pdr = 0.8
+connected_node_ids = [39, 54, 37, 41, 182, 202, 249, 85, 100, 102, 103, 113, 121, 137]
+[[drone]]
+id = 33
+pdr = 0.15
+connected_node_ids = [31, 11, 1, 45, 51, 167, 177, 219, 87, 95, 118, 159, 161]
+[[drone]]
+id = 34
+pdr = 0.13
+connected_node_ids = [5, 24, 22, 63, 169, 232, 89, 97, 100, 123, 132, 151]
+[[drone]]
+id = 35
+pdr = 0.59
+connected_node_ids = [22, 15, 69, 186, 220, 222, 80, 121, 152]
+[[drone]]
+id = 36
+pdr = 0.81
+connected_node_ids = [64, 55, 99]
+[[drone]]
+id = 37
+pdr = 0.83
+connected_node_ids = [66, 32, 40, 43, 254, 95, 113, 128]
+[[drone]]
+id = 38
+pdr = 0.86
+connected_node_ids = [2, 14, 19, 53, 0, 170, 185, 195, 107, 126, 133]
+[[drone]]
+id = 39
+pdr = 0.4
+connected_node_ids = [2, 32, 42, 6, 195, 200, 222, 115]
+[[drone]]
+id = 40
+pdr = 0.32
+connected_node_ids = [15, 25, 7, 37, 68, 171, 196, 87, 158]
+[[drone]]
+id = 41
+pdr = 0.44
+connected_node_ids = [31, 69, 32, 54, 165, 189, 224, 253, 84, 101]
+[[drone]]
+id = 42
+pdr = 0.59
+connected_node_ids = [17, 39, 45, 18, 201, 89, 108, 150]
+[[drone]]
+id = 43
+pdr = 0.57
+connected_node_ids = [3, 37, 23, 226, 72, 78, 145, 146]
+[[drone]]
+id = 44
+pdr = 0.92
+connected_node_ids = [53, 23, 67, 212, 71, 73, 90, 119, 128, 139]
+[[drone]]
+id = 45
+pdr = 0.6
+connected_node_ids = [9, 42, 55, 33, 53, 66, 248, 83]
+[[drone]]
+id = 46
+pdr = 0.23
+connected_node_ids = [22, 52, 66, 64, 186, 202, 234, 82, 133, 138, 144, 157]
+[[drone]]
+id = 47
+pdr = 0.31
+connected_node_ids = [6, 11, 20, 19, 29, 52, 181, 185, 233, 86, 105, 122, 129]
+[[drone]]
+id = 48
+pdr = 0.5
+connected_node_ids = [1, 15, 29, 25, 3, 59, 64, 68, 83, 130, 131, 141, 147, 160]
+[[drone]]
+id = 49
+pdr = 0.74
+connected_node_ids = [7, 24, 67, 61, 124]
+[[drone]]
+id = 50
+pdr = 0.13
+connected_node_ids = [30, 11, 15, 74, 118, 152]
+[[drone]]
+id = 51
+pdr = 0.26
+connected_node_ids = [18, 8, 33, 65, 76, 78, 82, 84, 109, 112, 128]
+[[drone]]
+id = 52
+pdr = 0.59
+connected_node_ids = [1, 9, 46, 67, 47, 168, 216, 82, 105, 118, 127, 151, 155]
+[[drone]]
+id = 53
+pdr = 0.3
+connected_node_ids = [27, 38, 44, 45, 6, 65, 231, 92, 98, 104, 130, 132]
+[[drone]]
+id = 54
+pdr = 0.07
+connected_node_ids = [32, 41, 17, 164, 176, 184, 208, 212, 70, 93, 106, 112, 146]
+[[drone]]
+id = 55
+pdr = 0.68
+connected_node_ids = [36, 45, 19, 69, 60, 214, 239, 93, 112, 116, 148]
+[[drone]]
+id = 56
+pdr = 0.12
+connected_node_ids = [21, 12, 209, 247]
+[[drone]]
+id = 57
+pdr = 0.44
+connected_node_ids = [10, 67, 8, 162, 225, 227, 116, 158]
+[[drone]]
+id = 58
+pdr = 0.81
+connected_node_ids = [21, 68, 27, 166, 243, 148]
+[[drone]]
+id = 59
+pdr = 0.98
+connected_node_ids = [16, 27, 48, 221, 241, 242, 80, 120, 161]
+[[drone]]
+id = 60
+pdr = 0.08
+connected_node_ids = [8, 55, 62, 204, 254, 70, 74, 79, 87, 95, 119, 141, 145, 151]
+[[drone]]
+id = 61
+pdr = 0.03
+connected_node_ids = [10, 29, 64, 49, 166, 74, 81, 89, 103, 131, 135, 140, 146]
+[[drone]]
+id = 62
+pdr = 0.09
+connected_node_ids = [12, 60, 11, 69, 180, 229, 75, 76, 77, 135, 143]
+[[drone]]
+id = 63
+pdr = 0.44
+connected_node_ids = [34, 27, 3, 190, 199, 209, 210, 218, 75, 78, 89]
+[[drone]]
+id = 64
+pdr = 0.97
+connected_node_ids = [12, 36, 61, 48, 46, 191, 81, 84, 116, 117, 124, 144]
+[[drone]]
+id = 65
+pdr = 0.72
+connected_node_ids = [51, 53, 137, 156]
+[[drone]]
+id = 66
+pdr = 0.43
+connected_node_ids = [27, 37, 46, 14, 45, 67, 246, 72, 100, 120, 126, 130, 131]
+[[drone]]
+id = 67
+pdr = 0.74
+connected_node_ids = [4, 26, 49, 52, 57, 44, 66, 208, 230, 72, 84, 86, 87, 101, 121, 127]
+[[drone]]
+id = 68
+pdr = 0.31
+connected_node_ids = [58, 48, 40, 235, 71, 108, 158]
+[[drone]]
+id = 69
+pdr = 0.83
+connected_node_ids = [35, 41, 55, 22, 62]
+
+[[server]]
+id = 70
+connected_drone_ids = [60, 19, 54, 2]
+
+[[server]]
+id = 71
+connected_drone_ids = [22, 68, 44]
+
+[[server]]
+id = 72
+connected_drone_ids = [67, 43, 8, 66]
+
+[[server]]
+id = 73
+connected_drone_ids = [13, 20, 44]
+
+[[server]]
+id = 74
+connected_drone_ids = [50, 60, 15, 61]
+
+[[server]]
+id = 75
+connected_drone_ids = [26, 63, 17, 62]
+
+[[server]]
+id = 76
+connected_drone_ids = [62, 51]
+
+[[server]]
+id = 77
+connected_drone_ids = [62, 17, 12, 19]
+
+[[server]]
+id = 78
+connected_drone_ids = [51, 63, 43]
+
+[[server]]
+id = 79
+connected_drone_ids = [60, 19, 1]
+
+[[server]]
+id = 80
+connected_drone_ids = [15, 59, 35]
+
+[[server]]
+id = 81
+connected_drone_ids = [61, 9, 17, 64]
+
+[[server]]
+id = 82
+connected_drone_ids = [46, 51, 52]
+
+[[server]]
+id = 83
+connected_drone_ids = [15, 45, 48]
+
+[[server]]
+id = 84
+connected_drone_ids = [67, 64, 51, 41]
+
+[[server]]
+id = 85
+connected_drone_ids = [32, 13, 20]
+
+[[server]]
+id = 86
+connected_drone_ids = [47, 67, 23]
+
+[[server]]
+id = 87
+connected_drone_ids = [67, 60, 40, 33]
+
+[[server]]
+id = 88
+connected_drone_ids = [15, 8]
+
+[[server]]
+id = 89
+connected_drone_ids = [42, 63, 61, 34]
+
+[[server]]
+id = 90
+connected_drone_ids = [29, 18, 44]
+
+[[server]]
+id = 91
+connected_drone_ids = [8, 29, 20, 17]
+
+[[server]]
+id = 92
+connected_drone_ids = [53, 8]
+
+[[server]]
+id = 93
+connected_drone_ids = [55, 13, 18, 54]
+
+[[server]]
+id = 94
+connected_drone_ids = [8, 27]
+
+[[server]]
+id = 95
+connected_drone_ids = [4, 37, 33, 60]
+
+[[server]]
+id = 96
+connected_drone_ids = [7, 27]
+
+[[server]]
+id = 97
+connected_drone_ids = [18, 7, 34, 16]
+
+[[server]]
+id = 98
+connected_drone_ids = [53, 20]
+
+[[server]]
+id = 99
+connected_drone_ids = [11, 22, 36, 10]
+
+[[server]]
+id = 100
+connected_drone_ids = [34, 66, 25, 32]
+
+[[server]]
+id = 101
+connected_drone_ids = [41, 0, 67, 12]
+
+[[server]]
+id = 102
+connected_drone_ids = [32, 5]
+
+[[server]]
+id = 103
+connected_drone_ids = [9, 61, 32]
+
+[[server]]
+id = 104
+connected_drone_ids = [28, 23, 53]
+
+[[server]]
+id = 105
+connected_drone_ids = [27, 23, 52, 47]
+
+[[server]]
+id = 106
+connected_drone_ids = [27, 54]
+
+[[server]]
+id = 107
+connected_drone_ids = [38, 20]
+
+[[server]]
+id = 108
+connected_drone_ids = [68, 42, 6]
+
+[[server]]
+id = 109
+connected_drone_ids = [22, 16, 51]
+
+[[server]]
+id = 110
+connected_drone_ids = [30, 3, 6]
+
+[[server]]
+id = 111
+connected_drone_ids = [23, 20]
+
+[[server]]
+id = 112
+connected_drone_ids = [55, 51, 54]
+
+[[server]]
+id = 113
+connected_drone_ids = [32, 37, 17]
+
+[[server]]
+id = 114
+connected_drone_ids = [28, 7]
+
+[[server]]
+id = 115
+connected_drone_ids = [6, 39]
+
+[[server]]
+id = 116
+connected_drone_ids = [57, 64, 55]
+
+[[server]]
+id = 117
+connected_drone_ids = [64, 24, 13]
+
+[[server]]
+id = 118
+connected_drone_ids = [52, 9, 50, 33]
+
+[[server]]
+id = 119
+connected_drone_ids = [13, 60, 29, 44]
+
+[[server]]
+id = 120
+connected_drone_ids = [59, 66]
+
+[[server]]
+id = 121
+connected_drone_ids = [11, 67, 35, 32]
+
+[[server]]
+id = 122
+connected_drone_ids = [30, 47]
+
+[[server]]
+id = 123
+connected_drone_ids = [22, 34]
+
+[[server]]
+id = 124
+connected_drone_ids = [28, 64, 49]
+
+[[server]]
+id = 125
+connected_drone_ids = [18, 22, 30, 13]
+
+[[server]]
+id = 126
+connected_drone_ids = [66, 38]
+
+[[server]]
+id = 127
+connected_drone_ids = [52, 14, 67, 26]
+
+[[server]]
+id = 128
+connected_drone_ids = [44, 37, 51]
+
+[[server]]
+id = 129
+connected_drone_ids = [47, 5, 11]
+
+[[server]]
+id = 130
+connected_drone_ids = [48, 53, 66]
+
+[[server]]
+id = 131
+connected_drone_ids = [61, 48, 66]
+
+[[server]]
+id = 132
+connected_drone_ids = [53, 23, 34, 26]
+
+[[server]]
+id = 133
+connected_drone_ids = [38, 46]
+
+[[server]]
+id = 134
+connected_drone_ids = [27, 5, 29]
+
+[[server]]
+id = 135
+connected_drone_ids = [61, 62]
+
+[[server]]
+id = 136
+connected_drone_ids = [23, 6]
+
+[[server]]
+id = 137
+connected_drone_ids = [32, 65]
+
+[[server]]
+id = 138
+connected_drone_ids = [46, 24]
+
+[[server]]
+id = 139
+connected_drone_ids = [4, 2, 12, 44]
+
+[[server]]
+id = 140
+connected_drone_ids = [29, 61]
+
+[[server]]
+id = 141
+connected_drone_ids = [48, 60]
+
+[[server]]
+id = 142
+connected_drone_ids = [2, 17]
+
+[[server]]
+id = 143
+connected_drone_ids = [0, 1, 62]
+
+[[server]]
+id = 144
+connected_drone_ids = [64, 46, 19]
+
+[[server]]
+id = 145
+connected_drone_ids = [5, 43, 60, 2]
+
+[[server]]
+id = 146
+connected_drone_ids = [25, 61, 54, 43]
+
+[[server]]
+id = 147
+connected_drone_ids = [48, 19]
+
+[[server]]
+id = 148
+connected_drone_ids = [55, 58]
+
+[[server]]
+id = 149
+connected_drone_ids = [18, 21]
+
+[[server]]
+id = 150
+connected_drone_ids = [42, 0, 18]
+
+[[server]]
+id = 151
+connected_drone_ids = [34, 52, 60]
+
+[[server]]
+id = 152
+connected_drone_ids = [35, 50]
+
+[[server]]
+id = 153
+connected_drone_ids = [29, 15, 27]
+
+[[server]]
+id = 154
+connected_drone_ids = [26, 22]
+
+[[server]]
+id = 155
+connected_drone_ids = [52, 0]
+
+[[server]]
+id = 156
+connected_drone_ids = [29, 65]
+
+[[server]]
+id = 157
+connected_drone_ids = [22, 18, 46]
+
+[[server]]
+id = 158
+connected_drone_ids = [68, 40, 57]
+
+[[server]]
+id = 159
+connected_drone_ids = [13, 33, 5, 22]
+
+[[server]]
+id = 160
+connected_drone_ids = [23, 14, 2, 48]
+
+[[server]]
+id = 161
+connected_drone_ids = [59, 2, 33]
+
+[[client]]
+id = 162
+connected_drone_ids = [5, 57]
+
+[[client]]
+id = 163
+connected_drone_ids = [17, 3]
+
+[[client]]
+id = 164
+connected_drone_ids = [12, 54]
+
+[[client]]
+id = 165
+connected_drone_ids = [41]
+
+[[client]]
+id = 166
+connected_drone_ids = [58, 61]
+
+[[client]]
+id = 167
+connected_drone_ids = [33]
+
+[[client]]
+id = 168
+connected_drone_ids = [52, 11]
+
+[[client]]
+id = 169
+connected_drone_ids = [34, 15]
+
+[[client]]
+id = 170
+connected_drone_ids = [38]
+
+[[client]]
+id = 171
+connected_drone_ids = [40]
+
+[[client]]
+id = 172
+connected_drone_ids = [18, 8]
+
+[[client]]
+id = 173
+connected_drone_ids = [14]
+
+[[client]]
+id = 174
+connected_drone_ids = [30]
+
+[[client]]
+id = 175
+connected_drone_ids = [24]
+
+[[client]]
+id = 176
+connected_drone_ids = [54]
+
+[[client]]
+id = 177
+connected_drone_ids = [1, 33]
+
+[[client]]
+id = 178
+connected_drone_ids = [22, 18]
+
+[[client]]
+id = 179
+connected_drone_ids = [24]
+
+[[client]]
+id = 180
+connected_drone_ids = [11, 62]
+
+[[client]]
+id = 181
+connected_drone_ids = [6, 47]
+
+[[client]]
+id = 182
+connected_drone_ids = [32, 11]
+
+[[client]]
+id = 183
+connected_drone_ids = [31]
+
+[[client]]
+id = 184
+connected_drone_ids = [10, 54]
+
+[[client]]
+id = 185
+connected_drone_ids = [38, 47]
+
+[[client]]
+id = 186
+connected_drone_ids = [35, 46]
+
+[[client]]
+id = 187
+connected_drone_ids = [25]
+
+[[client]]
+id = 188
+connected_drone_ids = [0]
+
+[[client]]
+id = 189
+connected_drone_ids = [41]
+
+[[client]]
+id = 190
+connected_drone_ids = [63, 4]
+
+[[client]]
+id = 191
+connected_drone_ids = [2, 64]
+
+[[client]]
+id = 192
+connected_drone_ids = [23, 15]
+
+[[client]]
+id = 193
+connected_drone_ids = [14]
+
+[[client]]
+id = 194
+connected_drone_ids = [25]
+
+[[client]]
+id = 195
+connected_drone_ids = [39, 38]
+
+[[client]]
+id = 196
+connected_drone_ids = [40, 16]
+
+[[client]]
+id = 197
+connected_drone_ids = [6]
+
+[[client]]
+id = 198
+connected_drone_ids = [9]
+
+[[client]]
+id = 199
+connected_drone_ids = [4, 63]
+
+[[client]]
+id = 200
+connected_drone_ids = [39, 13]
+
+[[client]]
+id = 201
+connected_drone_ids = [42, 18]
+
+[[client]]
+id = 202
+connected_drone_ids = [46, 32]
+
+[[client]]
+id = 203
+connected_drone_ids = [25]
+
+[[client]]
+id = 204
+connected_drone_ids = [60]
+
+[[client]]
+id = 205
+connected_drone_ids = [11, 12]
+
+[[client]]
+id = 206
+connected_drone_ids = [3]
+
+[[client]]
+id = 207
+connected_drone_ids = [19, 0]
+
+[[client]]
+id = 208
+connected_drone_ids = [54, 67]
+
+[[client]]
+id = 209
+connected_drone_ids = [63, 56]
+
+[[client]]
+id = 210
+connected_drone_ids = [63]
+
+[[client]]
+id = 211
+connected_drone_ids = [8]
+
+[[client]]
+id = 212
+connected_drone_ids = [54, 44]
+
+[[client]]
+id = 213
+connected_drone_ids = [2]
+
+[[client]]
+id = 214
+connected_drone_ids = [55]
+
+[[client]]
+id = 215
+connected_drone_ids = [12, 11]
+
+[[client]]
+id = 216
+connected_drone_ids = [12, 52]
+
+[[client]]
+id = 217
+connected_drone_ids = [23, 21]
+
+[[client]]
+id = 218
+connected_drone_ids = [63]
+
+[[client]]
+id = 219
+connected_drone_ids = [23, 33]
+
+[[client]]
+id = 220
+connected_drone_ids = [35]
+
+[[client]]
+id = 221
+connected_drone_ids = [59]
+
+[[client]]
+id = 222
+connected_drone_ids = [35, 39]
+
+[[client]]
+id = 223
+connected_drone_ids = [20, 10]
+
+[[client]]
+id = 224
+connected_drone_ids = [41]
+
+[[client]]
+id = 225
+connected_drone_ids = [57]
+
+[[client]]
+id = 226
+connected_drone_ids = [43, 2]
+
+[[client]]
+id = 227
+connected_drone_ids = [57, 23]
+
+[[client]]
+id = 228
+connected_drone_ids = [14]
+
+[[client]]
+id = 229
+connected_drone_ids = [5, 62]
+
+[[client]]
+id = 230
+connected_drone_ids = [67, 29]
+
+[[client]]
+id = 231
+connected_drone_ids = [53, 16]
+
+[[client]]
+id = 232
+connected_drone_ids = [9, 34]
+
+[[client]]
+id = 233
+connected_drone_ids = [47]
+
+[[client]]
+id = 234
+connected_drone_ids = [46]
+
+[[client]]
+id = 235
+connected_drone_ids = [29, 68]
+
+[[client]]
+id = 236
+connected_drone_ids = [6, 15]
+
+[[client]]
+id = 237
+connected_drone_ids = [6]
+
+[[client]]
+id = 238
+connected_drone_ids = [31]
+
+[[client]]
+id = 239
+connected_drone_ids = [23, 55]
+
+[[client]]
+id = 240
+connected_drone_ids = [26, 8]
+
+[[client]]
+id = 241
+connected_drone_ids = [59]
+
+[[client]]
+id = 242
+connected_drone_ids = [59, 27]
+
+[[client]]
+id = 243
+connected_drone_ids = [58]
+
+[[client]]
+id = 244
+connected_drone_ids = [18]
+
+[[client]]
+id = 245
+connected_drone_ids = [1]
+
+[[client]]
+id = 246
+connected_drone_ids = [66]
+
+[[client]]
+id = 247
+connected_drone_ids = [27, 56]
+
+[[client]]
+id = 248
+connected_drone_ids = [45]
+
+[[client]]
+id = 249
+connected_drone_ids = [32]
+
+[[client]]
+id = 250
+connected_drone_ids = [28]
+
+[[client]]
+id = 251
+connected_drone_ids = [16]
+
+[[client]]
+id = 252
+connected_drone_ids = [23, 9]
+
+[[client]]
+id = 253
+connected_drone_ids = [9, 41]
+
+[[client]]
+id = 254
+connected_drone_ids = [60, 37]
