@@ -151,7 +151,7 @@ impl SimulationController {
             // rust_do_it_drone,
             rust_busters_drone,
             rusty_drone,
-            // rustastic_drone,
+            rustastic_drone,
             lockheed_rustin_drone,
             d_r_o_n_e_drone,
         ];
@@ -1067,7 +1067,6 @@ mod tests {
         let drone11 = drone_factories.next().unwrap();
         let drone12 = drone_factories.next().unwrap();
 
-        
         assert_eq!(
             drone1
                 as *const fn(
