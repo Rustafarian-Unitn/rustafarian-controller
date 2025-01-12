@@ -147,7 +147,7 @@ impl SimulationController {
             cpp_enjoyers_drone,
             get_droned_drone,
             rusteze_drone,
-            // dr_one_drone,
+            dr_one_drone,
             // rust_do_it_drone,
             rust_busters_drone,
             rusty_drone,
