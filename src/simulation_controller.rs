@@ -135,8 +135,8 @@ impl SimulationController {
     /// A `SimulationController` instance with the network topology and channels set up.
     pub fn build(
         config: &str,
-        media_folder: String,
         file_folder: String,
+        media_folder: String,
         debug_mode: bool,
     ) -> Self {
         let config = config_parser::parse_config(config);
