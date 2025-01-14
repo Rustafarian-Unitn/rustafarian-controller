@@ -200,8 +200,8 @@ impl SimulationController {
             &mut node_channels,
             &mut drone_channels,
             &mut topology,
-            media_folder,
             file_folder,
+            media_folder,
             debug_mode,
             &logger,
         );
