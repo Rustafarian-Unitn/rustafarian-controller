@@ -1,9 +1,15 @@
 use crate::config_parser;
 use crate::drone_functions::{
-    cpp_enjoyers_drone, d_r_o_n_e_drone, dr_one_drone, get_droned_drone, lockheed_rustin_drone,
-    rust_busters_drone, rust_do_it_drone, 
+    cpp_enjoyers_drone,
+    d_r_o_n_e_drone,
+    dr_one_drone,
+    get_droned_drone,
+    lockheed_rustin_drone,
+    rust_busters_drone,
+    rust_do_it_drone,
     // rustastic_drone,
-     rusteze_drone, rusty_drone,
+    rusteze_drone,
+    rusty_drone,
 };
 use crate::runnable::Runnable;
 use crossbeam_channel::{unbounded, Receiver, Sender};
@@ -126,6 +132,34 @@ impl SimulationController {
             handles,
             logger,
         }
+    }
+
+    pub fn destroy(&mut self) {
+        self.logger
+            .log("Destroying simulation controller...", LogLevel::INFO);
+
+        // Join and cleanup all threads
+        for handle in self.handles.iter_mut() {
+            if let Some(h) = handle.take() {
+                if !h.is_finished() {
+                    // Try to join thread with timeout
+                    if let Err(e) = h.join() {
+                        self.logger
+                            .log(&format!("Error joining thread: {:?}", e), LogLevel::ERROR);
+                    }
+                }
+            }
+        }
+
+        // Clear channels
+        self.nodes_channels.clear();
+        self.drone_channels.clear();
+
+        // Clear topology
+        self.topology = Topology::new();
+
+        self.logger
+            .log("Simulation controller destroyed", LogLevel::INFO);
     }
 
     /// Builds a simulation controller from a configuration string.
