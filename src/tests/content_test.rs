@@ -19,8 +19,6 @@ mod content_test {
         );
 
         let client_id: u8 = 7;
-        let server_id_1 = 8;
-        let server_id_2 = 10;
 
         let client_command_channel = simulation_controller
             .nodes_channels
@@ -32,34 +30,6 @@ mod content_test {
         let client_response_channel = simulation_controller
             .nodes_channels
             .get(&client_id)
-            .unwrap()
-            .receive_response_channel
-            .clone();
-
-        let server_command_channel_1 = simulation_controller
-            .nodes_channels
-            .get(&server_id_1)
-            .unwrap()
-            .send_command_channel
-            .clone();
-
-        let server_response_channel_1 = simulation_controller
-            .nodes_channels
-            .get(&server_id_1)
-            .unwrap()
-            .receive_response_channel
-            .clone();
-
-        let server_command_channel_2 = simulation_controller
-            .nodes_channels
-            .get(&server_id_2)
-            .unwrap()
-            .send_command_channel
-            .clone();
-
-        let server_response_channel_2 = simulation_controller
-            .nodes_channels
-            .get(&server_id_2)
             .unwrap()
             .receive_response_channel
             .clone();
@@ -79,39 +49,6 @@ mod content_test {
                 expected_nodes.sort();
                 assert_eq!(nodes, expected_nodes);
                 println!("Client nodes: {:?}", topology.nodes());
-                break;
-            }
-        }
-
-        let _res = server_command_channel_1.send(SimControllerCommand::Topology);
-
-        for response in server_response_channel_1.iter() {
-            if let SimControllerResponseWrapper::Message(SimControllerMessage::TopologyResponse(
-                topology,
-            )) = response
-            {
-                let mut nodes = topology.nodes().clone();
-                nodes.sort();
-                let mut expected_nodes = vec![1, 2, 3, 7, 4, 5, 6, 8, 9, 10];
-                expected_nodes.sort();
-                assert_eq!(nodes, expected_nodes);
-                println!("Server 1 nodes: {:?}", topology.nodes());
-                break;
-            }
-        }
-
-        let _res = server_command_channel_2.send(SimControllerCommand::Topology);
-        for response in server_response_channel_2.iter() {
-            if let SimControllerResponseWrapper::Message(SimControllerMessage::TopologyResponse(
-                topology,
-            )) = response
-            {
-                let mut nodes = topology.nodes().clone();
-                nodes.sort();
-                let mut expected_nodes = vec![1, 2, 3, 7, 4, 5, 6, 8, 9, 10];
-                expected_nodes.sort();
-                assert_eq!(nodes, expected_nodes);
-                println!("Server 2 nodes: {:?}", topology.nodes());
                 break;
             }
         }

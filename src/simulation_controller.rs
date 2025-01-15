@@ -12,6 +12,7 @@ use crate::drone_functions::{
     rusty_drone,
 };
 use crate::runnable::Runnable;
+use crossbeam::select;
 use crossbeam_channel::{unbounded, Receiver, Sender};
 use rand::Error;
 use rustafarian_chat_server::chat_server::ChatServer;
@@ -113,6 +114,7 @@ pub struct SimulationController {
     pub topology: Topology,
     pub nodes_channels: HashMap<NodeId, NodeChannels>,
     pub drone_channels: HashMap<NodeId, DroneChannels>,
+    shutdown_channel: (Sender<()>, Receiver<()>),
     pub handles: Vec<Option<JoinHandle<()>>>,
     pub logger: Logger,
 }
@@ -121,6 +123,7 @@ impl SimulationController {
     pub fn new(
         nodes_channels: HashMap<NodeId, NodeChannels>,
         drone_channels: HashMap<NodeId, DroneChannels>,
+        shutdown_channel: (Sender<()>, Receiver<()>),
         handles: Vec<Option<JoinHandle<()>>>,
         topology: Topology,
         logger: Logger,
@@ -129,6 +132,7 @@ impl SimulationController {
             topology,
             nodes_channels,
             drone_channels,
+            shutdown_channel,
             handles,
             logger,
         }
@@ -144,6 +148,8 @@ impl SimulationController {
 
         // Clear topology
         self.topology = Topology::new();
+
+        let _ = self.shutdown_channel.0.send(());
 
         // Join and cleanup all threads
         for handle in self.handles.iter_mut() {
@@ -192,6 +198,7 @@ impl SimulationController {
             &mut drone_factories,
             &mut self.drone_channels,
             &mut self.nodes_channels,
+            self.shutdown_channel.clone().1,
             &mut self.topology,
             &logger,
         );
@@ -200,6 +207,7 @@ impl SimulationController {
             config.client,
             &mut self.nodes_channels,
             &mut self.drone_channels,
+            self.shutdown_channel.clone().1,
             &mut self.topology,
             debug_mode,
             &logger,
@@ -210,6 +218,7 @@ impl SimulationController {
             config.server,
             &mut self.nodes_channels,
             &mut self.drone_channels,
+            self.shutdown_channel.clone().1,
             &mut self.topology,
             file_folder,
             media_folder,
@@ -233,6 +242,8 @@ impl SimulationController {
         let logger = Logger::new("Controller".to_string(), 0, debug_mode);
 
         logger.log("Building the simulation controller", LogLevel::INFO);
+
+        let (shutdown_sx, shutdown_rx) = unbounded::<()>();
 
         // Create a factory function for the implementations
         let drone_factories = SimulationController::get_active_drone_factories();
@@ -260,6 +271,7 @@ impl SimulationController {
             &mut drone_factories,
             &mut drone_channels,
             &mut node_channels,
+            shutdown_rx.clone(),
             &mut topology,
             &logger,
         );
@@ -268,6 +280,7 @@ impl SimulationController {
             config.client,
             &mut node_channels,
             &mut drone_channels,
+            shutdown_rx.clone(),
             &mut topology,
             debug_mode,
             &logger,
@@ -278,6 +291,7 @@ impl SimulationController {
             config.server,
             &mut node_channels,
             &mut drone_channels,
+            shutdown_rx.clone(),
             &mut topology,
             file_folder,
             media_folder,
@@ -285,7 +299,14 @@ impl SimulationController {
             &logger,
         );
 
-        SimulationController::new(node_channels, drone_channels, handles, topology, logger)
+        SimulationController::new(
+            node_channels,
+            drone_channels,
+            (shutdown_sx, shutdown_rx),
+            handles,
+            topology,
+            logger,
+        )
     }
 
     fn init_channels(
@@ -397,6 +418,7 @@ impl SimulationController {
         drone_factories: &mut dyn Iterator<Item = DroneFactory>,
         drone_channels: &mut HashMap<NodeId, DroneChannels>,
         node_channels: &mut HashMap<NodeId, NodeChannels>,
+        shutdown_channel: Receiver<()>,
         topology: &mut Topology,
         logger: &Logger,
     ) {
@@ -445,8 +467,17 @@ impl SimulationController {
             );
 
             topology.set_label(drone_config.id, name);
-
-            handles.push(Some(thread::spawn(move || drone.run())));
+            let shutdown_rx = shutdown_channel.clone();
+            handles.push(Some(thread::spawn(move || loop {
+                select! {
+                    recv(shutdown_rx) -> _ =>{
+                        break;
+                    }
+                    default => {
+                        drone.run();
+                    }
+                }
+            })));
             logger.log(
                 format!("Drone {} started successfully", drone_config.id).as_str(),
                 LogLevel::DEBUG,
@@ -468,6 +499,7 @@ impl SimulationController {
         clients_config: Vec<ClientConfig>,
         node_channels: &mut HashMap<NodeId, NodeChannels>,
         drone_channels: &mut HashMap<NodeId, DroneChannels>,
+        shutdown_channel: Receiver<()>,
         topology: &mut Topology,
         debug_mode: bool,
         logger: &Logger,
@@ -530,6 +562,9 @@ impl SimulationController {
                 format!("Starting client {}", client_config.id).as_str(),
                 LogLevel::DEBUG,
             );
+
+            let shutdown_rx = shutdown_channel.clone();
+
             // Start off the client
             handles.push(Some(thread::spawn(move || {
                 if client_config.id % 2 == 0 {
@@ -541,7 +576,14 @@ impl SimulationController {
                         send_response_channel,
                         debug_mode,
                     );
-                    client.run(TICKS)
+                    select!(
+                        recv(shutdown_rx) -> _ => {
+                            return;
+                        },
+                        default => {
+                            client.run(TICKS)
+                        }
+                    )
                 } else {
                     let mut client = BrowserClient::new(
                         client_config.id,
@@ -551,7 +593,13 @@ impl SimulationController {
                         send_response_channel,
                         debug_mode,
                     );
-                    client.run(TICKS)
+                    select!(
+                    recv(shutdown_rx) -> _ => {
+                        return;
+                    },
+                    default =>{
+                        client.run(TICKS)
+                    })
                 }
             })));
             logger.log(
@@ -576,6 +624,7 @@ impl SimulationController {
         servers_config: Vec<ServerConfig>,
         node_channels: &mut HashMap<NodeId, NodeChannels>,
         drone_channels: &mut HashMap<NodeId, DroneChannels>,
+        shutdown_channel: Receiver<()>,
         topology: &mut Topology,
         file_folder: String,
         media_folder: String,
@@ -655,6 +704,9 @@ impl SimulationController {
                 format!("Starting server {}", server_config.id).as_str(),
                 LogLevel::DEBUG,
             );
+
+            let shutdown_rx = shutdown_channel.clone();
+
             // Start off the server
             handles.push(Some(thread::spawn(move || {
                 if server_config.id % 3 == 0 {
@@ -666,7 +718,14 @@ impl SimulationController {
                         drones,
                         debug_mode,
                     );
-                    server.run()
+                    select!(
+                        recv(shutdown_rx) -> _ => {
+                            return;
+                        },
+                        default => {
+                            server.run()
+                        }
+                    )
                 } else if server_config.id % 3 == 1 {
                     let mut server = ContentServer::new(
                         server_config.id,
@@ -684,8 +743,14 @@ impl SimulationController {
                         server_config.id,
                         ServerType::Media
                     );
-
-                    server.run()
+                    select!(
+                        recv(shutdown_rx) -> _ => {
+                            return;
+                        },
+                        default => {
+                            server.run()
+                        }
+                    )
                 } else {
                     let mut server = ContentServer::new(
                         server_config.id,
@@ -703,8 +768,12 @@ impl SimulationController {
                         server_config.id,
                         ServerType::Text
                     );
-
-                    server.run()
+                    select!(
+                        recv(shutdown_rx) -> _ => {
+                            return;
+                        },
+                        default => {
+                    server.run()})
                 }
             })));
 
@@ -838,10 +907,11 @@ mod tests {
         let drone_channels = HashMap::new();
         let handles = Vec::new();
         let logger = Logger::new("Controller".to_string(), 0, false);
-
+        let shutdoun_channel = unbounded::<()>();
         let controller = SimulationController::new(
             nodes_channels,
             drone_channels,
+            shutdoun_channel,
             handles,
             Topology::new(),
             logger,
@@ -898,7 +968,7 @@ mod tests {
             &mut topology,
             &logger,
         );
-
+        let shutdown_channel = unbounded::<()>();
         let drones_config = config.drone;
         SimulationController::init_drones(
             &mut handles,
@@ -906,6 +976,7 @@ mod tests {
             &mut drone_factories,
             &mut drone_channels,
             &mut node_channels,
+            shutdown_channel.1,
             &mut topology,
             &logger,
         );
@@ -923,7 +994,7 @@ mod tests {
         let mut drone_channels = HashMap::new();
         let mut topology = Topology::new();
         let logger = Logger::new("Controller".to_string(), 0, false);
-
+        let shutdown_channel = unbounded::<()>();
         SimulationController::init_channels(
             &config,
             &mut node_channels,
@@ -938,6 +1009,7 @@ mod tests {
             clients_config,
             &mut node_channels,
             &mut drone_channels,
+            shutdown_channel.1,
             &mut topology,
             true,
             &logger,
@@ -955,6 +1027,7 @@ mod tests {
         let mut drone_channels = HashMap::new();
         let mut topology = Topology::new();
         let logger = Logger::new("Controller".to_string(), 0, false);
+        let shutdown_channel = unbounded::<()>();
 
         SimulationController::init_channels(
             &config,
@@ -970,6 +1043,7 @@ mod tests {
             servers_config,
             &mut node_channels,
             &mut drone_channels,
+            shutdown_channel.1,
             &mut topology,
             MEDIA_FOLDER.to_string(),
             FILE_FOLDER.to_string(),

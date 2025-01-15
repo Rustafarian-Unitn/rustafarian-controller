@@ -341,9 +341,12 @@ pub fn setup() -> (
     nodes_channels.insert(5, client_2_channels);
     nodes_channels.insert(8, browser_client_channels);
 
+    let shutdown_channel = unbounded::<()>();
+
     let simulation_controller = SimulationController::new(
         nodes_channels,
         drones_channels,
+        shutdown_channel,
         Vec::new(),
         client.topology().clone(),
         Logger::new("SimulationController".to_string(), 0, true),
