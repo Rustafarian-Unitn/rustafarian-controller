@@ -120,7 +120,7 @@ pub struct SimulationController {
 }
 
 impl SimulationController {
-    const SHUTDOWN_TIMEOUT: Duration = Duration::from_secs(5);
+    const SHUTDOWN_TIMEOUT: Duration = Duration::from_millis(200);
     const THREAD_SLEEP: Duration = Duration::from_millis(100);
 
     pub fn new(

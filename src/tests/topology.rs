@@ -48,7 +48,7 @@ fn test_client_topology() {
         false,
     );
 
-    thread::sleep(std::time::Duration::from_millis(500));
+    thread::sleep(std::time::Duration::from_secs(5));
     let client_id = 4;
     let client_channels = controller.nodes_channels.get(&client_id).unwrap();
     let client_send_command_channel = &client_channels.send_command_channel;

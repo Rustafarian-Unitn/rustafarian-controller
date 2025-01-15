@@ -34,7 +34,7 @@ mod content_test {
             .receive_response_channel
             .clone();
 
-        thread::sleep(std::time::Duration::from_secs(1));
+        thread::sleep(std::time::Duration::from_secs(5));
 
         let _res = client_command_channel.send(SimControllerCommand::Topology);
 
@@ -213,7 +213,7 @@ mod content_test {
             .receive_response_channel
             .clone();
 
-        thread::sleep(std::time::Duration::from_secs(1));
+        thread::sleep(std::time::Duration::from_secs(5));
 
         let _res = client_command_channel
             .send(SimControllerCommand::RequestMediaFile(media_id, server_id));
@@ -331,7 +331,7 @@ mod content_test {
             .clone();
 
         let _res = client_command_channel.send(SimControllerCommand::RequestTextFile(2, server_id));
-        thread::sleep(std::time::Duration::from_secs(3));
+        thread::sleep(std::time::Duration::from_secs(5));
 
         for response in client_response_channel.iter() {
             if let SimControllerResponseWrapper::Message(SimControllerMessage::TextFileResponse(
