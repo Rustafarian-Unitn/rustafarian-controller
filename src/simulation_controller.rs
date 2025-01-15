@@ -138,6 +138,13 @@ impl SimulationController {
         self.logger
             .log("Destroying simulation controller...", LogLevel::INFO);
 
+        // Clear channels
+        self.nodes_channels.clear();
+        self.drone_channels.clear();
+
+        // Clear topology
+        self.topology = Topology::new();
+
         // Join and cleanup all threads
         for handle in self.handles.iter_mut() {
             if let Some(h) = handle.take() {
@@ -150,13 +157,6 @@ impl SimulationController {
                 }
             }
         }
-
-        // Clear channels
-        self.nodes_channels.clear();
-        self.drone_channels.clear();
-
-        // Clear topology
-        self.topology = Topology::new();
 
         self.logger
             .log("Simulation controller destroyed", LogLevel::INFO);
@@ -171,7 +171,7 @@ impl SimulationController {
     ) {
         self.destroy();
         let config = config_parser::parse_config(config);
-        
+
         let logger = Logger::new("Controller".to_string(), 0, debug_mode);
 
         // Create a factory function for the implementations
