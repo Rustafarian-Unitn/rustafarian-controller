@@ -188,116 +188,116 @@ mod content_test {
 
     #[test]
     fn file_media_test() {
-            let simulation_controller = SimulationController::build(
-                "src/tests/configurations/topology_10_nodes.toml",
-                "resources/files".to_string(),
-                "resources/media".to_string(),
-                false,
-            );
+        let simulation_controller = SimulationController::build(
+            "src/tests/configurations/topology_10_nodes.toml",
+            "resources/files".to_string(),
+            "resources/media".to_string(),
+            false,
+        );
 
-            let client_id: u8 = 7;
-            let server_id = 10;
-            let media_id = 4;
+        let client_id: u8 = 7;
+        let server_id = 10;
+        let media_id = 4;
 
-            let client_command_channel = simulation_controller
-                .nodes_channels
-                .get(&client_id)
-                .unwrap()
-                .send_command_channel
-                .clone();
+        let client_command_channel = simulation_controller
+            .nodes_channels
+            .get(&client_id)
+            .unwrap()
+            .send_command_channel
+            .clone();
 
-            let client_response_channel = simulation_controller
-                .nodes_channels
-                .get(&client_id)
-                .unwrap()
-                .receive_response_channel
-                .clone();
+        let client_response_channel = simulation_controller
+            .nodes_channels
+            .get(&client_id)
+            .unwrap()
+            .receive_response_channel
+            .clone();
 
-            thread::sleep(std::time::Duration::from_secs(1));
+        thread::sleep(std::time::Duration::from_secs(1));
 
-            let _res = client_command_channel
-                .send(SimControllerCommand::RequestMediaFile(media_id, server_id));
+        let _res = client_command_channel
+            .send(SimControllerCommand::RequestMediaFile(media_id, server_id));
 
-            for response in client_response_channel.iter() {
-                if let SimControllerResponseWrapper::Message(
-                    SimControllerMessage::MediaFileResponse(_, media),
-                ) = response
-                {
-                    match open("resources/media/0004.jpg") {
-                        Ok(image) => {
-                            let mut file_content = Vec::new();
-                            image
-                                .write_to(&mut Cursor::new(&mut file_content), ImageFormat::Jpeg)
-                                .expect("Failed to convert image to buffer");
-                            assert_eq!(file_content, media);
-                            break;
-                        }
-                        Err(err) => {
-                            eprintln!("Error reading media {}", err);
-                        }
+        for response in client_response_channel.iter() {
+            if let SimControllerResponseWrapper::Message(SimControllerMessage::MediaFileResponse(
+                _,
+                media,
+            )) = response
+            {
+                match open("resources/media/0004.jpg") {
+                    Ok(image) => {
+                        let mut file_content = Vec::new();
+                        image
+                            .write_to(&mut Cursor::new(&mut file_content), ImageFormat::Jpeg)
+                            .expect("Failed to convert image to buffer");
+                        assert_eq!(file_content, media);
+                        break;
+                    }
+                    Err(err) => {
+                        eprintln!("Error reading media {}", err);
                     }
                 }
             }
+        }
     }
 
     #[test]
     fn file_text_media_test() {
-            let simulation_controller = SimulationController::build(
-                "src/tests/configurations/topology_10_nodes.toml",
-                "resources/files".to_string(),
-                "resources/media".to_string(),
+        let simulation_controller = SimulationController::build(
+            "src/tests/configurations/topology_10_nodes.toml",
+            "resources/files".to_string(),
+            "resources/media".to_string(),
+            false,
+        );
 
-                false,
-            );
+        let client_id: u8 = 5;
+        let server_1_id = 8;
+        let text_id = 3;
+        let media_id = 4;
+        let client_command_channel = simulation_controller
+            .nodes_channels
+            .get(&client_id)
+            .unwrap()
+            .send_command_channel
+            .clone();
 
-            let client_id: u8 = 5;
-            let server_1_id = 8;
-            let text_id = 3;
-            let media_id = 4;
-            let client_command_channel = simulation_controller
-                .nodes_channels
-                .get(&client_id)
-                .unwrap()
-                .send_command_channel
-                .clone();
+        let client_response_channel = simulation_controller
+            .nodes_channels
+            .get(&client_id)
+            .unwrap()
+            .receive_response_channel
+            .clone();
 
-            let client_response_channel = simulation_controller
-                .nodes_channels
-                .get(&client_id)
-                .unwrap()
-                .receive_response_channel
-                .clone();
+        thread::sleep(std::time::Duration::from_secs(5));
 
-            thread::sleep(std::time::Duration::from_secs(5));
+        let _res = client_command_channel
+            .send(SimControllerCommand::RequestTextFile(text_id, server_1_id));
 
-            let _res = client_command_channel
-                .send(SimControllerCommand::RequestTextFile(text_id, server_1_id));
+        for response in client_response_channel.iter() {
+            println!("Response {:?}", response);
+            if let SimControllerResponseWrapper::Message(
+                SimControllerMessage::TextWithReferences(_, text, media_files),
+            ) = response
+            {
+                let text_content = fs::read_to_string("resources/files/0003.txt")
+                    .expect("Failed to read file 0003.txt");
+                assert_eq!(text, text_content);
 
-            for response in client_response_channel.iter() {
-                println!("Response {:?}", response);
-                if let SimControllerResponseWrapper::Message(
-                    SimControllerMessage::TextWithReferences(_, text, media_files),
-                ) = response
-                {
-                    let text_content = fs::read_to_string("resources/files/0003.txt")
-                        .expect("Failed to read file 0003.txt");
-                    assert_eq!(text, text_content);
-
-                    match open("resources/media/0004.jpg") {
-                        Ok(image) => {
-                            let mut file_content = Vec::new();
-                            image
-                                .write_to(&mut Cursor::new(&mut file_content), ImageFormat::Jpeg)
-                                .expect("Failed to convert image to buffer");
-                            assert_eq!(file_content, *media_files.get(&media_id).unwrap());
-                            break;
-                        }
-                        Err(err) => {
-                            eprintln!("Error reading media {}", err);
-                        }
+                match open("resources/media/0004.jpg") {
+                    Ok(image) => {
+                        let mut file_content = Vec::new();
+                        image
+                            .write_to(&mut Cursor::new(&mut file_content), ImageFormat::Jpeg)
+                            .expect("Failed to convert image to buffer");
+                        assert_eq!(file_content, *media_files.get(&media_id).unwrap());
+                        break;
+                    }
+                    Err(err) => {
+                        eprintln!("Error reading media {}", err);
                     }
                 }
             }
+        }
     }
 
     #[test]
@@ -414,7 +414,6 @@ mod content_test {
                 "src/tests/configurations/topology_10_nodes.toml",
                 "resources/files".to_string(),
                 "resources/media".to_string(),
-
                 DEBUG,
             );
             let client_id: u8 = 5;

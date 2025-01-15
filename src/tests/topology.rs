@@ -17,7 +17,7 @@ fn test_simulation_controller_build_complex_topology() {
     );
     let controller = SimulationController::build(
         config_str,
-        "resources/files".to_string(), 
+        "resources/files".to_string(),
         "resources/media".to_string(),
         false,
     );
@@ -43,7 +43,7 @@ fn test_client_topology() {
     );
     let controller = SimulationController::build(
         config_str,
-        "resources/files".to_string(), 
+        "resources/files".to_string(),
         "resources/media".to_string(),
         false,
     );
@@ -71,7 +71,7 @@ fn test_client_topology() {
 }
 
 fn assert_topology(edges: &HashMap<NodeId, HashSet<NodeId>>) {
-    assert!(edges.len() == 10);
+    assert_eq!(edges.len(), 10);
     assert!(edges.get(&1).unwrap().contains(&2));
     assert!(edges.get(&1).unwrap().contains(&3));
     assert!(edges.get(&1).unwrap().contains(&4));

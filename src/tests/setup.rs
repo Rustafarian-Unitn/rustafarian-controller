@@ -5,12 +5,17 @@ use ::rustafarian_client::browser_client;
 use crossbeam_channel::unbounded;
 use rustafarian_client::{browser_client::BrowserClient, chat_client::ChatClient, client::Client};
 use rustafarian_drone::RustafarianDrone;
-use rustafarian_shared::{logger::Logger, messages::{
-    commander_messages::{SimControllerCommand, SimControllerResponseWrapper},
-    general_messages::ServerType,
-}};
+use rustafarian_shared::{
+    logger::Logger,
+    messages::{
+        commander_messages::{SimControllerCommand, SimControllerResponseWrapper},
+        general_messages::ServerType,
+    },
+};
 use wg_2024::{
-    controller::{DroneCommand, DroneEvent}, drone::Drone, packet::{NodeType, Packet}
+    controller::{DroneCommand, DroneEvent},
+    drone::Drone,
+    packet::{NodeType, Packet},
 };
 
 use crate::simulation_controller::DroneChannels;
@@ -325,8 +330,17 @@ pub fn setup() -> (
     browser_client.topology().add_edge(2, 7);
 
     chat_server.update_topology(
-        vec![(1, NodeType::Client), (2,NodeType::Client), (3, NodeType::Server), (4,NodeType::Server), (5, NodeType::Client), (6, NodeType::Drone), (7, NodeType::Drone), (8, NodeType::Client)],
-        vec![(1, 2), (2, 3), (2, 4), (2, 5), (2, 6), (2, 7),(2,8)],
+        vec![
+            (1, NodeType::Client),
+            (2, NodeType::Client),
+            (3, NodeType::Server),
+            (4, NodeType::Server),
+            (5, NodeType::Client),
+            (6, NodeType::Drone),
+            (7, NodeType::Drone),
+            (8, NodeType::Client),
+        ],
+        vec![(1, 2), (2, 3), (2, 4), (2, 5), (2, 6), (2, 7), (2, 8)],
     );
 
     let mut drones_channels = HashMap::new();

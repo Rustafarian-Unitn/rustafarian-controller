@@ -12,8 +12,7 @@ use crate::drone_functions::{
     rusty_drone,
 };
 use crate::runnable::Runnable;
-use crossbeam::select;
-use crossbeam_channel::{unbounded, Receiver, Sender};
+use crossbeam_channel::{unbounded, Receiver, RecvTimeoutError, Sender};
 use rand::Error;
 use rustafarian_chat_server::chat_server::ChatServer;
 use rustafarian_client::browser_client::BrowserClient;
@@ -30,6 +29,7 @@ use rustafarian_shared::topology::Topology;
 use std::collections::HashMap;
 use std::thread;
 use std::thread::JoinHandle;
+use std::time::Duration;
 use wg_2024::config::{Client as ClientConfig, Drone as DroneConfig, Server as ServerConfig};
 use wg_2024::controller::{DroneCommand, DroneEvent};
 use wg_2024::network::NodeId;
@@ -120,6 +120,9 @@ pub struct SimulationController {
 }
 
 impl SimulationController {
+    const SHUTDOWN_TIMEOUT: Duration = Duration::from_secs(5);
+    const THREAD_SLEEP: Duration = Duration::from_millis(100);
+
     pub fn new(
         nodes_channels: HashMap<NodeId, NodeChannels>,
         drone_channels: HashMap<NodeId, DroneChannels>,
@@ -142,27 +145,34 @@ impl SimulationController {
         self.logger
             .log("Destroying simulation controller...", LogLevel::INFO);
 
-        // Clear channels
-        self.nodes_channels.clear();
-        self.drone_channels.clear();
+        // Send shutdown signal
+        if let Err(e) = self.shutdown_channel.0.send(()) {
+            self.logger.log(
+                &format!("Failed to send shutdown signal: {}", e),
+                LogLevel::ERROR,
+            );
+        }
 
-        // Clear topology
-        self.topology = Topology::new();
-
-        let _ = self.shutdown_channel.0.send(());
-
-        // Join and cleanup all threads
+        // Join threads with timeout
         for handle in self.handles.iter_mut() {
             if let Some(h) = handle.take() {
-                if !h.is_finished() {
-                    // Try to join thread with timeout
-                    if let Err(e) = h.join() {
+                match Self::join_with_timeout(h, Self::SHUTDOWN_TIMEOUT) {
+                    Ok(_) => self
+                        .logger
+                        .log("Thread joined successfully", LogLevel::INFO),
+                    Err(e) => {
                         self.logger
-                            .log(&format!("Error joining thread: {:?}", e), LogLevel::ERROR);
+                            .log(&format!("Thread failed to join: {}", e), LogLevel::ERROR);
                     }
                 }
             }
         }
+
+        // Clear topology and channels
+        self.topology = Topology::new();
+        self.nodes_channels.clear();
+        self.drone_channels.clear();
+        self.handles.clear();
 
         self.logger
             .log("Simulation controller destroyed", LogLevel::INFO);
@@ -176,6 +186,7 @@ impl SimulationController {
         debug_mode: bool,
     ) {
         self.destroy();
+
         let config = config_parser::parse_config(config);
 
         let logger = Logger::new("Controller".to_string(), 0, debug_mode);
@@ -446,9 +457,10 @@ impl SimulationController {
                 .collect();
 
             let drone_channels = drone_channels.get(&drone_config.id).unwrap();
+            let drone_id = drone_config.id;
 
             let (mut drone, name) = factory(
-                drone_config.id,
+                drone_id,
                 drone_channels.send_event_channel.clone(),
                 drone_channels.receive_command_channel.clone(),
                 drone_channels.receive_packet_channel.clone(),
@@ -457,29 +469,33 @@ impl SimulationController {
             );
 
             logger.log(
-                format!(
-                    "Creating drone {} with {} factory",
-                    drone_config.id,
-                    name.clone()
-                )
-                .as_str(),
+                format!("Creating drone {} with {} factory", drone_id, name.clone()).as_str(),
                 LogLevel::DEBUG,
             );
 
             topology.set_label(drone_config.id, name);
+
             let shutdown_rx = shutdown_channel.clone();
-            handles.push(Some(thread::spawn(move || loop {
-                select! {
-                    recv(shutdown_rx) -> _ =>{
-                        break;
-                    }
-                    default => {
-                        drone.run();
+
+            let drone_id = drone_id;
+
+            handles.push(Some(thread::spawn(move || {
+                let mut drone = drone;
+                loop {
+                    match shutdown_rx.recv_timeout(Self::THREAD_SLEEP) {
+                        Ok(_) | Err(RecvTimeoutError::Disconnected) => {
+                            println!("Drone {} shutting down", drone_id);
+                            break;
+                        }
+                        Err(RecvTimeoutError::Timeout) => {
+                            drone.run();
+                        }
                     }
                 }
             })));
+
             logger.log(
-                format!("Drone {} started successfully", drone_config.id).as_str(),
+                format!("Drone {} started successfully", drone_id).as_str(),
                 LogLevel::DEBUG,
             );
         }
@@ -565,9 +581,10 @@ impl SimulationController {
 
             let shutdown_rx = shutdown_channel.clone();
 
+            let client_id = client_config.id;
             // Start off the client
             handles.push(Some(thread::spawn(move || {
-                if client_config.id % 2 == 0 {
+                if client_id % 2 == 0 {
                     let mut client = ChatClient::new(
                         client_config.id,
                         neighbour_drones,
@@ -576,14 +593,17 @@ impl SimulationController {
                         send_response_channel,
                         debug_mode,
                     );
-                    select!(
-                        recv(shutdown_rx) -> _ => {
-                            return;
-                        },
-                        default => {
-                            client.run(TICKS)
+                    loop {
+                        match shutdown_rx.recv_timeout(Self::THREAD_SLEEP) {
+                            Ok(_) | Err(RecvTimeoutError::Disconnected) => {
+                                println!("Chat client {} shutting down", client_id);
+                                break;
+                            }
+                            Err(RecvTimeoutError::Timeout) => {
+                                client.run(TICKS);
+                            }
                         }
-                    )
+                    }
                 } else {
                     let mut client = BrowserClient::new(
                         client_config.id,
@@ -593,17 +613,22 @@ impl SimulationController {
                         send_response_channel,
                         debug_mode,
                     );
-                    select!(
-                    recv(shutdown_rx) -> _ => {
-                        return;
-                    },
-                    default =>{
-                        client.run(TICKS)
-                    })
+                    loop {
+                        match shutdown_rx.recv_timeout(Self::THREAD_SLEEP) {
+                            Ok(_) | Err(RecvTimeoutError::Disconnected) => {
+                                println!("Browser client {} shutting down", client_id);
+                                break;
+                            }
+                            Err(RecvTimeoutError::Timeout) => {
+                                client.run(TICKS);
+                                thread::sleep(Self::THREAD_SLEEP);
+                            }
+                        }
+                    }
                 }
             })));
             logger.log(
-                format!("Client {} started successfully", client_config.id).as_str(),
+                format!("Client {} started successfully", client_id).as_str(),
                 LogLevel::DEBUG,
             );
         }
@@ -706,10 +731,10 @@ impl SimulationController {
             );
 
             let shutdown_rx = shutdown_channel.clone();
-
+            let server_id = server_config.id;
             // Start off the server
             handles.push(Some(thread::spawn(move || {
-                if server_config.id % 3 == 0 {
+                if server_id % 3 == 0 {
                     let mut server = ChatServer::new(
                         server_config.id,
                         receive_command_channel,
@@ -718,15 +743,18 @@ impl SimulationController {
                         drones,
                         debug_mode,
                     );
-                    select!(
-                        recv(shutdown_rx) -> _ => {
-                            return;
-                        },
-                        default => {
-                            server.run()
+                    loop {
+                        match shutdown_rx.recv_timeout(Self::THREAD_SLEEP) {
+                            Ok(_) | Err(RecvTimeoutError::Disconnected) => {
+                                println!("Chat server {} shutting down", server_id);
+                                break;
+                            }
+                            Err(RecvTimeoutError::Timeout) => {
+                                server.run();
+                            }
                         }
-                    )
-                } else if server_config.id % 3 == 1 {
+                    }
+                } else if server_id % 3 == 1 {
                     let mut server = ContentServer::new(
                         server_config.id,
                         drones,
@@ -743,14 +771,17 @@ impl SimulationController {
                         server_config.id,
                         ServerType::Media
                     );
-                    select!(
-                        recv(shutdown_rx) -> _ => {
-                            return;
-                        },
-                        default => {
-                            server.run()
+                    loop {
+                        match shutdown_rx.recv_timeout(Self::THREAD_SLEEP) {
+                            Ok(_) | Err(RecvTimeoutError::Disconnected) => {
+                                println!("Media server {} shutting down", server_id);
+                                break;
+                            }
+                            Err(RecvTimeoutError::Timeout) => {
+                                server.run();
+                            }
                         }
-                    )
+                    }
                 } else {
                     let mut server = ContentServer::new(
                         server_config.id,
@@ -768,12 +799,17 @@ impl SimulationController {
                         server_config.id,
                         ServerType::Text
                     );
-                    select!(
-                        recv(shutdown_rx) -> _ => {
-                            return;
-                        },
-                        default => {
-                    server.run()})
+                    loop {
+                        match shutdown_rx.recv_timeout(Self::THREAD_SLEEP) {
+                            Ok(_) | Err(RecvTimeoutError::Disconnected) => {
+                                println!("Text server {} shutting down", server_id);
+                                break;
+                            }
+                            Err(RecvTimeoutError::Timeout) => {
+                                server.run();
+                            }
+                        }
+                    }
                 }
             })));
 
@@ -879,6 +915,21 @@ impl SimulationController {
             d_r_o_n_e_drone,
         ]
     }
+
+    fn join_with_timeout(handle: JoinHandle<()>, timeout: Duration) -> Result<(), String> {
+        let (tx, rx) = crossbeam_channel::bounded(1);
+
+        thread::spawn(move || {
+            let result = handle.join();
+            let _ = tx.send(result);
+        });
+
+        match rx.recv_timeout(timeout) {
+            Ok(Ok(_)) => Ok(()),
+            Ok(Err(_)) => Err("Thread panicked".to_string()),
+            Err(_) => Err("Thread join timed out".to_string()),
+        }
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -892,8 +943,9 @@ mod tests {
     use super::*;
     use crate::tests::setup;
     use rustafarian_shared::topology::Topology;
-    use std::{collections::HashMap, fs::File};
+    use std::{collections::HashMap, fs::File, time::Duration};
     use wg_2024::{
+        controller,
         network::SourceRoutingHeader,
         packet::{
             Ack, FloodRequest, FloodResponse, Fragment, Nack, NackType, NodeType, Packet,
@@ -1218,6 +1270,7 @@ mod tests {
             rust_do_it_drone,
             rust_busters_drone,
             rusty_drone,
+            lockheed_rustin_drone,
             d_r_o_n_e_drone,
         ];
         let mut drone_factories = drone_factories.into_iter().cycle();
@@ -1476,4 +1529,146 @@ mod tests {
                     ) -> (Box<dyn Runnable>, String)
         );
     }
+
+    #[test]
+    fn test_shut_down_controller() {
+        let mut controller = SimulationController::build(
+            "src/tests/configurations/topology_1.toml",
+            FILE_FOLDER.to_string(),
+            MEDIA_FOLDER.to_string(),
+            false,
+        );
+        thread::sleep(Duration::from_secs(1));
+
+        controller.destroy();
+
+        for handle in controller.handles.iter() {
+            assert!(handle.is_none());
+        }
+    }
+
+    #[test]
+    fn test_rebuild_controller() {
+        let mut controller = SimulationController::build(
+            "src/tests/configurations/topology_1.toml", 
+            FILE_FOLDER.to_string(),
+            MEDIA_FOLDER.to_string(),
+            false
+        );
+        
+        let initial_handles = controller.handles.len();
+        let initial_nodes = controller.nodes_channels.len();
+        let initial_drones = controller.drone_channels.len();
+        
+        controller.rebuild(
+            "src/tests/configurations/topology_1.toml",
+            FILE_FOLDER.to_string(), 
+            MEDIA_FOLDER.to_string(),
+            false
+        );
+
+        assert_eq!(initial_handles, controller.handles.len());
+        println!("Handles {}\n", controller.handles.len());
+        
+        assert_eq!(initial_nodes, controller.nodes_channels.len()); 
+        println!("Nodes {}\n", controller.handles.len());
+        assert_eq!(initial_drones, controller.drone_channels.len());
+        println!("Drones {}\n", controller.handles.len());
+
+        for handle in controller.handles.iter() {
+            assert!(handle.is_some());
+        }
+    }
+
+    #[test]
+    fn test_topology_after_build() {
+        let controller = SimulationController::build(
+            "src/tests/configurations/topology_1.toml",
+            FILE_FOLDER.to_string(),
+            MEDIA_FOLDER.to_string(), 
+            false
+        );
+        let drone_1_id = 1;
+        let drone_2_id = 2;
+        let drone_3_id = 3;
+        let drone_4_id = 4;
+        let drone_5_id = 5;
+        let client_7_id = 7;
+        let server_11_id = 11;
+        // Check nodes exist
+        assert!(controller.topology.nodes().contains(&drone_1_id));
+        assert!(controller.topology.nodes().contains(&drone_2_id));
+        assert!(controller.topology.nodes().contains(&drone_3_id));
+        assert!(controller.topology.nodes().contains(&drone_4_id));
+        assert!(controller.topology.nodes().contains(&drone_5_id));
+        assert!(controller.topology.nodes().contains(&client_7_id));
+        assert!(controller.topology.nodes().contains(&server_11_id));
+
+        // Check node types
+        assert_eq!(controller.topology.get_node_type(drone_1_id).unwrap(), "drone");
+        assert_eq!(controller.topology.get_node_type(drone_2_id).unwrap(), "drone");
+        assert_eq!(controller.topology.get_node_type(drone_3_id).unwrap(), "drone");
+        assert_eq!(controller.topology.get_node_type(drone_4_id).unwrap(), "drone");
+        assert_eq!(controller.topology.get_node_type(drone_5_id).unwrap(), "drone");
+        assert_eq!(controller.topology.get_node_type(client_7_id).unwrap(), "browser_client");
+        assert_eq!(controller.topology.get_node_type(server_11_id).unwrap(), "Text");
+
+        // Check edges exist
+        assert!(controller.topology.edges().get(&drone_1_id).unwrap().contains(&client_7_id));
+        assert!(controller.topology.edges().get(&drone_1_id).unwrap().contains(&drone_3_id));
+        assert!(controller.topology.edges().get(&drone_2_id).unwrap().contains(&client_7_id));
+        assert!(controller.topology.edges().get(&drone_2_id).unwrap().contains(&drone_3_id));
+        assert!(controller.topology.edges().get(&drone_3_id).unwrap().contains(&drone_1_id));
+        assert!(controller.topology.edges().get(&drone_3_id).unwrap().contains(&drone_2_id));
+        assert!(controller.topology.edges().get(&drone_3_id).unwrap().contains(&drone_4_id));
+        assert!(controller.topology.edges().get(&drone_3_id).unwrap().contains(&drone_5_id));
+        assert!(controller.topology.edges().get(&drone_4_id).unwrap().contains(&drone_3_id));        
+        assert!(controller.topology.edges().get(&drone_4_id).unwrap().contains(&server_11_id));
+        assert!(controller.topology.edges().get(&drone_5_id).unwrap().contains(&drone_3_id));        
+        assert!(controller.topology.edges().get(&drone_5_id).unwrap().contains(&server_11_id));
+        assert!(controller.topology.edges().get(&server_11_id).unwrap().contains(&drone_4_id));
+        assert!(controller.topology.edges().get(&server_11_id).unwrap().contains(&drone_5_id));
+
+
+    }
+
+    #[test]
+    fn test_channels_after_build() {
+        let controller = SimulationController::build(
+            "src/tests/configurations/topology_1.toml",
+            FILE_FOLDER.to_string(),
+            MEDIA_FOLDER.to_string(),
+            false
+        );
+
+        // Check node channels exist
+        let drone_1_id = 1;
+        let drone_2_id = 2;
+        let drone_3_id = 3;
+        let drone_4_id = 4;
+        let drone_5_id = 5;
+        let client_7_id = 7;
+        let server_11_id = 11;
+
+        // Check drone channels exist  
+        assert!(controller.drone_channels.contains_key(&drone_1_id));
+        assert!(controller.drone_channels.contains_key(&drone_2_id));
+        assert!(controller.drone_channels.contains_key(&drone_3_id));
+        assert!(controller.drone_channels.contains_key(&drone_4_id));
+        assert!(controller.drone_channels.contains_key(&drone_5_id));
+
+        // Check node channels exist
+        assert!(controller.nodes_channels.contains_key(&client_7_id));
+        assert!(controller.nodes_channels.contains_key(&server_11_id));
+
+        // Check channel properties
+        let node_channel = controller.nodes_channels.get(&client_7_id).unwrap();
+        assert!(node_channel.send_packet_channel.is_empty());
+        assert!(node_channel.receive_packet_channel.is_empty());
+
+        let drone_channel = controller.drone_channels.get(&drone_1_id).unwrap();
+        assert!(drone_channel.send_packet_channel.is_empty());
+        assert!(drone_channel.receive_packet_channel.is_empty());
+    }
+
 }

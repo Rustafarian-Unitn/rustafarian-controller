@@ -7,7 +7,7 @@ pub mod simulation_controller;
 mod tests {
     pub mod chat_test;
     pub mod content_test;
+    pub mod drone_interaction;
     pub mod setup;
     pub mod topology;
-    pub mod drone_interaction;
 }
