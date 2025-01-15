@@ -162,6 +162,62 @@ impl SimulationController {
             .log("Simulation controller destroyed", LogLevel::INFO);
     }
 
+    pub fn rebuild(
+        &mut self,
+        config: &str,
+        file_folder: String,
+        media_folder: String,
+        debug_mode: bool,
+    ) {
+        self.destroy();
+        let config = config_parser::parse_config(config);
+        
+        let logger = Logger::new("Controller".to_string(), 0, debug_mode);
+
+        // Create a factory function for the implementations
+        let drone_factories = SimulationController::get_active_drone_factories();
+        let mut drone_factories = drone_factories.into_iter().cycle();
+
+        Self::init_channels(
+            &config,
+            &mut self.nodes_channels,
+            &mut self.drone_channels,
+            &mut self.topology,
+            &logger,
+        );
+
+        Self::init_drones(
+            &mut self.handles,
+            config.drone,
+            &mut drone_factories,
+            &mut self.drone_channels,
+            &mut self.nodes_channels,
+            &mut self.topology,
+            &logger,
+        );
+        Self::init_clients(
+            &mut self.handles,
+            config.client,
+            &mut self.nodes_channels,
+            &mut self.drone_channels,
+            &mut self.topology,
+            debug_mode,
+            &logger,
+        );
+
+        Self::init_servers(
+            &mut self.handles,
+            config.server,
+            &mut self.nodes_channels,
+            &mut self.drone_channels,
+            &mut self.topology,
+            file_folder,
+            media_folder,
+            debug_mode,
+            &logger,
+        );
+    }
+
     /// Builds a simulation controller from a configuration string.
     /// # Arguments
     /// * `config` - A string containing the path to the configuration for the simulation
@@ -179,18 +235,7 @@ impl SimulationController {
         logger.log("Building the simulation controller", LogLevel::INFO);
 
         // Create a factory function for the implementations
-        let drone_factories: Vec<DroneFactory> = vec![
-            cpp_enjoyers_drone,
-            get_droned_drone,
-            rusteze_drone,
-            dr_one_drone,
-            // rust_do_it_drone,
-            rust_busters_drone,
-            rusty_drone,
-            // rustastic_drone,
-            lockheed_rustin_drone,
-            d_r_o_n_e_drone,
-        ];
+        let drone_factories = SimulationController::get_active_drone_factories();
 
         let mut drone_factories = drone_factories.into_iter().cycle();
 
@@ -751,6 +796,19 @@ impl SimulationController {
                 .log("Destination is not a node", LogLevel::ERROR);
             Err(Error::new("Destination is not a node"))
         }
+    }
+
+    fn get_active_drone_factories() -> Vec<DroneFactory> {
+        vec![
+            cpp_enjoyers_drone,
+            get_droned_drone,
+            rusteze_drone,
+            dr_one_drone,
+            rust_do_it_drone,
+            rust_busters_drone,
+            rusty_drone,
+            d_r_o_n_e_drone,
+        ]
     }
 }
 
