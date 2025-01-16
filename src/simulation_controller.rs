@@ -1,15 +1,7 @@
 use crate::config_parser;
 use crate::drone_functions::{
-    cpp_enjoyers_drone,
-    d_r_o_n_e_drone,
-    dr_one_drone,
-    get_droned_drone,
-    lockheed_rustin_drone,
-    rust_busters_drone,
-    rust_do_it_drone,
-    rustastic_drone,
-    rusteze_drone,
-    rusty_drone,
+    cpp_enjoyers_drone, d_r_o_n_e_drone, dr_one_drone, get_droned_drone, lockheed_rustin_drone,
+    rust_busters_drone, rust_do_it_drone, rustastic_drone, rusteze_drone, rusty_drone,
 };
 use crate::runnable::Runnable;
 use crossbeam_channel::{unbounded, Receiver, RecvTimeoutError, Sender};
@@ -203,8 +195,7 @@ impl SimulationController {
             &logger,
         );
 
-        Self::init_drones(
-            &mut self.handles,
+        let mut drone_handles = Self::init_drones(
             config.drone,
             &mut drone_factories,
             &mut self.drone_channels,
@@ -213,8 +204,9 @@ impl SimulationController {
             &mut self.topology,
             &logger,
         );
-        Self::init_clients(
-            &mut self.handles,
+        self.handles.append(&mut drone_handles);
+
+        let mut client_handles = Self::init_clients(
             config.client,
             &mut self.nodes_channels,
             &mut self.drone_channels,
@@ -223,9 +215,9 @@ impl SimulationController {
             debug_mode,
             &logger,
         );
+        self.handles.append(&mut client_handles);
 
-        Self::init_servers(
-            &mut self.handles,
+        let mut server_handles = Self::init_servers(
             config.server,
             &mut self.nodes_channels,
             &mut self.drone_channels,
@@ -236,6 +228,7 @@ impl SimulationController {
             debug_mode,
             &logger,
         );
+        self.handles.append(&mut server_handles);
     }
 
     /// Builds a simulation controller from a configuration string.
@@ -276,8 +269,7 @@ impl SimulationController {
             &logger,
         );
 
-        Self::init_drones(
-            &mut handles,
+        let mut drone_handles = Self::init_drones(
             config.drone,
             &mut drone_factories,
             &mut drone_channels,
@@ -286,8 +278,9 @@ impl SimulationController {
             &mut topology,
             &logger,
         );
-        Self::init_clients(
-            &mut handles,
+        handles.append(&mut drone_handles);
+
+        let mut client_handles = Self::init_clients(
             config.client,
             &mut node_channels,
             &mut drone_channels,
@@ -296,9 +289,9 @@ impl SimulationController {
             debug_mode,
             &logger,
         );
+        handles.append(&mut client_handles);
 
-        Self::init_servers(
-            &mut handles,
+        let mut server_handles = Self::init_servers(
             config.server,
             &mut node_channels,
             &mut drone_channels,
@@ -309,6 +302,8 @@ impl SimulationController {
             debug_mode,
             &logger,
         );
+
+        handles.append(&mut server_handles);
 
         SimulationController::new(
             node_channels,
@@ -424,7 +419,6 @@ impl SimulationController {
     /// # Returns
     /// A vector of thread handles for the drone instances
     fn init_drones(
-        handles: &mut Vec<Option<JoinHandle<()>>>,
         drones_config: Vec<DroneConfig>,
         drone_factories: &mut dyn Iterator<Item = DroneFactory>,
         drone_channels: &mut HashMap<NodeId, DroneChannels>,
@@ -432,9 +426,11 @@ impl SimulationController {
         shutdown_channel: Receiver<()>,
         topology: &mut Topology,
         logger: &Logger,
-    ) {
+    ) -> Vec<Option<JoinHandle<()>>> {
         logger.log("Initializing drones", LogLevel::INFO);
         // For each drone config pick the next factory in a circular fashion to generate a drone instance
+        let mut handles = Vec::new();
+
         for drone_config in drones_config.iter() {
             logger.log(
                 format!("Creating drone {}", drone_config.id).as_str(),
@@ -497,6 +493,7 @@ impl SimulationController {
                 LogLevel::DEBUG,
             );
         }
+        handles
     }
 
     /// Initializes the client nodes in the network.
@@ -509,7 +506,6 @@ impl SimulationController {
     /// # Returns
     /// A vector of thread handles for the client instances
     fn init_clients(
-        handles: &mut Vec<Option<JoinHandle<()>>>,
         clients_config: Vec<ClientConfig>,
         node_channels: &mut HashMap<NodeId, NodeChannels>,
         drone_channels: &mut HashMap<NodeId, DroneChannels>,
@@ -517,8 +513,10 @@ impl SimulationController {
         topology: &mut Topology,
         debug_mode: bool,
         logger: &Logger,
-    ) {
+    ) -> Vec<Option<JoinHandle<()>>> {
         logger.log("Initializing clients", LogLevel::INFO);
+
+        let mut handles = Vec::new();
         for client_config in clients_config {
             logger.log(
                 format!("Creating client {}", client_config.id).as_str(),
@@ -630,6 +628,7 @@ impl SimulationController {
                 LogLevel::DEBUG,
             );
         }
+        handles
     }
 
     /// Initializes the server nodes in the network.
@@ -643,7 +642,6 @@ impl SimulationController {
     /// A vector of thread handles for the server instances
     ///
     fn init_servers(
-        handles: &mut Vec<Option<JoinHandle<()>>>,
         servers_config: Vec<ServerConfig>,
         node_channels: &mut HashMap<NodeId, NodeChannels>,
         drone_channels: &mut HashMap<NodeId, DroneChannels>,
@@ -653,12 +651,12 @@ impl SimulationController {
         media_folder: String,
         debug_mode: bool,
         logger: &Logger,
-    ) {
+    ) -> Vec<Option<JoinHandle<()>>> {
         logger.log("Initializing servers", LogLevel::INFO);
         // Generate the file and media folders
         let _ = std::fs::create_dir_all(FILE_FOLDER);
         let _ = std::fs::create_dir_all(MEDIA_FOLDER);
-
+        let mut handles = Vec::new();
         // For each drone config pick the next factory in a circular fashion to generate a drone instance
         for server_config in servers_config {
             let media_folder = media_folder.clone();
@@ -816,6 +814,7 @@ impl SimulationController {
                 LogLevel::DEBUG,
             );
         }
+        handles
     }
 
     /// Handles direct packet routing between nodes.
@@ -932,12 +931,6 @@ impl SimulationController {
     }
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////// --TESTS -- ///////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -993,7 +986,6 @@ mod tests {
 
     #[test]
     fn test_init_drones() {
-        let mut handles = Vec::new();
         let drone_factories: Vec<DroneFactory> = vec![
             cpp_enjoyers_drone,
             get_droned_drone,
@@ -1021,8 +1013,7 @@ mod tests {
         );
         let shutdown_channel = unbounded::<()>();
         let drones_config = config.drone;
-        SimulationController::init_drones(
-            &mut handles,
+        let handles = SimulationController::init_drones(
             drones_config,
             &mut drone_factories,
             &mut drone_channels,
@@ -1039,7 +1030,6 @@ mod tests {
 
     #[test]
     fn test_init_clients() {
-        let mut handles = Vec::new();
         let config = config_parser::parse_config("src/tests/configurations/topology_1.toml");
         let mut node_channels = HashMap::new();
         let mut drone_channels = HashMap::new();
@@ -1055,8 +1045,7 @@ mod tests {
         );
 
         let clients_config = config.client;
-        SimulationController::init_clients(
-            &mut handles,
+        let handles = SimulationController::init_clients(
             clients_config,
             &mut node_channels,
             &mut drone_channels,
@@ -1072,7 +1061,6 @@ mod tests {
 
     #[test]
     fn test_init_servers() {
-        let mut handles = Vec::new();
         let config = config_parser::parse_config("src/tests/configurations/topology_1.toml");
         let mut node_channels = HashMap::new();
         let mut drone_channels = HashMap::new();
@@ -1089,8 +1077,7 @@ mod tests {
         );
         let servers_config = config.server;
 
-        SimulationController::init_servers(
-            &mut handles,
+        let server_handles = SimulationController::init_servers(
             servers_config,
             &mut node_channels,
             &mut drone_channels,
@@ -1103,7 +1090,7 @@ mod tests {
         );
 
         assert_eq!(node_channels.len(), 2);
-        assert_eq!(handles.len(), 1);
+        assert_eq!(server_handles.len(), 1);
     }
 
     #[test]
@@ -1269,6 +1256,7 @@ mod tests {
             rust_do_it_drone,
             rust_busters_drone,
             rusty_drone,
+            rustastic_drone,
             lockheed_rustin_drone,
             d_r_o_n_e_drone,
         ];
@@ -1281,7 +1269,7 @@ mod tests {
         let drone5 = drone_factories.next().unwrap();
         let drone6 = drone_factories.next().unwrap();
         let drone7 = drone_factories.next().unwrap();
-        // let drone8 = drone_factories.next().unwrap();
+        let drone8 = drone_factories.next().unwrap();
         let drone9 = drone_factories.next().unwrap();
         let drone10 = drone_factories.next().unwrap();
         let drone11 = drone_factories.next().unwrap();
@@ -1427,26 +1415,26 @@ mod tests {
                     f32,
                 ) -> (Box<dyn Runnable>, String)
         );
-        // assert_eq!(
-        //     drone8
-        //         as *const fn(
-        //             NodeId,
-        //             Sender<DroneEvent>,
-        //             Receiver<DroneCommand>,
-        //             Receiver<Packet>,
-        //             HashMap<NodeId, Sender<Packet>>,
-        //             f32,
-        //         ) -> (Box<dyn Runnable>, String),
-        //     rustastic_drone
-        //         as *const fn(
-        //             NodeId,
-        //             Sender<DroneEvent>,
-        //             Receiver<DroneCommand>,
-        //             Receiver<Packet>,
-        //             HashMap<NodeId, Sender<Packet>>,
-        //             f32,
-        //         ) -> (Box<dyn Runnable>, String)
-        // );
+        assert_eq!(
+            drone8
+                as *const fn(
+                    NodeId,
+                    Sender<DroneEvent>,
+                    Receiver<DroneCommand>,
+                    Receiver<Packet>,
+                    HashMap<NodeId, Sender<Packet>>,
+                    f32,
+                ) -> (Box<dyn Runnable>, String),
+            rustastic_drone
+                as *const fn(
+                    NodeId,
+                    Sender<DroneEvent>,
+                    Receiver<DroneCommand>,
+                    Receiver<Packet>,
+                    HashMap<NodeId, Sender<Packet>>,
+                    f32,
+                ) -> (Box<dyn Runnable>, String)
+        );
         assert_eq!(
             drone9
                 as *const fn(
@@ -1487,7 +1475,7 @@ mod tests {
                     f32,
                 ) -> (Box<dyn Runnable>, String)
         );
-        assert!(
+        assert_eq!(
             drone11
                 as *const fn(
                     NodeId,
@@ -1496,19 +1484,8 @@ mod tests {
                     Receiver<Packet>,
                     HashMap<NodeId, Sender<Packet>>,
                     f32,
-                ) -> (Box<dyn Runnable>, String)
-                == cpp_enjoyers_drone
-                    as *const fn(
-                        NodeId,
-                        Sender<DroneEvent>,
-                        Receiver<DroneCommand>,
-                        Receiver<Packet>,
-                        HashMap<NodeId, Sender<Packet>>,
-                        f32,
-                    ) -> (Box<dyn Runnable>, String)
-        );
-        assert!(
-            drone12
+                ) -> (Box<dyn Runnable>, String),
+            cpp_enjoyers_drone
                 as *const fn(
                     NodeId,
                     Sender<DroneEvent>,
@@ -1517,15 +1494,26 @@ mod tests {
                     HashMap<NodeId, Sender<Packet>>,
                     f32,
                 ) -> (Box<dyn Runnable>, String)
-                == get_droned_drone
-                    as *const fn(
-                        NodeId,
-                        Sender<DroneEvent>,
-                        Receiver<DroneCommand>,
-                        Receiver<Packet>,
-                        HashMap<NodeId, Sender<Packet>>,
-                        f32,
-                    ) -> (Box<dyn Runnable>, String)
+        );
+        assert_eq!(
+            drone12
+                as *const fn(
+                    NodeId,
+                    Sender<DroneEvent>,
+                    Receiver<DroneCommand>,
+                    Receiver<Packet>,
+                    HashMap<NodeId, Sender<Packet>>,
+                    f32,
+                ) -> (Box<dyn Runnable>, String),
+            get_droned_drone
+                as *const fn(
+                    NodeId,
+                    Sender<DroneEvent>,
+                    Receiver<DroneCommand>,
+                    Receiver<Packet>,
+                    HashMap<NodeId, Sender<Packet>>,
+                    f32,
+                ) -> (Box<dyn Runnable>, String)
         );
     }
 
@@ -1549,27 +1537,27 @@ mod tests {
     #[test]
     fn test_rebuild_controller() {
         let mut controller = SimulationController::build(
-            "src/tests/configurations/topology_1.toml", 
+            "src/tests/configurations/topology_1.toml",
             FILE_FOLDER.to_string(),
             MEDIA_FOLDER.to_string(),
-            false
+            false,
         );
-        
+
         let initial_handles = controller.handles.len();
         let initial_nodes = controller.nodes_channels.len();
         let initial_drones = controller.drone_channels.len();
-        
+
         controller.rebuild(
             "src/tests/configurations/topology_1.toml",
-            FILE_FOLDER.to_string(), 
+            FILE_FOLDER.to_string(),
             MEDIA_FOLDER.to_string(),
-            false
+            false,
         );
 
         assert_eq!(initial_handles, controller.handles.len());
         println!("Handles {}\n", controller.handles.len());
-        
-        assert_eq!(initial_nodes, controller.nodes_channels.len()); 
+
+        assert_eq!(initial_nodes, controller.nodes_channels.len());
         println!("Nodes {}\n", controller.handles.len());
         assert_eq!(initial_drones, controller.drone_channels.len());
         println!("Drones {}\n", controller.handles.len());
@@ -1584,8 +1572,8 @@ mod tests {
         let controller = SimulationController::build(
             "src/tests/configurations/topology_1.toml",
             FILE_FOLDER.to_string(),
-            MEDIA_FOLDER.to_string(), 
-            false
+            MEDIA_FOLDER.to_string(),
+            false,
         );
         let drone_1_id = 1;
         let drone_2_id = 2;
@@ -1604,31 +1592,120 @@ mod tests {
         assert!(controller.topology.nodes().contains(&server_11_id));
 
         // Check node types
-        assert_eq!(controller.topology.get_node_type(drone_1_id).unwrap(), "drone");
-        assert_eq!(controller.topology.get_node_type(drone_2_id).unwrap(), "drone");
-        assert_eq!(controller.topology.get_node_type(drone_3_id).unwrap(), "drone");
-        assert_eq!(controller.topology.get_node_type(drone_4_id).unwrap(), "drone");
-        assert_eq!(controller.topology.get_node_type(drone_5_id).unwrap(), "drone");
-        assert_eq!(controller.topology.get_node_type(client_7_id).unwrap(), "browser_client");
-        assert_eq!(controller.topology.get_node_type(server_11_id).unwrap(), "Text");
+        assert_eq!(
+            controller.topology.get_node_type(drone_1_id).unwrap(),
+            "drone"
+        );
+        assert_eq!(
+            controller.topology.get_node_type(drone_2_id).unwrap(),
+            "drone"
+        );
+        assert_eq!(
+            controller.topology.get_node_type(drone_3_id).unwrap(),
+            "drone"
+        );
+        assert_eq!(
+            controller.topology.get_node_type(drone_4_id).unwrap(),
+            "drone"
+        );
+        assert_eq!(
+            controller.topology.get_node_type(drone_5_id).unwrap(),
+            "drone"
+        );
+        assert_eq!(
+            controller.topology.get_node_type(client_7_id).unwrap(),
+            "browser_client"
+        );
+        assert_eq!(
+            controller.topology.get_node_type(server_11_id).unwrap(),
+            "Text"
+        );
 
         // Check edges exist
-        assert!(controller.topology.edges().get(&drone_1_id).unwrap().contains(&client_7_id));
-        assert!(controller.topology.edges().get(&drone_1_id).unwrap().contains(&drone_3_id));
-        assert!(controller.topology.edges().get(&drone_2_id).unwrap().contains(&client_7_id));
-        assert!(controller.topology.edges().get(&drone_2_id).unwrap().contains(&drone_3_id));
-        assert!(controller.topology.edges().get(&drone_3_id).unwrap().contains(&drone_1_id));
-        assert!(controller.topology.edges().get(&drone_3_id).unwrap().contains(&drone_2_id));
-        assert!(controller.topology.edges().get(&drone_3_id).unwrap().contains(&drone_4_id));
-        assert!(controller.topology.edges().get(&drone_3_id).unwrap().contains(&drone_5_id));
-        assert!(controller.topology.edges().get(&drone_4_id).unwrap().contains(&drone_3_id));        
-        assert!(controller.topology.edges().get(&drone_4_id).unwrap().contains(&server_11_id));
-        assert!(controller.topology.edges().get(&drone_5_id).unwrap().contains(&drone_3_id));        
-        assert!(controller.topology.edges().get(&drone_5_id).unwrap().contains(&server_11_id));
-        assert!(controller.topology.edges().get(&server_11_id).unwrap().contains(&drone_4_id));
-        assert!(controller.topology.edges().get(&server_11_id).unwrap().contains(&drone_5_id));
-
-
+        assert!(controller
+            .topology
+            .edges()
+            .get(&drone_1_id)
+            .unwrap()
+            .contains(&client_7_id));
+        assert!(controller
+            .topology
+            .edges()
+            .get(&drone_1_id)
+            .unwrap()
+            .contains(&drone_3_id));
+        assert!(controller
+            .topology
+            .edges()
+            .get(&drone_2_id)
+            .unwrap()
+            .contains(&client_7_id));
+        assert!(controller
+            .topology
+            .edges()
+            .get(&drone_2_id)
+            .unwrap()
+            .contains(&drone_3_id));
+        assert!(controller
+            .topology
+            .edges()
+            .get(&drone_3_id)
+            .unwrap()
+            .contains(&drone_1_id));
+        assert!(controller
+            .topology
+            .edges()
+            .get(&drone_3_id)
+            .unwrap()
+            .contains(&drone_2_id));
+        assert!(controller
+            .topology
+            .edges()
+            .get(&drone_3_id)
+            .unwrap()
+            .contains(&drone_4_id));
+        assert!(controller
+            .topology
+            .edges()
+            .get(&drone_3_id)
+            .unwrap()
+            .contains(&drone_5_id));
+        assert!(controller
+            .topology
+            .edges()
+            .get(&drone_4_id)
+            .unwrap()
+            .contains(&drone_3_id));
+        assert!(controller
+            .topology
+            .edges()
+            .get(&drone_4_id)
+            .unwrap()
+            .contains(&server_11_id));
+        assert!(controller
+            .topology
+            .edges()
+            .get(&drone_5_id)
+            .unwrap()
+            .contains(&drone_3_id));
+        assert!(controller
+            .topology
+            .edges()
+            .get(&drone_5_id)
+            .unwrap()
+            .contains(&server_11_id));
+        assert!(controller
+            .topology
+            .edges()
+            .get(&server_11_id)
+            .unwrap()
+            .contains(&drone_4_id));
+        assert!(controller
+            .topology
+            .edges()
+            .get(&server_11_id)
+            .unwrap()
+            .contains(&drone_5_id));
     }
 
     #[test]
@@ -1637,7 +1714,7 @@ mod tests {
             "src/tests/configurations/topology_1.toml",
             FILE_FOLDER.to_string(),
             MEDIA_FOLDER.to_string(),
-            false
+            false,
         );
 
         // Check node channels exist
@@ -1649,7 +1726,7 @@ mod tests {
         let client_7_id = 7;
         let server_11_id = 11;
 
-        // Check drone channels exist  
+        // Check drone channels exist
         assert!(controller.drone_channels.contains_key(&drone_1_id));
         assert!(controller.drone_channels.contains_key(&drone_2_id));
         assert!(controller.drone_channels.contains_key(&drone_3_id));
@@ -1669,5 +1746,4 @@ mod tests {
         assert!(drone_channel.send_packet_channel.is_empty());
         assert!(drone_channel.receive_packet_channel.is_empty());
     }
-
 }

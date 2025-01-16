@@ -31,7 +31,7 @@ fn test_simulation_controller_build_complex_topology() {
     // Check the topology
     let edges = controller.topology.edges();
     println!("{:?}", edges);
-    assert_topology(&edges);
+    assert_topology(edges);
 }
 
 #[test]
@@ -64,7 +64,7 @@ fn test_client_topology() {
         )) = response
         {
             let edges = topology.edges();
-            assert_topology(&edges);
+            assert_topology(edges);
             break;
         }
     }

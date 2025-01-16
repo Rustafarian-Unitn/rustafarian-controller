@@ -95,7 +95,6 @@ mod drone_communication_tests {
                 default(timeout) => {
                     // Last message received should be an ack from the server. The server does not answer to the request
                     println!("TEST - Timeout reached");
-                    assert!(true);
                     break;
                 }
             }

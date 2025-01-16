@@ -1,4 +1,4 @@
-mod content_test {
+mod tests {
     use image::{open, ImageFormat};
     use rustafarian_shared::messages::commander_messages::{
         SimControllerCommand, SimControllerMessage, SimControllerResponseWrapper,
@@ -728,13 +728,12 @@ mod content_test {
                     recv(client_response_channel) -> response => {
                         if let Ok(SimControllerResponseWrapper::Message(SimControllerMessage::TextFileResponse{..})) = response {
                             println!("TEST - Message received {:?}", response);
-                            assert!(false, "Server should not respond to invalid request");
+                            panic!("Server should not respond to invalid request");
                         }
                     }
                     default(timeout) => {
                         // Last message received should be an ack from the server. The server does not answer to the request
                         println!("TEST - Timeout reached");
-                        assert!(true);
                         break;
                     }
                 }
