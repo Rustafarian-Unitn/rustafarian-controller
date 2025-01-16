@@ -477,8 +477,6 @@ impl SimulationController {
 
             let shutdown_rx = shutdown_channel.clone();
 
-            let drone_id = drone_id;
-
             handles.push(Some(thread::spawn(move || {
                 let mut drone = drone;
                 loop {
@@ -910,6 +908,8 @@ impl SimulationController {
             rusteze_drone,
             dr_one_drone,
             rust_do_it_drone,
+            lockheed_rustin_drone,
+            // rustastic_drone,
             rust_busters_drone,
             rusty_drone,
             d_r_o_n_e_drone,
