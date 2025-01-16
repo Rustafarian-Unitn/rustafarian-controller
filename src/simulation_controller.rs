@@ -7,7 +7,7 @@ use crate::drone_functions::{
     lockheed_rustin_drone,
     rust_busters_drone,
     rust_do_it_drone,
-    // rustastic_drone,
+    rustastic_drone,
     rusteze_drone,
     rusty_drone,
 };
@@ -459,7 +459,7 @@ impl SimulationController {
             let drone_channels = drone_channels.get(&drone_config.id).unwrap();
             let drone_id = drone_config.id;
 
-            let (mut drone, name) = factory(
+            let (drone, name) = factory(
                 drone_id,
                 drone_channels.send_event_channel.clone(),
                 drone_channels.receive_command_channel.clone(),
@@ -909,7 +909,7 @@ impl SimulationController {
             dr_one_drone,
             rust_do_it_drone,
             lockheed_rustin_drone,
-            // rustastic_drone,
+            rustastic_drone,
             rust_busters_drone,
             rusty_drone,
             d_r_o_n_e_drone,
@@ -943,9 +943,8 @@ mod tests {
     use super::*;
     use crate::tests::setup;
     use rustafarian_shared::topology::Topology;
-    use std::{collections::HashMap, fs::File, time::Duration};
+    use std::{collections::HashMap, time::Duration};
     use wg_2024::{
-        controller,
         network::SourceRoutingHeader,
         packet::{
             Ack, FloodRequest, FloodResponse, Fragment, Nack, NackType, NodeType, Packet,

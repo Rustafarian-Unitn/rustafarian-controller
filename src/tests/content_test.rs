@@ -8,7 +8,6 @@ mod content_test {
     use std::{fs, thread};
 
     use crate::simulation_controller::SimulationController;
-    const TIMEOUT: u64 = 15;
     #[test]
     fn initialization_content_test() {
         let simulation_controller = SimulationController::build(
