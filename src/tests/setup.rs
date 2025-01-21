@@ -5,17 +5,22 @@ use ::rustafarian_client::browser_client;
 use crossbeam_channel::unbounded;
 use rustafarian_client::{browser_client::BrowserClient, chat_client::ChatClient, client::Client};
 use rustafarian_drone::RustafarianDrone;
-use rustafarian_shared::{logger::Logger, messages::{
-    commander_messages::{SimControllerCommand, SimControllerResponseWrapper},
-    general_messages::ServerType,
-}};
+use rustafarian_shared::{
+    logger::Logger,
+    messages::{
+        commander_messages::{SimControllerCommand, SimControllerResponseWrapper},
+        general_messages::ServerType,
+    },
+};
 use wg_2024::{
-    controller::{DroneCommand, DroneEvent}, drone::Drone, packet::{NodeType, Packet}
+    controller::{DroneCommand, DroneEvent},
+    drone::Drone,
+    packet::{NodeType, Packet},
 };
 
-use crate::simulation_controller::DroneChannels;
 use crate::simulation_controller::NodeChannels;
 use crate::simulation_controller::SimulationController;
+use crate::simulation_controller::{ControllerConfig, DroneChannels};
 use rustafarian_content_server::content_server::ContentServer;
 const DEBUG: bool = true;
 
@@ -325,8 +330,17 @@ pub fn setup() -> (
     browser_client.topology().add_edge(2, 7);
 
     chat_server.update_topology(
-        vec![(1, NodeType::Client), (2,NodeType::Client), (3, NodeType::Server), (4,NodeType::Server), (5, NodeType::Client), (6, NodeType::Drone), (7, NodeType::Drone), (8, NodeType::Client)],
-        vec![(1, 2), (2, 3), (2, 4), (2, 5), (2, 6), (2, 7),(2,8)],
+        vec![
+            (1, NodeType::Client),
+            (2, NodeType::Client),
+            (3, NodeType::Server),
+            (4, NodeType::Server),
+            (5, NodeType::Client),
+            (6, NodeType::Drone),
+            (7, NodeType::Drone),
+            (8, NodeType::Client),
+        ],
+        vec![(1, 2), (2, 3), (2, 4), (2, 5), (2, 6), (2, 7), (2, 8)],
     );
 
     let mut drones_channels = HashMap::new();
@@ -341,13 +355,19 @@ pub fn setup() -> (
     nodes_channels.insert(5, client_2_channels);
     nodes_channels.insert(8, browser_client_channels);
 
-    let simulation_controller = SimulationController::new(
+    let shutdown_channel = unbounded::<()>();
+
+    let controller_config = ControllerConfig {
         nodes_channels,
         drones_channels,
-        Vec::new(),
-        client.topology().clone(),
-        Logger::new("SimulationController".to_string(), 0, true),
-    );
+        shutdown_channel,
+        handles: vec![],
+        topology: client.topology().clone(),
+        logger: Logger::new("SimulationController".to_string(), 0, true),
+        debug_mode: true,
+    };
+
+    let simulation_controller = SimulationController::new(controller_config);
 
     (
         (client, client_2, browser_client),

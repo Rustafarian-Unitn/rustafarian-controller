@@ -17,13 +17,13 @@ fn test_simulation_controller_build_complex_topology() {
     );
     let controller = SimulationController::build(
         config_str,
-        "resources/files".to_string(), 
+        "resources/files".to_string(),
         "resources/media".to_string(),
         false,
     );
     thread::sleep(std::time::Duration::from_millis(500));
 
-    assert_eq!(controller.drone_channels.len(), 3);
+    assert_eq!(controller.drones_channels.len(), 3);
     assert_eq!(controller.nodes_channels.len(), 7);
     assert_eq!(controller.handles.len(), 10);
     assert_eq!(controller.topology.nodes().len(), 10);
@@ -31,7 +31,7 @@ fn test_simulation_controller_build_complex_topology() {
     // Check the topology
     let edges = controller.topology.edges();
     println!("{:?}", edges);
-    assert_topology(&edges);
+    assert_topology(edges);
 }
 
 #[test]
@@ -43,12 +43,12 @@ fn test_client_topology() {
     );
     let controller = SimulationController::build(
         config_str,
-        "resources/files".to_string(), 
+        "resources/files".to_string(),
         "resources/media".to_string(),
         false,
     );
 
-    thread::sleep(std::time::Duration::from_millis(500));
+    thread::sleep(std::time::Duration::from_secs(5));
     let client_id = 4;
     let client_channels = controller.nodes_channels.get(&client_id).unwrap();
     let client_send_command_channel = &client_channels.send_command_channel;
@@ -64,14 +64,14 @@ fn test_client_topology() {
         )) = response
         {
             let edges = topology.edges();
-            assert_topology(&edges);
+            assert_topology(edges);
             break;
         }
     }
 }
 
 fn assert_topology(edges: &HashMap<NodeId, HashSet<NodeId>>) {
-    assert!(edges.len() == 10);
+    assert_eq!(edges.len(), 10);
     assert!(edges.get(&1).unwrap().contains(&2));
     assert!(edges.get(&1).unwrap().contains(&3));
     assert!(edges.get(&1).unwrap().contains(&4));

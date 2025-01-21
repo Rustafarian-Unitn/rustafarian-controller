@@ -1,4 +1,4 @@
-mod chat_test {
+mod tests {
 
     use std::{collections::HashSet, thread};
 
@@ -47,9 +47,7 @@ mod chat_test {
             )) = response
             {
                 if known_servers.len() == 1 {
-                    assert!(known_servers.get(&9).is_some());
-                } else {
-                    assert!(true);
+                    assert!(known_servers.contains_key(&9));
                 }
                 break;
             }
@@ -195,12 +193,12 @@ mod chat_test {
             ) = response
             {
                 println!("TEST - Client list response {:?}", response);
-                let _expected_list = vec![6];
+                let _expected_list = [6];
                 assert!(
                     matches!(
                         response,
                         SimControllerResponseWrapper::Message(
-                            SimControllerMessage::ClientListResponse(9, _expected_response2)
+                            SimControllerMessage::ClientListResponse(9, _expected_list)
                         )
                     ),
                     "Expected client list"
@@ -353,12 +351,12 @@ mod chat_test {
                 SimControllerMessage::RegisteredServersResponse(_),
             ) = response
             {
-                let _expected_response = vec![4];
+                let _expected_response = [4];
                 assert!(
                     matches!(
                         response,
                         SimControllerResponseWrapper::Message(
-                            SimControllerMessage::RegisteredServersResponse(_expected_response2)
+                            SimControllerMessage::RegisteredServersResponse(_expected_response)
                         )
                     ),
                     "Expected registered servers response"
