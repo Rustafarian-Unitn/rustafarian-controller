@@ -48,7 +48,7 @@ mod tests {
             {
                 if known_servers.len() == 1 {
                     assert!(known_servers.contains_key(&9));
-                } 
+                }
                 break;
             }
         }

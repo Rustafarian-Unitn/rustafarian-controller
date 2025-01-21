@@ -23,7 +23,7 @@ fn test_simulation_controller_build_complex_topology() {
     );
     thread::sleep(std::time::Duration::from_millis(500));
 
-    assert_eq!(controller.drone_channels.len(), 3);
+    assert_eq!(controller.drones_channels.len(), 3);
     assert_eq!(controller.nodes_channels.len(), 7);
     assert_eq!(controller.handles.len(), 10);
     assert_eq!(controller.topology.nodes().len(), 10);

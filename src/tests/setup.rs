@@ -18,9 +18,9 @@ use wg_2024::{
     packet::{NodeType, Packet},
 };
 
-use crate::simulation_controller::DroneChannels;
 use crate::simulation_controller::NodeChannels;
 use crate::simulation_controller::SimulationController;
+use crate::simulation_controller::{ControllerConfig, DroneChannels};
 use rustafarian_content_server::content_server::ContentServer;
 const DEBUG: bool = true;
 
@@ -357,14 +357,17 @@ pub fn setup() -> (
 
     let shutdown_channel = unbounded::<()>();
 
-    let simulation_controller = SimulationController::new(
+    let controller_config = ControllerConfig {
         nodes_channels,
         drones_channels,
         shutdown_channel,
-        Vec::new(),
-        client.topology().clone(),
-        Logger::new("SimulationController".to_string(), 0, true),
-    );
+        handles: vec![],
+        topology: client.topology().clone(),
+        logger: Logger::new("SimulationController".to_string(), 0, true),
+        debug_mode: true,
+    };
+
+    let simulation_controller = SimulationController::new(controller_config);
 
     (
         (client, client_2, browser_client),

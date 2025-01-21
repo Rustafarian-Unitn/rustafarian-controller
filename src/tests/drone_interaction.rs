@@ -26,21 +26,21 @@ mod drone_communication_tests {
         let content_server_id = 8;
 
         let drone_command_channel = simulation_controller
-            .drone_channels
+            .drones_channels
             .get(&drone_id)
             .unwrap()
             .send_command_channel
             .clone();
 
         let drone_command_channel_2 = simulation_controller
-            .drone_channels
+            .drones_channels
             .get(&drone_2_id)
             .unwrap()
             .send_command_channel
             .clone();
 
         let drone_command_channel_3 = simulation_controller
-            .drone_channels
+            .drones_channels
             .get(&drone_3_id)
             .unwrap()
             .send_command_channel
@@ -54,7 +54,7 @@ mod drone_communication_tests {
             .clone();
 
         let drone_event_channel = simulation_controller
-            .drone_channels
+            .drones_channels
             .get(&drone_id)
             .unwrap()
             .receive_event_channel

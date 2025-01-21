@@ -62,6 +62,16 @@ type DroneFactory = fn(
     pdr: f32,
 ) -> (Box<dyn Runnable>, String);
 
+pub struct ControllerConfig {
+    pub nodes_channels: HashMap<NodeId, NodeChannels>,
+    pub drones_channels: HashMap<NodeId, DroneChannels>,
+    pub shutdown_channel: (Sender<()>, Receiver<()>),
+    pub handles: Vec<Option<JoinHandle<()>>>,
+    pub topology: Topology,
+    pub logger: Logger,
+    pub debug_mode: bool,
+}
+
 /// A controller that manages the simulation of a network composed of drones, clients, and servers.
 ///
 /// The `SimulationController` is responsible for:
@@ -105,7 +115,7 @@ type DroneFactory = fn(
 pub struct SimulationController {
     pub topology: Topology,
     pub nodes_channels: HashMap<NodeId, NodeChannels>,
-    pub drone_channels: HashMap<NodeId, DroneChannels>,
+    pub drones_channels: HashMap<NodeId, DroneChannels>,
     shutdown_channel: (Sender<()>, Receiver<()>),
     pub handles: Vec<Option<JoinHandle<()>>>,
     pub logger: Logger,
@@ -115,21 +125,14 @@ impl SimulationController {
     const SHUTDOWN_TIMEOUT: Duration = Duration::from_millis(200);
     const THREAD_SLEEP: Duration = Duration::from_millis(100);
 
-    pub fn new(
-        nodes_channels: HashMap<NodeId, NodeChannels>,
-        drone_channels: HashMap<NodeId, DroneChannels>,
-        shutdown_channel: (Sender<()>, Receiver<()>),
-        handles: Vec<Option<JoinHandle<()>>>,
-        topology: Topology,
-        logger: Logger,
-    ) -> Self {
+    pub fn new(config: ControllerConfig) -> Self {
         SimulationController {
-            topology,
-            nodes_channels,
-            drone_channels,
-            shutdown_channel,
-            handles,
-            logger,
+            topology: config.topology,
+            nodes_channels: config.nodes_channels,
+            drones_channels: config.drones_channels,
+            shutdown_channel: config.shutdown_channel,
+            handles: config.handles,
+            logger: config.logger,
         }
     }
 
@@ -163,7 +166,7 @@ impl SimulationController {
         // Clear topology and channels
         self.topology = Topology::new();
         self.nodes_channels.clear();
-        self.drone_channels.clear();
+        self.drones_channels.clear();
         self.handles.clear();
 
         self.logger
@@ -186,49 +189,34 @@ impl SimulationController {
         // Create a factory function for the implementations
         let drone_factories = SimulationController::get_active_drone_factories();
         let mut drone_factories = drone_factories.into_iter().cycle();
-
-        Self::init_channels(
-            &config,
-            &mut self.nodes_channels,
-            &mut self.drone_channels,
-            &mut self.topology,
-            &logger,
-        );
-
-        let mut drone_handles = Self::init_drones(
-            config.drone,
-            &mut drone_factories,
-            &mut self.drone_channels,
-            &mut self.nodes_channels,
-            self.shutdown_channel.clone().1,
-            &mut self.topology,
-            &logger,
-        );
-        self.handles.append(&mut drone_handles);
-
-        let mut client_handles = Self::init_clients(
-            config.client,
-            &mut self.nodes_channels,
-            &mut self.drone_channels,
-            self.shutdown_channel.clone().1,
-            &mut self.topology,
+        let mut controller_config = ControllerConfig {
+            nodes_channels: HashMap::new(),
+            drones_channels: HashMap::new(),
+            shutdown_channel: self.shutdown_channel.clone(),
+            handles: Vec::new(),
+            topology: Topology::new(),
+            logger,
             debug_mode,
-            &logger,
-        );
-        self.handles.append(&mut client_handles);
+        };
 
-        let mut server_handles = Self::init_servers(
+        Self::init_channels(&config, &mut controller_config);
+
+        Self::init_drones(config.drone, &mut drone_factories, &mut controller_config);
+
+        Self::init_clients(config.client, &mut controller_config);
+
+        Self::init_servers(
             config.server,
-            &mut self.nodes_channels,
-            &mut self.drone_channels,
-            self.shutdown_channel.clone().1,
-            &mut self.topology,
+            &mut controller_config,
             file_folder,
             media_folder,
-            debug_mode,
-            &logger,
         );
-        self.handles.append(&mut server_handles);
+
+        self.topology = controller_config.topology;
+        self.nodes_channels = controller_config.nodes_channels;
+        self.drones_channels = controller_config.drones_channels;
+        self.handles = controller_config.handles;
+        self.logger = controller_config.logger;
     }
 
     /// Builds a simulation controller from a configuration string.
@@ -254,79 +242,48 @@ impl SimulationController {
 
         let mut drone_factories = drone_factories.into_iter().cycle();
 
-        let mut drone_channels: HashMap<NodeId, DroneChannels> = HashMap::new();
-        let mut node_channels: HashMap<NodeId, NodeChannels> = HashMap::new();
+        let drones_channels: HashMap<NodeId, DroneChannels> = HashMap::new();
+        let node_channels: HashMap<NodeId, NodeChannels> = HashMap::new();
 
-        let mut handles = Vec::new();
+        let handles = Vec::new();
 
-        let mut topology = Topology::new();
+        let topology = Topology::new();
 
-        Self::init_channels(
-            &config,
-            &mut node_channels,
-            &mut drone_channels,
-            &mut topology,
-            &logger,
-        );
-
-        let mut drone_handles = Self::init_drones(
-            config.drone,
-            &mut drone_factories,
-            &mut drone_channels,
-            &mut node_channels,
-            shutdown_rx.clone(),
-            &mut topology,
-            &logger,
-        );
-        handles.append(&mut drone_handles);
-
-        let mut client_handles = Self::init_clients(
-            config.client,
-            &mut node_channels,
-            &mut drone_channels,
-            shutdown_rx.clone(),
-            &mut topology,
-            debug_mode,
-            &logger,
-        );
-        handles.append(&mut client_handles);
-
-        let mut server_handles = Self::init_servers(
-            config.server,
-            &mut node_channels,
-            &mut drone_channels,
-            shutdown_rx.clone(),
-            &mut topology,
-            file_folder,
-            media_folder,
-            debug_mode,
-            &logger,
-        );
-
-        handles.append(&mut server_handles);
-
-        SimulationController::new(
-            node_channels,
-            drone_channels,
-            (shutdown_sx, shutdown_rx),
+        let mut controller_config = ControllerConfig {
+            nodes_channels: node_channels,
+            drones_channels,
+            shutdown_channel: (shutdown_sx, shutdown_rx),
             handles,
             topology,
             logger,
-        )
+            debug_mode,
+        };
+
+        Self::init_channels(&config, &mut controller_config);
+
+        Self::init_drones(config.drone, &mut drone_factories, &mut controller_config);
+        Self::init_clients(config.client, &mut controller_config);
+
+        Self::init_servers(
+            config.server,
+            &mut controller_config,
+            file_folder,
+            media_folder,
+        );
+
+        SimulationController::new(controller_config)
     }
 
-    fn init_channels(
-        config: &wg_2024::config::Config,
-        node_channels: &mut HashMap<NodeId, NodeChannels>,
-        drone_channels: &mut HashMap<NodeId, DroneChannels>,
-        topology: &mut Topology,
-        logger: &Logger,
-    ) {
-        logger.log("Initializing the channels", LogLevel::INFO);
+    fn init_channels(config: &wg_2024::config::Config, controller_config: &mut ControllerConfig) {
+        controller_config
+            .logger
+            .log("Initializing the channels", LogLevel::INFO);
 
-        logger.log("Drone channels", LogLevel::DEBUG);
+        controller_config
+            .logger
+            .log("Drone channels", LogLevel::DEBUG);
         for drone_config in config.drone.iter() {
-            logger.log(
+            controller_config.logger.log(
                 format!("Creating drone channels for node {}", drone_config.id).as_str(),
                 LogLevel::DEBUG,
             );
@@ -335,7 +292,7 @@ impl SimulationController {
             let (send_event_channel, receive_event_channel) = unbounded::<DroneEvent>();
             let (send_packet_channel, receive_packet_channel) = unbounded::<Packet>();
 
-            drone_channels.insert(
+            controller_config.drones_channels.insert(
                 drone_config.id,
                 DroneChannels {
                     send_command_channel,
@@ -347,21 +304,31 @@ impl SimulationController {
                 },
             );
 
-            logger.log("Adding drone to topology", LogLevel::DEBUG);
+            controller_config
+                .logger
+                .log("Adding drone to topology", LogLevel::DEBUG);
             // Build the topology to represent the network in the frontend
-            topology.add_node(drone_config.id);
+            controller_config.topology.add_node(drone_config.id);
 
-            logger.log("Adding edges to topology", LogLevel::DEBUG);
+            controller_config
+                .logger
+                .log("Adding edges to topology", LogLevel::DEBUG);
             drone_config.connected_node_ids.iter().for_each(|node_id| {
-                topology.add_edge(drone_config.id, *node_id);
+                controller_config
+                    .topology
+                    .add_edge(drone_config.id, *node_id);
             });
 
-            logger.log("Setting node type in topology", LogLevel::DEBUG);
-            topology.set_node_type(drone_config.id, "drone".to_string());
+            controller_config
+                .logger
+                .log("Setting node type in topology", LogLevel::DEBUG);
+            controller_config
+                .topology
+                .set_node_type(drone_config.id, "drone".to_string());
         }
 
         for client_config in config.client.iter() {
-            logger.log(
+            controller_config.logger.log(
                 format!("Creating client channels for node {}", client_config.id).as_str(),
                 LogLevel::DEBUG,
             );
@@ -371,7 +338,7 @@ impl SimulationController {
                 unbounded::<SimControllerResponseWrapper>();
             let (send_packet_channel, receive_packet_channel) = unbounded::<Packet>();
 
-            node_channels.insert(
+            controller_config.nodes_channels.insert(
                 client_config.id,
                 NodeChannels {
                     send_packet_channel,
@@ -385,7 +352,7 @@ impl SimulationController {
         }
 
         for server_config in config.server.iter() {
-            logger.log(
+            controller_config.logger.log(
                 format!("Creating server channels for node {}", server_config.id).as_str(),
                 LogLevel::DEBUG,
             );
@@ -395,7 +362,7 @@ impl SimulationController {
                 unbounded::<SimControllerResponseWrapper>();
             let (send_packet_channel, receive_packet_channel) = unbounded::<Packet>();
 
-            node_channels.insert(
+            controller_config.nodes_channels.insert(
                 server_config.id,
                 NodeChannels {
                     send_packet_channel,
@@ -414,25 +381,22 @@ impl SimulationController {
     /// * `handles` - A mutable reference to the vector of thread handles
     /// * `drones_config` - A vector of drone configurations parsed from the configuration file
     /// * `drone_factories` - A mutable reference to the drone factory iterator which returns in a round robin fashion a drone factory for each drone acquired
-    /// * `drone_channels` - A mutable reference to the drone channels hashmap for communication
+    /// * `drones_channels` - A mutable reference to the drone channels hashmap for communication
     /// * `topology` - A mutable reference to the network topology. This is used to represent the network in the frontend
     /// # Returns
     /// A vector of thread handles for the drone instances
     fn init_drones(
         drones_config: Vec<DroneConfig>,
         drone_factories: &mut dyn Iterator<Item = DroneFactory>,
-        drone_channels: &mut HashMap<NodeId, DroneChannels>,
-        node_channels: &mut HashMap<NodeId, NodeChannels>,
-        shutdown_channel: Receiver<()>,
-        topology: &mut Topology,
-        logger: &Logger,
-    ) -> Vec<Option<JoinHandle<()>>> {
-        logger.log("Initializing drones", LogLevel::INFO);
+        controller_config: &mut ControllerConfig,
+    ) {
+        controller_config
+            .logger
+            .log("Initializing drones", LogLevel::INFO);
         // For each drone config pick the next factory in a circular fashion to generate a drone instance
-        let mut handles = Vec::new();
 
         for drone_config in drones_config.iter() {
-            logger.log(
+            controller_config.logger.log(
                 format!("Creating drone {}", drone_config.id).as_str(),
                 LogLevel::DEBUG,
             );
@@ -440,40 +404,45 @@ impl SimulationController {
             let factory = drone_factories.next().unwrap();
 
             // Neighbouring drones
-            let neighbor_channels: HashMap<NodeId, Sender<Packet>> = drone_channels
+            let neighbor_channels: HashMap<NodeId, Sender<Packet>> = controller_config
+                .drones_channels
                 .iter()
                 .filter(|(k, _)| drone_config.connected_node_ids.contains(k))
                 .map(|(k, v)| (*k, v.send_packet_channel.clone()))
                 .chain(
-                    node_channels
+                    controller_config
+                        .nodes_channels
                         .iter()
                         .filter(|(k, _)| drone_config.connected_node_ids.contains(k))
                         .map(|(k, v)| (*k, v.send_packet_channel.clone())),
                 )
                 .collect();
 
-            let drone_channels = drone_channels.get(&drone_config.id).unwrap();
+            let drones_channels = controller_config
+                .drones_channels
+                .get(&drone_config.id)
+                .unwrap();
             let drone_id = drone_config.id;
 
             let (drone, name) = factory(
                 drone_id,
-                drone_channels.send_event_channel.clone(),
-                drone_channels.receive_command_channel.clone(),
-                drone_channels.receive_packet_channel.clone(),
+                drones_channels.send_event_channel.clone(),
+                drones_channels.receive_command_channel.clone(),
+                drones_channels.receive_packet_channel.clone(),
                 neighbor_channels,
                 drone_config.pdr,
             );
 
-            logger.log(
+            controller_config.logger.log(
                 format!("Creating drone {} with {} factory", drone_id, name.clone()).as_str(),
                 LogLevel::DEBUG,
             );
 
-            topology.set_label(drone_config.id, name);
+            controller_config.topology.set_label(drone_config.id, name);
 
-            let shutdown_rx = shutdown_channel.clone();
+            let shutdown_rx = controller_config.shutdown_channel.1.clone();
 
-            handles.push(Some(thread::spawn(move || {
+            controller_config.handles.push(Some(thread::spawn(move || {
                 let mut drone = drone;
                 loop {
                     match shutdown_rx.recv_timeout(Self::THREAD_SLEEP) {
@@ -487,13 +456,11 @@ impl SimulationController {
                     }
                 }
             })));
-
-            logger.log(
+            controller_config.logger.log(
                 format!("Drone {} started successfully", drone_id).as_str(),
                 LogLevel::DEBUG,
             );
         }
-        handles
     }
 
     /// Initializes the client nodes in the network.
@@ -501,85 +468,94 @@ impl SimulationController {
     /// * `handles` - A mutable reference to the vector of thread handles
     /// * `clients_config` - A vector of client configurations parsed from the configuration file
     /// * `node_channels` - A mutable reference to the node channels hashmap for communication
-    /// * `drone_channels` - A mutable reference to the drone channels hashmap for communication
+    /// * `drones_channels` - A mutable reference to the drone channels hashmap for communication
     /// * `topology` - A mutable reference to the network topology. This is used to represent the network in the frontend
     /// # Returns
     /// A vector of thread handles for the client instances
-    fn init_clients(
-        clients_config: Vec<ClientConfig>,
-        node_channels: &mut HashMap<NodeId, NodeChannels>,
-        drone_channels: &mut HashMap<NodeId, DroneChannels>,
-        shutdown_channel: Receiver<()>,
-        topology: &mut Topology,
-        debug_mode: bool,
-        logger: &Logger,
-    ) -> Vec<Option<JoinHandle<()>>> {
-        logger.log("Initializing clients", LogLevel::INFO);
+    fn init_clients(clients_config: Vec<ClientConfig>, controller_config: &mut ControllerConfig) {
+        controller_config
+            .logger
+            .log("Initializing clients", LogLevel::INFO);
 
-        let mut handles = Vec::new();
         for client_config in clients_config {
-            logger.log(
+            controller_config.logger.log(
                 format!("Creating client {}", client_config.id).as_str(),
                 LogLevel::DEBUG,
             );
             // Register assigned neighbouring drones
-            let neighbour_drones = drone_channels
+            let neighbour_drones = controller_config
+                .drones_channels
                 .iter()
                 .filter(|(k, _)| client_config.connected_drone_ids.contains(k))
                 .map(|(k, v)| (*k, v.send_packet_channel.clone()))
                 .collect();
 
             // Register the client's node in the topology
-            topology.add_node(client_config.id);
+            controller_config.topology.add_node(client_config.id);
             if client_config.id % 2 == 0 {
-                logger.log(
+                controller_config.logger.log(
                     format!("Node {} is a Chat client", client_config.id).as_str(),
                     LogLevel::DEBUG,
                 );
-                topology.set_label(client_config.id, "Chat client".to_string());
-                topology.set_node_type(client_config.id, "chat_client".to_string());
+                controller_config
+                    .topology
+                    .set_label(client_config.id, "Chat client".to_string());
+                controller_config
+                    .topology
+                    .set_node_type(client_config.id, "chat_client".to_string());
             } else {
-                logger.log(
+                controller_config.logger.log(
                     format!("Node {} is a Browser client", client_config.id).as_str(),
                     LogLevel::DEBUG,
                 );
-                topology.set_label(client_config.id, "Browser client".to_string());
-                topology.set_node_type(client_config.id, "browser_client".to_string());
+                controller_config
+                    .topology
+                    .set_label(client_config.id, "Browser client".to_string());
+                controller_config
+                    .topology
+                    .set_node_type(client_config.id, "browser_client".to_string());
             }
 
             client_config
                 .connected_drone_ids
                 .iter()
                 .for_each(|node_id| {
-                    topology.add_edge(client_config.id, *node_id);
+                    controller_config
+                        .topology
+                        .add_edge(client_config.id, *node_id);
                 });
 
-            let receive_packet_channel = node_channels
+            let receive_packet_channel = controller_config
+                .nodes_channels
                 .get(&client_config.id)
                 .unwrap()
                 .receive_packet_channel
                 .clone();
-            let receive_command_channel = node_channels
+            let receive_command_channel = controller_config
+                .nodes_channels
                 .get_mut(&client_config.id)
                 .unwrap()
                 .receive_command_channel
                 .clone();
-            let send_response_channel = node_channels
+            let send_response_channel = controller_config
+                .nodes_channels
                 .get(&client_config.id)
                 .unwrap()
                 .send_response_channel
                 .clone();
 
-            logger.log(
+            controller_config.logger.log(
                 format!("Starting client {}", client_config.id).as_str(),
                 LogLevel::DEBUG,
             );
 
-            let shutdown_rx = shutdown_channel.clone();
+            let shutdown_rx = controller_config.shutdown_channel.1.clone();
 
             let client_id = client_config.id;
+
+            let debug_mode = controller_config.debug_mode;
             // Start off the client
-            handles.push(Some(thread::spawn(move || {
+            controller_config.handles.push(Some(thread::spawn(move || {
                 if client_id % 2 == 0 {
                     let mut client = ChatClient::new(
                         client_config.id,
@@ -623,12 +599,11 @@ impl SimulationController {
                     }
                 }
             })));
-            logger.log(
+            controller_config.logger.log(
                 format!("Client {} started successfully", client_id).as_str(),
                 LogLevel::DEBUG,
             );
         }
-        handles
     }
 
     /// Initializes the server nodes in the network.
@@ -636,100 +611,116 @@ impl SimulationController {
     /// * `handles` - A mutable reference to the vector of thread handles
     /// * `servers_config` - A vector of server configurations parsed from the configuration file
     /// * `node_channels` - A mutable reference to the node channels hashmap for communication
-    /// * `drone_channels` - A mutable reference to the drone channels hashmap for communication
+    /// * `drones_channels` - A mutable reference to the drone channels hashmap for communication
     /// * `topology` - A mutable reference to the network topology. This is used to represent the network in the frontend
     /// # Returns
     /// A vector of thread handles for the server instances
     ///
     fn init_servers(
         servers_config: Vec<ServerConfig>,
-        node_channels: &mut HashMap<NodeId, NodeChannels>,
-        drone_channels: &mut HashMap<NodeId, DroneChannels>,
-        shutdown_channel: Receiver<()>,
-        topology: &mut Topology,
+        controller_config: &mut ControllerConfig,
         file_folder: String,
         media_folder: String,
-        debug_mode: bool,
-        logger: &Logger,
-    ) -> Vec<Option<JoinHandle<()>>> {
-        logger.log("Initializing servers", LogLevel::INFO);
+    ) {
+        controller_config
+            .logger
+            .log("Initializing servers", LogLevel::INFO);
         // Generate the file and media folders
         let _ = std::fs::create_dir_all(FILE_FOLDER);
         let _ = std::fs::create_dir_all(MEDIA_FOLDER);
-        let mut handles = Vec::new();
+
         // For each drone config pick the next factory in a circular fashion to generate a drone instance
         for server_config in servers_config {
             let media_folder = media_folder.clone();
             let file_folder = file_folder.clone();
 
-            logger.log(
+            controller_config.logger.log(
                 format!("Creating server {}", server_config.id).as_str(),
                 LogLevel::DEBUG,
             );
 
-            let drones = drone_channels
+            let drones = controller_config
+                .drones_channels
                 .iter()
                 .filter(|(k, _)| server_config.connected_drone_ids.contains(k))
                 .map(|(k, v)| (*k, v.send_packet_channel.clone()))
                 .collect();
 
             // Register the server's node in the topology
-            topology.add_node(server_config.id);
+            controller_config.topology.add_node(server_config.id);
             server_config
                 .connected_drone_ids
                 .iter()
                 .for_each(|node_id| {
-                    topology.add_edge(server_config.id, *node_id);
+                    controller_config
+                        .topology
+                        .add_edge(server_config.id, *node_id);
                 });
 
             if server_config.id % 3 == 0 {
-                logger.log(
+                controller_config.logger.log(
                     format!("Node {} is a Chat server", server_config.id).as_str(),
                     LogLevel::DEBUG,
                 );
-                topology.set_label(server_config.id, "Chat server".to_string());
-                topology.set_node_type(server_config.id, "Chat".to_string());
+                controller_config
+                    .topology
+                    .set_label(server_config.id, "Chat server".to_string());
+                controller_config
+                    .topology
+                    .set_node_type(server_config.id, "Chat".to_string());
             } else if server_config.id % 3 == 1 {
-                logger.log(
+                controller_config.logger.log(
                     format!("Node {} is a Media server", server_config.id).as_str(),
                     LogLevel::DEBUG,
                 );
-                topology.set_label(server_config.id, "Media server".to_string());
-                topology.set_node_type(server_config.id, "Media".to_string());
+                controller_config
+                    .topology
+                    .set_label(server_config.id, "Media server".to_string());
+                controller_config
+                    .topology
+                    .set_node_type(server_config.id, "Media".to_string());
             } else {
-                logger.log(
+                controller_config.logger.log(
                     format!("Node {} is a Text server", server_config.id).as_str(),
                     LogLevel::DEBUG,
                 );
-                topology.set_label(server_config.id, "Text server".to_string());
-                topology.set_node_type(server_config.id, "Text".to_string());
+                controller_config
+                    .topology
+                    .set_label(server_config.id, "Text server".to_string());
+                controller_config
+                    .topology
+                    .set_node_type(server_config.id, "Text".to_string());
             }
 
-            let receive_packet_channel = node_channels
+            let receive_packet_channel = controller_config
+                .nodes_channels
                 .get(&server_config.id)
                 .unwrap()
                 .receive_packet_channel
                 .clone();
-            let receive_command_channel = node_channels
+            let receive_command_channel = controller_config
+                .nodes_channels
                 .get_mut(&server_config.id)
                 .unwrap()
                 .receive_command_channel
                 .clone();
-            let send_response_channel = node_channels
+            let send_response_channel = controller_config
+                .nodes_channels
                 .get(&server_config.id)
                 .unwrap()
                 .send_response_channel
                 .clone();
 
-            logger.log(
+            controller_config.logger.log(
                 format!("Starting server {}", server_config.id).as_str(),
                 LogLevel::DEBUG,
             );
 
-            let shutdown_rx = shutdown_channel.clone();
+            let shutdown_rx = controller_config.shutdown_channel.1.clone();
             let server_id = server_config.id;
+            let debug_mode = controller_config.debug_mode;
             // Start off the server
-            handles.push(Some(thread::spawn(move || {
+            controller_config.handles.push(Some(thread::spawn(move || {
                 if server_id % 3 == 0 {
                     let mut server = ChatServer::new(
                         server_config.id,
@@ -809,12 +800,11 @@ impl SimulationController {
                 }
             })));
 
-            logger.log(
+            controller_config.logger.log(
                 format!("Server {} started successfully", server_config.id).as_str(),
                 LogLevel::DEBUG,
             );
         }
-        handles
     }
 
     /// Handles direct packet routing between nodes.
@@ -948,22 +938,23 @@ mod tests {
     #[test]
     fn test_simulation_controller_new() {
         let nodes_channels = HashMap::new();
-        let drone_channels = HashMap::new();
+        let drones_channels = HashMap::new();
         let handles = Vec::new();
         let logger = Logger::new("Controller".to_string(), 0, false);
         let shutdoun_channel = unbounded::<()>();
-        let controller = SimulationController::new(
+        let controller = SimulationController::new(ControllerConfig {
             nodes_channels,
-            drone_channels,
-            shutdoun_channel,
+            drones_channels,
+            shutdown_channel: shutdoun_channel,
             handles,
-            Topology::new(),
+            topology: Topology::new(),
             logger,
-        );
+            debug_mode: false,
+        });
 
         assert!(controller.topology.nodes().is_empty());
         assert!(controller.nodes_channels.is_empty());
-        assert!(controller.drone_channels.is_empty());
+        assert!(controller.drones_channels.is_empty());
         assert!(controller.handles.is_empty());
     }
 
@@ -978,7 +969,7 @@ mod tests {
             false,
         );
 
-        assert_eq!(controller.drone_channels.len(), 5);
+        assert_eq!(controller.drones_channels.len(), 5);
         assert_eq!(controller.nodes_channels.len(), 2);
         assert_eq!(controller.handles.len(), 7);
         assert_eq!(controller.topology.nodes().len(), 7);
@@ -997,100 +988,95 @@ mod tests {
             d_r_o_n_e_drone,
         ];
         let mut drone_factories = drone_factories.into_iter().cycle();
-        let mut drone_channels = HashMap::new();
-        let mut node_channels = HashMap::new();
-        let mut topology = Topology::new();
+        let drones_channels = HashMap::new();
+        let nodes_channels = HashMap::new();
+        let topology = Topology::new();
         let logger = Logger::new("Controller".to_string(), 0, false);
 
         let config =
             config_parser::parse_config("src/tests/configurations/topology_20_drones.toml");
-        SimulationController::init_channels(
-            &config,
-            &mut node_channels,
-            &mut drone_channels,
-            &mut topology,
-            &logger,
-        );
-        let shutdown_channel = unbounded::<()>();
+
+        let mut controller_config = ControllerConfig {
+            nodes_channels,
+            drones_channels,
+            shutdown_channel: (unbounded::<()>()),
+            handles: Vec::new(),
+            topology,
+            logger,
+            debug_mode: false,
+        };
+
+        SimulationController::init_channels(&config, &mut controller_config);
         let drones_config = config.drone;
-        let handles = SimulationController::init_drones(
+
+        SimulationController::init_drones(
             drones_config,
             &mut drone_factories,
-            &mut drone_channels,
-            &mut node_channels,
-            shutdown_channel.1,
-            &mut topology,
-            &logger,
+            &mut controller_config,
         );
 
-        assert_eq!(drone_channels.len(), 20);
+        assert_eq!(controller_config.drones_channels.len(), 20);
 
-        assert_eq!(handles.len(), 20);
+        assert_eq!(controller_config.handles.len(), 20);
     }
 
     #[test]
     fn test_init_clients() {
         let config = config_parser::parse_config("src/tests/configurations/topology_1.toml");
-        let mut node_channels = HashMap::new();
-        let mut drone_channels = HashMap::new();
-        let mut topology = Topology::new();
+        let nodes_channels = HashMap::new();
+        let drones_channels = HashMap::new();
+        let topology = Topology::new();
         let logger = Logger::new("Controller".to_string(), 0, false);
         let shutdown_channel = unbounded::<()>();
-        SimulationController::init_channels(
-            &config,
-            &mut node_channels,
-            &mut drone_channels,
-            &mut topology,
-            &logger,
-        );
+
+        let mut controller_config = ControllerConfig {
+            nodes_channels,
+            drones_channels,
+            shutdown_channel,
+            handles: Vec::new(),
+            topology,
+            logger,
+            debug_mode: false,
+        };
+        SimulationController::init_channels(&config, &mut controller_config);
 
         let clients_config = config.client;
-        let handles = SimulationController::init_clients(
-            clients_config,
-            &mut node_channels,
-            &mut drone_channels,
-            shutdown_channel.1,
-            &mut topology,
-            true,
-            &logger,
-        );
+        SimulationController::init_clients(clients_config, &mut controller_config);
 
-        assert_eq!(node_channels.len(), 2);
-        assert_eq!(handles.len(), 1);
+        assert_eq!(controller_config.nodes_channels.len(), 2);
+        assert_eq!(controller_config.handles.len(), 1);
     }
 
     #[test]
     fn test_init_servers() {
         let config = config_parser::parse_config("src/tests/configurations/topology_1.toml");
-        let mut node_channels = HashMap::new();
-        let mut drone_channels = HashMap::new();
-        let mut topology = Topology::new();
+        let nodes_channels = HashMap::new();
+        let drones_channels = HashMap::new();
+        let topology = Topology::new();
         let logger = Logger::new("Controller".to_string(), 0, false);
         let shutdown_channel = unbounded::<()>();
 
-        SimulationController::init_channels(
-            &config,
-            &mut node_channels,
-            &mut drone_channels,
-            &mut topology,
-            &logger,
-        );
-        let servers_config = config.server;
+        let mut controller_config = ControllerConfig {
+            nodes_channels,
+            drones_channels,
+            shutdown_channel,
+            handles: Vec::new(),
+            topology,
+            logger,
+            debug_mode: false,
+        };
 
-        let server_handles = SimulationController::init_servers(
+        SimulationController::init_channels(&config, &mut controller_config);
+        let servers_config = config.server;
+        SimulationController::init_servers(
             servers_config,
-            &mut node_channels,
-            &mut drone_channels,
-            shutdown_channel.1,
-            &mut topology,
+            &mut controller_config,
             MEDIA_FOLDER.to_string(),
             FILE_FOLDER.to_string(),
-            true,
-            &logger,
         );
 
-        assert_eq!(node_channels.len(), 2);
-        assert_eq!(server_handles.len(), 1);
+        assert_eq!(controller_config.nodes_channels.len(), 2);
+        assert_eq!(controller_config.handles.len(), 1);
     }
 
     #[test]
@@ -1545,7 +1531,7 @@ mod tests {
 
         let initial_handles = controller.handles.len();
         let initial_nodes = controller.nodes_channels.len();
-        let initial_drones = controller.drone_channels.len();
+        let initial_drones = controller.drones_channels.len();
 
         controller.rebuild(
             "src/tests/configurations/topology_1.toml",
@@ -1559,7 +1545,7 @@ mod tests {
 
         assert_eq!(initial_nodes, controller.nodes_channels.len());
         println!("Nodes {}\n", controller.handles.len());
-        assert_eq!(initial_drones, controller.drone_channels.len());
+        assert_eq!(initial_drones, controller.drones_channels.len());
         println!("Drones {}\n", controller.handles.len());
 
         for handle in controller.handles.iter() {
@@ -1727,11 +1713,11 @@ mod tests {
         let server_11_id = 11;
 
         // Check drone channels exist
-        assert!(controller.drone_channels.contains_key(&drone_1_id));
-        assert!(controller.drone_channels.contains_key(&drone_2_id));
-        assert!(controller.drone_channels.contains_key(&drone_3_id));
-        assert!(controller.drone_channels.contains_key(&drone_4_id));
-        assert!(controller.drone_channels.contains_key(&drone_5_id));
+        assert!(controller.drones_channels.contains_key(&drone_1_id));
+        assert!(controller.drones_channels.contains_key(&drone_2_id));
+        assert!(controller.drones_channels.contains_key(&drone_3_id));
+        assert!(controller.drones_channels.contains_key(&drone_4_id));
+        assert!(controller.drones_channels.contains_key(&drone_5_id));
 
         // Check node channels exist
         assert!(controller.nodes_channels.contains_key(&client_7_id));
@@ -1742,7 +1728,7 @@ mod tests {
         assert!(node_channel.send_packet_channel.is_empty());
         assert!(node_channel.receive_packet_channel.is_empty());
 
-        let drone_channel = controller.drone_channels.get(&drone_1_id).unwrap();
+        let drone_channel = controller.drones_channels.get(&drone_1_id).unwrap();
         assert!(drone_channel.send_packet_channel.is_empty());
         assert!(drone_channel.receive_packet_channel.is_empty());
     }
