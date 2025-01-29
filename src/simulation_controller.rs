@@ -4,7 +4,7 @@ use crate::drone_functions::{
     rust_busters_drone, rust_do_it_drone, rustastic_drone, rusteze_drone, rusty_drone,
 };
 use crate::runnable::Runnable;
-use crossbeam_channel::{unbounded, Receiver, RecvTimeoutError, Sender};
+use crossbeam_channel::{unbounded, Receiver, Sender};
 use rand::Error;
 use rustafarian_chat_server::chat_server::ChatServer;
 use rustafarian_client::browser_client::BrowserClient;
@@ -65,7 +65,6 @@ type DroneFactory = fn(
 pub struct ControllerConfig {
     pub nodes_channels: HashMap<NodeId, NodeChannels>,
     pub drones_channels: HashMap<NodeId, DroneChannels>,
-    pub shutdown_channel: (Sender<()>, Receiver<()>),
     pub handles: Vec<Option<JoinHandle<()>>>,
     pub topology: Topology,
     pub logger: Logger,
@@ -116,21 +115,18 @@ pub struct SimulationController {
     pub topology: Topology,
     pub nodes_channels: HashMap<NodeId, NodeChannels>,
     pub drones_channels: HashMap<NodeId, DroneChannels>,
-    shutdown_channel: (Sender<()>, Receiver<()>),
     pub handles: Vec<Option<JoinHandle<()>>>,
     pub logger: Logger,
 }
 
 impl SimulationController {
     const SHUTDOWN_TIMEOUT: Duration = Duration::from_millis(200);
-    const THREAD_SLEEP: Duration = Duration::from_millis(100);
 
     pub fn new(config: ControllerConfig) -> Self {
         SimulationController {
             topology: config.topology,
             nodes_channels: config.nodes_channels,
             drones_channels: config.drones_channels,
-            shutdown_channel: config.shutdown_channel,
             handles: config.handles,
             logger: config.logger,
         }
@@ -139,14 +135,6 @@ impl SimulationController {
     pub fn destroy(&mut self) {
         self.logger
             .log("Destroying simulation controller...", LogLevel::INFO);
-
-        // Send shutdown signal
-        if let Err(e) = self.shutdown_channel.0.send(()) {
-            self.logger.log(
-                &format!("Failed to send shutdown signal: {}", e),
-                LogLevel::ERROR,
-            );
-        }
 
         // Join threads with timeout
         for handle in self.handles.iter_mut() {
@@ -192,7 +180,6 @@ impl SimulationController {
         let mut controller_config = ControllerConfig {
             nodes_channels: HashMap::new(),
             drones_channels: HashMap::new(),
-            shutdown_channel: self.shutdown_channel.clone(),
             handles: Vec::new(),
             topology: Topology::new(),
             logger,
@@ -235,8 +222,6 @@ impl SimulationController {
 
         logger.log("Building the simulation controller", LogLevel::INFO);
 
-        let (shutdown_sx, shutdown_rx) = unbounded::<()>();
-
         // Create a factory function for the implementations
         let drone_factories = SimulationController::get_active_drone_factories();
 
@@ -252,7 +237,6 @@ impl SimulationController {
         let mut controller_config = ControllerConfig {
             nodes_channels: node_channels,
             drones_channels,
-            shutdown_channel: (shutdown_sx, shutdown_rx),
             handles,
             topology,
             logger,
@@ -440,21 +424,10 @@ impl SimulationController {
 
             controller_config.topology.set_label(drone_config.id, name);
 
-            let shutdown_rx = controller_config.shutdown_channel.1.clone();
-
             controller_config.handles.push(Some(thread::spawn(move || {
                 let mut drone = drone;
-                loop {
-                    match shutdown_rx.recv_timeout(Self::THREAD_SLEEP) {
-                        Ok(_) | Err(RecvTimeoutError::Disconnected) => {
-                            println!("Drone {} shutting down", drone_id);
-                            break;
-                        }
-                        Err(RecvTimeoutError::Timeout) => {
-                            drone.run();
-                        }
-                    }
-                }
+
+                drone.run();
             })));
             controller_config.logger.log(
                 format!("Drone {} started successfully", drone_id).as_str(),
@@ -549,8 +522,6 @@ impl SimulationController {
                 LogLevel::DEBUG,
             );
 
-            let shutdown_rx = controller_config.shutdown_channel.1.clone();
-
             let client_id = client_config.id;
 
             let debug_mode = controller_config.debug_mode;
@@ -565,17 +536,8 @@ impl SimulationController {
                         send_response_channel,
                         debug_mode,
                     );
-                    loop {
-                        match shutdown_rx.recv_timeout(Self::THREAD_SLEEP) {
-                            Ok(_) | Err(RecvTimeoutError::Disconnected) => {
-                                println!("Chat client {} shutting down", client_id);
-                                break;
-                            }
-                            Err(RecvTimeoutError::Timeout) => {
-                                client.run(TICKS);
-                            }
-                        }
-                    }
+
+                    client.run(TICKS);
                 } else {
                     let mut client = BrowserClient::new(
                         client_config.id,
@@ -585,18 +547,8 @@ impl SimulationController {
                         send_response_channel,
                         debug_mode,
                     );
-                    loop {
-                        match shutdown_rx.recv_timeout(Self::THREAD_SLEEP) {
-                            Ok(_) | Err(RecvTimeoutError::Disconnected) => {
-                                println!("Browser client {} shutting down", client_id);
-                                break;
-                            }
-                            Err(RecvTimeoutError::Timeout) => {
-                                client.run(TICKS);
-                                thread::sleep(Self::THREAD_SLEEP);
-                            }
-                        }
-                    }
+
+                    client.run(TICKS);
                 }
             })));
             controller_config.logger.log(
@@ -716,7 +668,6 @@ impl SimulationController {
                 LogLevel::DEBUG,
             );
 
-            let shutdown_rx = controller_config.shutdown_channel.1.clone();
             let server_id = server_config.id;
             let debug_mode = controller_config.debug_mode;
             // Start off the server
@@ -730,17 +681,8 @@ impl SimulationController {
                         drones,
                         debug_mode,
                     );
-                    loop {
-                        match shutdown_rx.recv_timeout(Self::THREAD_SLEEP) {
-                            Ok(_) | Err(RecvTimeoutError::Disconnected) => {
-                                println!("Chat server {} shutting down", server_id);
-                                break;
-                            }
-                            Err(RecvTimeoutError::Timeout) => {
-                                server.run();
-                            }
-                        }
-                    }
+
+                    server.run();
                 } else if server_id % 3 == 1 {
                     let mut server = ContentServer::new(
                         server_config.id,
@@ -758,17 +700,8 @@ impl SimulationController {
                         server_config.id,
                         ServerType::Media
                     );
-                    loop {
-                        match shutdown_rx.recv_timeout(Self::THREAD_SLEEP) {
-                            Ok(_) | Err(RecvTimeoutError::Disconnected) => {
-                                println!("Media server {} shutting down", server_id);
-                                break;
-                            }
-                            Err(RecvTimeoutError::Timeout) => {
-                                server.run();
-                            }
-                        }
-                    }
+
+                    server.run();
                 } else {
                     let mut server = ContentServer::new(
                         server_config.id,
@@ -786,17 +719,8 @@ impl SimulationController {
                         server_config.id,
                         ServerType::Text
                     );
-                    loop {
-                        match shutdown_rx.recv_timeout(Self::THREAD_SLEEP) {
-                            Ok(_) | Err(RecvTimeoutError::Disconnected) => {
-                                println!("Text server {} shutting down", server_id);
-                                break;
-                            }
-                            Err(RecvTimeoutError::Timeout) => {
-                                server.run();
-                            }
-                        }
-                    }
+
+                    server.run();
                 }
             })));
 
@@ -941,11 +865,9 @@ mod tests {
         let drones_channels = HashMap::new();
         let handles = Vec::new();
         let logger = Logger::new("Controller".to_string(), 0, false);
-        let shutdoun_channel = unbounded::<()>();
         let controller = SimulationController::new(ControllerConfig {
             nodes_channels,
             drones_channels,
-            shutdown_channel: shutdoun_channel,
             handles,
             topology: Topology::new(),
             logger,
@@ -999,7 +921,6 @@ mod tests {
         let mut controller_config = ControllerConfig {
             nodes_channels,
             drones_channels,
-            shutdown_channel: (unbounded::<()>()),
             handles: Vec::new(),
             topology,
             logger,
@@ -1027,12 +948,10 @@ mod tests {
         let drones_channels = HashMap::new();
         let topology = Topology::new();
         let logger = Logger::new("Controller".to_string(), 0, false);
-        let shutdown_channel = unbounded::<()>();
 
         let mut controller_config = ControllerConfig {
             nodes_channels,
             drones_channels,
-            shutdown_channel,
             handles: Vec::new(),
             topology,
             logger,
@@ -1054,12 +973,10 @@ mod tests {
         let drones_channels = HashMap::new();
         let topology = Topology::new();
         let logger = Logger::new("Controller".to_string(), 0, false);
-        let shutdown_channel = unbounded::<()>();
 
         let mut controller_config = ControllerConfig {
             nodes_channels,
             drones_channels,
-            shutdown_channel,
             handles: Vec::new(),
             topology,
             logger,

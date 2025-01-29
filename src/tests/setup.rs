@@ -360,7 +360,6 @@ pub fn setup() -> (
     let controller_config = ControllerConfig {
         nodes_channels,
         drones_channels,
-        shutdown_channel,
         handles: vec![],
         topology: client.topology().clone(),
         logger: Logger::new("SimulationController".to_string(), 0, true),
