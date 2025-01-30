@@ -136,6 +136,9 @@ impl SimulationController {
         }
     }
 
+    /// Destroys the simulation controller by sending to clients and servers a SimulationController:Shutdown message to gracefully finish their internal process. Then it waits for a timeout for the joining of all threads and clears the topology and channels.
+    /// # Arguments
+    /// * `self` - A mutable reference to the simulation controller
     pub fn destroy(&mut self) {
         self.logger
             .log("Destroying simulation controller...", LogLevel::INFO);
@@ -173,6 +176,13 @@ impl SimulationController {
             .log("Simulation controller destroyed", LogLevel::INFO);
     }
 
+    /// Rebuilds the simulation controller by destroying the current instance and creating a new one with the provided configuration.
+    /// # Arguments
+    /// * `self` - A mutable reference to the simulation controller
+    /// * `config` - A string containing the path to the configuration for the simulation
+    /// * `file_folder` - A string containing the path to the folder where text files are stored
+    /// * `media_folder` - A string containing the path to the folder where media files are stored
+    /// * `debug_mode` - A boolean indicating whether the debug mode is enabled
     pub fn rebuild(
         &mut self,
         config: &str,
@@ -274,6 +284,10 @@ impl SimulationController {
         SimulationController::new(controller_config)
     }
 
+    /// Initializes the channels for communication between nodes in the network. This includes drones, clients, and servers. Channels are then stored in the controller configuration and redistributed among the nodes registered as neighbours in the network topology.
+    /// # Arguments
+    /// * `config` - A reference to the parsed configuration file
+    /// * `controller_config` - A mutable reference to the controller configuration
     fn init_channels(config: &wg_2024::config::Config, controller_config: &mut ControllerConfig) {
         controller_config
             .logger
@@ -376,7 +390,7 @@ impl SimulationController {
         }
     }
 
-    /// Initializes the drone nodes in the network.
+    /// Initializes the drone nodes in the network. For each drone configuration, a drone instance is created using a factory function. The drone instance is then started in a separate thread. The drone is registered in the network topology and assigned neighbouring drones and nodes sender channels for communication. It is also assigned a channel for communication with the controller. 
     /// # Arguments
     /// * `handles` - A mutable reference to the vector of thread handles
     /// * `drones_config` - A vector of drone configurations parsed from the configuration file
@@ -463,7 +477,7 @@ impl SimulationController {
         }
     }
 
-    /// Initializes the client nodes in the network.
+    /// Initializes the client nodes in the network. For each client configuration, a client instance is created based on the client type (chat or browser). The client instance is then started in a separate thread. The client is registered in the network topology and assigned neighbouring drones sender channels for communication. It is also assigned a channel for communication with the controller.
     /// # Arguments
     /// * `handles` - A mutable reference to the vector of thread handles
     /// * `clients_config` - A vector of client configurations parsed from the configuration file
@@ -606,7 +620,7 @@ impl SimulationController {
         }
     }
 
-    /// Initializes the server nodes in the network.
+    /// Initializes the server nodes in the network. For each server configuration, a server instance is created based on the server type (chat, media, or text). The server instance is then started in a separate thread. The server is registered in the network topology and assigned neighbouring drones sender channels for communication. It is also assigned a channel for communication with the controller.
     /// # Arguments
     /// * `handles` - A mutable reference to the vector of thread handles
     /// * `servers_config` - A vector of server configurations parsed from the configuration file
@@ -807,7 +821,7 @@ impl SimulationController {
         }
     }
 
-    /// Handles direct packet routing between nodes.
+    /// Handles direct packet routing between nodes. The packet is sent to the destination node using the corresponding channel. The event of the packet being forwarded is then returned.
     /// # Arguments
     /// * `packet` - A packet to be routed between nodes
     /// # Returns
@@ -890,6 +904,7 @@ impl SimulationController {
         }
     }
 
+    /// Returns a vector of active drone factories.
     fn get_active_drone_factories() -> Vec<DroneFactory> {
         vec![
             cpp_enjoyers_drone,
