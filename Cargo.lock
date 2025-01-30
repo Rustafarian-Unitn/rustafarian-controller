@@ -99,7 +99,7 @@ dependencies = [
  "crossbeam-channel",
  "log",
  "pretty_env_logger",
- "rand",
+ "rand 0.8.5",
  "wg_2024",
 ]
 
@@ -170,9 +170,9 @@ dependencies = [
 
 [[package]]
 name = "bumpalo"
-version = "3.16.0"
+version = "3.17.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "79296716171880943b8470b5f8d03aa55eb2e645a4874bdbb28adb49162e012c"
+checksum = "1628fb46dfa0b37568d12e5edd512553eccf6a22a78e8bde00bb4aed84d5bdbf"
 
 [[package]]
 name = "bytemuck"
@@ -356,7 +356,7 @@ dependencies = [
  "colored 2.2.0",
  "crossbeam",
  "log",
- "rand",
+ "rand 0.8.5",
  "wg_2024",
 ]
 
@@ -390,11 +390,11 @@ dependencies = [
 [[package]]
 name = "dr_ones"
 version = "0.1.0"
-source = "git+https://github.com/Dr-Ones/drone#fb1a0247b7571373c415f9f6f786ff2b478a5670"
+source = "git+https://github.com/Dr-Ones/drone#f788fce7f62e466b8faffc04f4ab17121b81ebb5"
 dependencies = [
  "crossbeam-channel",
  "network_node",
- "rand",
+ "rand 0.8.5",
  "wg_2024",
 ]
 
@@ -637,7 +637,7 @@ dependencies = [
  "crossbeam-channel",
  "flexi_logger",
  "log",
- "rand",
+ "rand 0.9.0",
  "serde",
  "toml",
  "wg_2024",
@@ -651,7 +651,19 @@ checksum = "c4567c8db10ae91089c99af84c68c38da3ec2f087c3f82960bcdbf3656b6f4d7"
 dependencies = [
  "cfg-if",
  "libc",
- "wasi",
+ "wasi 0.11.0+wasi-snapshot-preview1",
+]
+
+[[package]]
+name = "getrandom"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "43a49c392881ce6d5c3b8cb70f98717b7c07aabbdff06687b9030dbfbe2725f8"
+dependencies = [
+ "cfg-if",
+ "libc",
+ "wasi 0.13.3+wasi-0.2.2",
+ "windows-targets",
 ]
 
 [[package]]
@@ -779,9 +791,9 @@ dependencies = [
 
 [[package]]
 name = "httparse"
-version = "1.9.5"
+version = "1.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7d71d3574edd2771538b901e6549113b4006ece66150fb69c0fb6d9a2adae946"
+checksum = "f2d708df4e7140240a16cd6ab0ab65c972d7433ab77819ea693fde9c43811e2a"
 
 [[package]]
 name = "httpdate"
@@ -1100,7 +1112,7 @@ version = "0.1.0"
 source = "git+https://github.com/Lockheed-Rustin/drone.git#98152e84d850d66642ff4070356fb05c372ff540"
 dependencies = [
  "crossbeam-channel",
- "rand",
+ "rand 0.8.5",
  "wg_2024",
 ]
 
@@ -1160,7 +1172,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2886843bf800fba2e3377cff24abf6379b4c4d5c6681eaf9ea5b0d15090450bd"
 dependencies = [
  "libc",
- "wasi",
+ "wasi 0.11.0+wasi-snapshot-preview1",
  "windows-sys 0.52.0",
 ]
 
@@ -1185,11 +1197,11 @@ dependencies = [
 [[package]]
 name = "network_node"
 version = "0.1.0"
-source = "git+https://github.com/Dr-Ones/common.git#aced0ae9c1db2977cf0d4e3535963411557da4d4"
+source = "git+https://github.com/Dr-Ones/common.git#cb76dfe6a8e9e5447b3a5064f199836b1344bcec"
 dependencies = [
  "crossbeam-channel",
  "once_cell",
- "rand",
+ "rand 0.8.5",
  "serde",
  "wg_2024",
 ]
@@ -1307,7 +1319,7 @@ version = "0.2.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "77957b295656769bb8ad2b6a6b09d897d94f05c41b069aede1fcdaa675eaea04"
 dependencies = [
- "zerocopy",
+ "zerocopy 0.7.35",
 ]
 
 [[package]]
@@ -1360,8 +1372,19 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "34af8d1a0e25924bc5b7c43c079c942339d8f0a8b57c39049bef581b46327404"
 dependencies = [
  "libc",
- "rand_chacha",
- "rand_core",
+ "rand_chacha 0.3.1",
+ "rand_core 0.6.4",
+]
+
+[[package]]
+name = "rand"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3779b94aeb87e8bd4e834cee3650289ee9e0d5677f976ecdb6d219e5f4f6cd94"
+dependencies = [
+ "rand_chacha 0.9.0",
+ "rand_core 0.9.0",
+ "zerocopy 0.8.14",
 ]
 
 [[package]]
@@ -1371,7 +1394,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e6c10a63a0fa32252be49d21e7709d4d4baf8d231c2dbce1eaa8141b9b127d88"
 dependencies = [
  "ppv-lite86",
- "rand_core",
+ "rand_core 0.6.4",
+]
+
+[[package]]
+name = "rand_chacha"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d3022b5f1df60f26e1ffddd6c66e8aa15de382ae63b3a0c1bfc0e4d3e3f325cb"
+dependencies = [
+ "ppv-lite86",
+ "rand_core 0.9.0",
 ]
 
 [[package]]
@@ -1380,7 +1413,17 @@ version = "0.6.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ec0be4795e2f6a28069bec0b5ff3e2ac9bafc99e6a9a7dc3547996c5c816922c"
 dependencies = [
- "getrandom",
+ "getrandom 0.2.15",
+]
+
+[[package]]
+name = "rand_core"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b08f3c9802962f7e1b25113931d94f43ed9725bebc59db9d0c3e9a23b67e15ff"
+dependencies = [
+ "getrandom 0.3.1",
+ "zerocopy 0.8.14",
 ]
 
 [[package]]
@@ -1449,7 +1492,7 @@ dependencies = [
  "crossbeam-channel",
  "env_logger 0.11.6",
  "log",
- "rand",
+ "rand 0.8.5",
  "toml",
  "wg_2024",
 ]
@@ -1457,12 +1500,12 @@ dependencies = [
 [[package]]
 name = "rustafarian-chat-server"
 version = "0.1.0"
-source = "git+https://github.com/Rustafarian-Unitn/rustafarian-chat-server.git#b1e279ccd12d49118e94b3ae1e1bb73ce1811907"
+source = "git+https://github.com/Rustafarian-Unitn/rustafarian-chat-server.git?branch=feature%2Fshutdown#5a5b929cb463f83c42a480265340fda0f0e29bf4"
 dependencies = [
  "chrono",
  "crossbeam",
  "crossbeam-channel",
- "rand",
+ "rand 0.8.5",
  "rustafarian-shared",
  "wg_2024",
 ]
@@ -1470,11 +1513,11 @@ dependencies = [
 [[package]]
 name = "rustafarian-client"
 version = "0.3.0"
-source = "git+https://github.com/Rustafarian-Unitn/rustafarian-client#c83d1aee34faca274ea0386cd05f23bb14110eb3"
+source = "git+https://github.com/Rustafarian-Unitn/rustafarian-client#a5bd2bb8701b124061caa5ff31fb56eec1a4379b"
 dependencies = [
  "crossbeam",
  "crossbeam-channel",
- "rand",
+ "rand 0.8.5",
  "rustafarian-shared",
  "serde",
  "serde_json",
@@ -1484,7 +1527,7 @@ dependencies = [
 [[package]]
 name = "rustafarian-content-server"
 version = "0.1.0"
-source = "git+https://github.com/Rustafarian-Unitn/rustafarian-content_server.git#af9aed37dff7fbff6825e388875c73139e105c92"
+source = "git+https://github.com/Rustafarian-Unitn/rustafarian-content_server.git?branch=feature%2Fshutdown#92d81865eaa2103356770901090e8c6ea0491c47"
 dependencies = [
  "chrono",
  "crossbeam",
@@ -1492,7 +1535,7 @@ dependencies = [
  "env_logger 0.10.2",
  "image",
  "log",
- "rand",
+ "rand 0.8.5",
  "rustafarian-project",
  "rustafarian-shared",
  "serde",
@@ -1512,7 +1555,7 @@ dependencies = [
  "getdroned",
  "image",
  "lockheedrustin-drone",
- "rand",
+ "rand 0.8.5",
  "rust_do_it",
  "rustafarian-chat-server",
  "rustafarian-client",
@@ -1535,7 +1578,7 @@ source = "git+https://github.com/Rustafarian-Unitn/rustafarian-drone?branch=deve
 dependencies = [
  "crossbeam",
  "crossbeam-channel",
- "rand",
+ "rand 0.8.5",
  "toml",
  "wg_2024",
 ]
@@ -1543,11 +1586,11 @@ dependencies = [
 [[package]]
 name = "rustafarian-drone"
 version = "1.0.0"
-source = "git+https://github.com/Rustafarian-Unitn/rustafarian-drone.git#b45a016b8576d9c497221b760f049869e2893438"
+source = "git+https://github.com/Rustafarian-Unitn/rustafarian-drone.git#5b4df145a4300b0190b6b3336ea4b9070132be6f"
 dependencies = [
  "crossbeam",
  "crossbeam-channel",
- "rand",
+ "rand 0.8.5",
  "toml",
  "wg_2024",
 ]
@@ -1559,7 +1602,7 @@ source = "git+https://github.com/Rustafarian-Unitn/rustafarian-project/?branch=p
 dependencies = [
  "crossbeam",
  "crossbeam-channel",
- "rand",
+ "rand 0.8.5",
  "rustafarian-drone 0.1.0",
  "toml",
  "wg_2024",
@@ -1568,10 +1611,10 @@ dependencies = [
 [[package]]
 name = "rustafarian-shared"
 version = "0.1.1"
-source = "git+https://github.com/Rustafarian-Unitn/rustafarian-shared.git#169545f2c87699357ff5a4b9b795e46aa68f8561"
+source = "git+https://github.com/Rustafarian-Unitn/rustafarian-shared.git?branch=feat%2Fshutdown#66e8e91c9d2cef94f188e56bd6a591f1c3e573aa"
 dependencies = [
  "crossbeam-channel",
- "rand",
+ "rand 0.8.5",
  "serde",
  "serde_json",
  "wg_2024",
@@ -1585,7 +1628,7 @@ dependencies = [
  "colored 3.0.0",
  "crossbeam-channel",
  "log",
- "rand",
+ "rand 0.8.5",
  "toml",
  "wg_2024",
 ]
@@ -1593,12 +1636,12 @@ dependencies = [
 [[package]]
 name = "rustbusters-drone"
 version = "1.0.0"
-source = "git+https://github.com/Rustbusters/drone.git#f798c5243fb7703ce0cc384773b99f8f2ac8f268"
+source = "git+https://github.com/Rustbusters/drone.git#98b30e3cc16b6211687a8caf2c24ee7d6f5ef73a"
 dependencies = [
  "crossbeam-channel",
  "lazy_static",
  "log",
- "rand",
+ "rand 0.8.5",
  "wg_2024",
 ]
 
@@ -1620,11 +1663,11 @@ dependencies = [
 [[package]]
 name = "rusteze_drone"
 version = "0.1.0"
-source = "git+https://github.com/Rusteze-AP/drone.git?branch=main#934c80dfefc0d41d5b6b406bbbb0382e43b9843e"
+source = "git+https://github.com/Rusteze-AP/drone.git?branch=main#0ceecaa4a2e37a05aed406bfcca41f9996a6e59a"
 dependencies = [
  "crossbeam",
  "logger",
- "rand",
+ "rand 0.8.5",
  "rusteze-tests",
  "wg_internal",
 ]
@@ -1641,15 +1684,15 @@ version = "0.0.0"
 source = "git+https://github.com/rusty-drone-2024/rusty-drone.git#ba26d2aefc398db9cc8df9e2d892f19edb7cc026"
 dependencies = [
  "crossbeam-channel",
- "rand",
+ "rand 0.9.0",
  "wg_2024",
 ]
 
 [[package]]
 name = "ryu"
-version = "1.0.18"
+version = "1.0.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f3cb5ba0dc43242ce17de99c180e96db90b235b8a9fdc9543c96d2209116bd9f"
+checksum = "6ea1a2d0a644769cc99faa24c3ad26b379b786fe7c36fd3c546254801650e6dd"
 
 [[package]]
 name = "scoped-tls"
@@ -1685,9 +1728,9 @@ dependencies = [
 
 [[package]]
 name = "serde_json"
-version = "1.0.137"
+version = "1.0.138"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "930cfb6e6abf99298aaad7d29abbef7a9999a9a8806a40088f55f0dcec03146b"
+checksum = "d434192e7da787e94a6ea7e9670b26a036d0ca41e0b7efb2676dd32bae872949"
 dependencies = [
  "itoa",
  "memchr",
@@ -2009,7 +2052,7 @@ dependencies = [
  "http 1.2.0",
  "httparse",
  "log",
- "rand",
+ "rand 0.8.5",
  "sha1",
  "thiserror 1.0.69",
  "url",
@@ -2030,9 +2073,9 @@ checksum = "75b844d17643ee918803943289730bec8aac480150456169e647ed0b576ba539"
 
 [[package]]
 name = "unicode-ident"
-version = "1.0.15"
+version = "1.0.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "11cd88e12b17c6494200a9c1b683a04fcac9573ed74cd1b62aeb2727c5592243"
+checksum = "a210d160f08b701c8721ba1c726c11662f877ea6b7094007e1ca9a1041945034"
 
 [[package]]
 name = "url"
@@ -2118,6 +2161,15 @@ name = "wasi"
 version = "0.11.0+wasi-snapshot-preview1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9c8d87e72b64a3b4db28d11ce29237c246188f4f51057d65a7eab63b7987e423"
+
+[[package]]
+name = "wasi"
+version = "0.13.3+wasi-0.2.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "26816d2e1a4a36a2940b96c5296ce403917633dff8f3440e9b236ed6f6bacad2"
+dependencies = [
+ "wit-bindgen-rt",
+]
 
 [[package]]
 name = "wasm-bindgen"
@@ -2383,11 +2435,20 @@ checksum = "589f6da84c646204747d1270a2a5661ea66ed1cced2631d546fdfb155959f9ec"
 
 [[package]]
 name = "winnow"
-version = "0.6.24"
+version = "0.6.25"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c8d71a593cc5c42ad7876e2c1fda56f314f3754c084128833e64f1345ff8a03a"
+checksum = "ad699df48212c6cc6eb4435f35500ac6fd3b9913324f938aea302022ce19d310"
 dependencies = [
  "memchr",
+]
+
+[[package]]
+name = "wit-bindgen-rt"
+version = "0.33.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3268f3d866458b787f390cf61f4bbb563b922d091359f9608842999eaee3943c"
+dependencies = [
+ "bitflags 2.8.0",
 ]
 
 [[package]]
@@ -2433,7 +2494,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1b9b4fd18abc82b8136838da5d50bae7bdea537c574d8dc1a34ed098d6c166f0"
 dependencies = [
  "byteorder",
- "zerocopy-derive",
+ "zerocopy-derive 0.7.35",
+]
+
+[[package]]
+name = "zerocopy"
+version = "0.8.14"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a367f292d93d4eab890745e75a778da40909cab4d6ff8173693812f79c4a2468"
+dependencies = [
+ "zerocopy-derive 0.8.14",
 ]
 
 [[package]]
@@ -2441,6 +2511,17 @@ name = "zerocopy-derive"
 version = "0.7.35"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fa4f8080344d4671fb4e831a13ad1e68092748387dfc4f55e356242fae12ce3e"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "zerocopy-derive"
+version = "0.8.14"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d3931cb58c62c13adec22e38686b559c86a30565e16ad6e8510a337cedc611e1"
 dependencies = [
  "proc-macro2",
  "quote",
