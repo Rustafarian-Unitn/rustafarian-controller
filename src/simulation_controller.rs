@@ -132,9 +132,22 @@ impl SimulationController {
         }
     }
 
+    /// Destroys the simulation controller by joining all threads and clearing the topology and channels.
+    /// # Arguments
+    /// * `self` - A mutable reference to the simulation controller
     pub fn destroy(&mut self) {
         self.logger
             .log("Destroying simulation controller...", LogLevel::INFO);
+
+        // Send shutdown message to all nodes
+        for (node_id, channels) in self.nodes_channels.iter_mut() {
+            self.logger.log(
+                &format!("Closing channels for node {}", node_id),
+                LogLevel::DEBUG,
+            );
+            let message = SimControllerCommand::Shutdown;
+            let _ = channels.send_command_channel.send(message);
+        }
 
         // Join threads with timeout
         for handle in self.handles.iter_mut() {
