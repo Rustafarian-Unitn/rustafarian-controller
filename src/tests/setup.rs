@@ -355,8 +355,6 @@ pub fn setup() -> (
     nodes_channels.insert(5, client_2_channels);
     nodes_channels.insert(8, browser_client_channels);
 
-    let shutdown_channel = unbounded::<()>();
-
     let controller_config = ControllerConfig {
         nodes_channels,
         drones_channels,
