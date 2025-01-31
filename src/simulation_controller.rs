@@ -390,7 +390,7 @@ impl SimulationController {
         }
     }
 
-    /// Initializes the drone nodes in the network. For each drone configuration, a drone instance is created using a factory function. The drone instance is then started in a separate thread. The drone is registered in the network topology and assigned neighbouring drones and nodes sender channels for communication. It is also assigned a channel for communication with the controller. 
+    /// Initializes the drone nodes in the network. For each drone configuration, a drone instance is created using a factory function. The drone instance is then started in a separate thread. The drone is registered in the network topology and assigned neighbouring drones and nodes sender channels for communication. It is also assigned a channel for communication with the controller.
     /// # Arguments
     /// * `handles` - A mutable reference to the vector of thread handles
     /// * `drones_config` - A vector of drone configurations parsed from the configuration file
