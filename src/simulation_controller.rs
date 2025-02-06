@@ -32,7 +32,7 @@ pub const FILE_FOLDER: &str = "resources/files";
 pub const MEDIA_FOLDER: &str = "resources/media";
 
 ///Internal channel management structures to distribute the channels among the instances of the topology
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct NodeChannels {
     pub send_packet_channel: Sender<Packet>,
     pub receive_packet_channel: Receiver<Packet>,
@@ -42,7 +42,7 @@ pub struct NodeChannels {
     pub send_response_channel: Sender<SimControllerResponseWrapper>,
 }
 ///Internal channel management structures to distribute the channels among the instances of the topology
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct DroneChannels {
     pub send_command_channel: Sender<DroneCommand>,
     pub receive_command_channel: Receiver<DroneCommand>,
@@ -1257,7 +1257,6 @@ mod tests {
             rust_do_it_drone,
             rust_busters_drone,
             rusty_drone,
-            //rustastic_drone,
             lockheed_rustin_drone,
             d_r_o_n_e_drone,
         ];
@@ -1270,7 +1269,6 @@ mod tests {
         let drone5 = drone_factories.next().unwrap();
         let drone6 = drone_factories.next().unwrap();
         let drone7 = drone_factories.next().unwrap();
-        let drone8 = drone_factories.next().unwrap();
         let drone9 = drone_factories.next().unwrap();
         let drone10 = drone_factories.next().unwrap();
         let drone11 = drone_factories.next().unwrap();
@@ -1416,26 +1414,7 @@ mod tests {
                     f32,
                 ) -> (Box<dyn Runnable>, String)
         );
-        assert_eq!(
-            drone8
-                as *const fn(
-                    NodeId,
-                    Sender<DroneEvent>,
-                    Receiver<DroneCommand>,
-                    Receiver<Packet>,
-                    HashMap<NodeId, Sender<Packet>>,
-                    f32,
-                ) -> (Box<dyn Runnable>, String),
-            rustastic_drone
-                as *const fn(
-                    NodeId,
-                    Sender<DroneEvent>,
-                    Receiver<DroneCommand>,
-                    Receiver<Packet>,
-                    HashMap<NodeId, Sender<Packet>>,
-                    f32,
-                ) -> (Box<dyn Runnable>, String)
-        );
+
         assert_eq!(
             drone9
                 as *const fn(
