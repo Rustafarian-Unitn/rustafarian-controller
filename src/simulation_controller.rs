@@ -146,21 +146,21 @@ impl SimulationController {
         // Send shutdown signal
         if let Err(e) = self.shutdown_channel.0.send(()) {
             self.logger.log(
-                &format!("Failed to send shutdown signal: {}", e),
+                &format!("Failed to send shutdown signal: {e}"),
                 LogLevel::ERROR,
             );
         }
 
         // Join threads with timeout
-        for handle in self.handles.iter_mut() {
+        for handle in &mut self.handles {
             if let Some(h) = handle.take() {
                 match Self::join_with_timeout(h, Self::SHUTDOWN_TIMEOUT) {
-                    Ok(_) => self
+                    Ok(()) => self
                         .logger
                         .log("Thread joined successfully", LogLevel::INFO),
                     Err(e) => {
                         self.logger
-                            .log(&format!("Thread failed to join: {}", e), LogLevel::ERROR);
+                            .log(&format!("Thread failed to join: {e}"), LogLevel::ERROR);
                     }
                 }
             }
@@ -245,7 +245,7 @@ impl SimulationController {
 
         logger.log("Building the simulation controller", LogLevel::INFO);
 
-        let (shutdown_sx, shutdown_rx) = unbounded::<()>();
+        let (shutdown_tx, shutdown_rx) = unbounded::<()>();
 
         // Create a factory function for the implementations
         let drone_factories = SimulationController::get_active_drone_factories();
@@ -262,7 +262,7 @@ impl SimulationController {
         let mut controller_config = ControllerConfig {
             nodes_channels: node_channels,
             drones_channels,
-            shutdown_channel: (shutdown_sx, shutdown_rx),
+            shutdown_channel: (shutdown_tx, shutdown_rx),
             handles,
             topology,
             logger,
@@ -460,8 +460,8 @@ impl SimulationController {
                 let mut drone = drone;
                 loop {
                     match shutdown_rx.recv_timeout(Self::THREAD_SLEEP) {
-                        Ok(_) | Err(RecvTimeoutError::Disconnected) => {
-                            println!("Drone {} shutting down", drone_id);
+                        Ok(()) | Err(RecvTimeoutError::Disconnected) => {
+                            println!("Drone {drone_id} shutting down");
                             break;
                         }
                         Err(RecvTimeoutError::Timeout) => {
@@ -471,7 +471,7 @@ impl SimulationController {
                 }
             })));
             controller_config.logger.log(
-                format!("Drone {} started successfully", drone_id).as_str(),
+                format!("Drone {drone_id} started successfully").as_str(),
                 LogLevel::DEBUG,
             );
         }
@@ -581,8 +581,8 @@ impl SimulationController {
                     );
                     loop {
                         match shutdown_rx.recv_timeout(Self::THREAD_SLEEP) {
-                            Ok(_) | Err(RecvTimeoutError::Disconnected) => {
-                                println!("Chat client {} shutting down", client_id);
+                            Ok(()) | Err(RecvTimeoutError::Disconnected) => {
+                                println!("Chat client {client_id} shutting down");
                                 break;
                             }
                             Err(RecvTimeoutError::Timeout) => {
@@ -601,8 +601,8 @@ impl SimulationController {
                     );
                     loop {
                         match shutdown_rx.recv_timeout(Self::THREAD_SLEEP) {
-                            Ok(_) | Err(RecvTimeoutError::Disconnected) => {
-                                println!("Browser client {} shutting down", client_id);
+                            Ok(()) | Err(RecvTimeoutError::Disconnected) => {
+                                println!("Browser client {client_id} shutting down");
                                 break;
                             }
                             Err(RecvTimeoutError::Timeout) => {
@@ -614,7 +614,7 @@ impl SimulationController {
                 }
             })));
             controller_config.logger.log(
-                format!("Client {} started successfully", client_id).as_str(),
+                format!("Client {client_id} started successfully").as_str(),
                 LogLevel::DEBUG,
             );
         }
@@ -746,8 +746,8 @@ impl SimulationController {
                     );
                     loop {
                         match shutdown_rx.recv_timeout(Self::THREAD_SLEEP) {
-                            Ok(_) | Err(RecvTimeoutError::Disconnected) => {
-                                println!("Chat server {} shutting down", server_id);
+                            Ok(()) | Err(RecvTimeoutError::Disconnected) => {
+                                println!("Chat server {server_id} shutting down");
                                 break;
                             }
                             Err(RecvTimeoutError::Timeout) => {
@@ -774,8 +774,8 @@ impl SimulationController {
                     );
                     loop {
                         match shutdown_rx.recv_timeout(Self::THREAD_SLEEP) {
-                            Ok(_) | Err(RecvTimeoutError::Disconnected) => {
-                                println!("Media server {} shutting down", server_id);
+                            Ok(()) | Err(RecvTimeoutError::Disconnected) => {
+                                println!("Media server {server_id} shutting down");
                                 break;
                             }
                             Err(RecvTimeoutError::Timeout) => {
@@ -802,8 +802,8 @@ impl SimulationController {
                     );
                     loop {
                         match shutdown_rx.recv_timeout(Self::THREAD_SLEEP) {
-                            Ok(_) | Err(RecvTimeoutError::Disconnected) => {
-                                println!("Text server {} shutting down", server_id);
+                            Ok(()) | Err(RecvTimeoutError::Disconnected) => {
+                                println!("Text server {server_id} shutting down");
                                 break;
                             }
                             Err(RecvTimeoutError::Timeout) => {
@@ -913,7 +913,6 @@ impl SimulationController {
             dr_one_drone,
             rust_do_it_drone,
             lockheed_rustin_drone,
-            //rustastic_drone,
             rust_busters_drone,
             rusty_drone,
             d_r_o_n_e_drone,
@@ -929,7 +928,7 @@ impl SimulationController {
         });
 
         match rx.recv_timeout(timeout) {
-            Ok(Ok(_)) => Ok(()),
+            Ok(Ok(())) => Ok(()),
             Ok(Err(_)) => Err("Thread panicked".to_string()),
             Err(_) => Err("Thread join timed out".to_string()),
         }
@@ -1509,7 +1508,7 @@ mod tests {
 
         controller.destroy();
 
-        for handle in controller.handles.iter() {
+        for handle in &controller.handles {
             assert!(handle.is_none());
         }
     }
@@ -1542,7 +1541,7 @@ mod tests {
         assert_eq!(initial_drones, controller.drones_channels.len());
         println!("Drones {}\n", controller.handles.len());
 
-        for handle in controller.handles.iter() {
+        for handle in &controller.handles {
             assert!(handle.is_some());
         }
     }
