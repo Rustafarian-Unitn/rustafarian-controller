@@ -231,12 +231,7 @@ impl SimulationController {
     /// * `config` - A string containing the path to the configuration for the simulation
     /// # Returns
     /// A `SimulationController` instance with the network topology and channels set up.
-    pub fn build(
-        config: &str,
-        file_folder: &str,
-        media_folder: &str,
-        debug_mode: bool,
-    ) -> Self {
+    pub fn build(config: &str, file_folder: &str, media_folder: &str, debug_mode: bool) -> Self {
         let config = config_parser::parse_config(config);
         let logger = Logger::new("Controller".to_string(), 0, debug_mode);
 
@@ -908,12 +903,7 @@ mod tests {
     fn test_simulation_controller_build() {
         let config_str = "src/tests/configurations/topology_1.toml";
 
-        let controller = SimulationController::build(
-            config_str,
-            MEDIA_FOLDER,
-            FILE_FOLDER,
-            false,
-        );
+        let controller = SimulationController::build(config_str, MEDIA_FOLDER, FILE_FOLDER, false);
 
         assert_eq!(controller.drones_channels.len(), 5);
         assert_eq!(controller.nodes_channels.len(), 2);

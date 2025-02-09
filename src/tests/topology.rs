@@ -15,12 +15,8 @@ fn test_simulation_controller_build_complex_topology() {
         std::path::Path::new(config_str).exists(),
         "Config file does not exist at the specified path"
     );
-    let controller = SimulationController::build(
-        config_str,
-        "resources/files",
-        "resources/media",
-        false,
-    );
+    let controller =
+        SimulationController::build(config_str, "resources/files", "resources/media", false);
     thread::sleep(std::time::Duration::from_millis(500));
 
     assert_eq!(controller.drones_channels.len(), 3);
@@ -41,12 +37,8 @@ fn test_client_topology() {
         std::path::Path::new(config_str).exists(),
         "Config file does not exist at the specified path"
     );
-    let controller = SimulationController::build(
-        config_str,
-        "resources/files",
-        "resources/media",
-        false,
-    );
+    let controller =
+        SimulationController::build(config_str, "resources/files", "resources/media", false);
 
     thread::sleep(std::time::Duration::from_secs(5));
     let client_id = 4;

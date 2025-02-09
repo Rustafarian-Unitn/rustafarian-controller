@@ -98,8 +98,7 @@ fn validate_config(config: &Config) {
             assert!(
                 found,
                 "Drone {} is connected to an inexistent client {}",
-                drone.id,
-                connected_node,
+                drone.id, connected_node,
             );
         }
     }
@@ -138,12 +137,11 @@ fn validate_config(config: &Config) {
                 );
             }
 
-            
-                assert!(found,
-                    "Client {} is connected to an inexistent drone {}",
-                    client.id, connected_node
-                );
-            
+            assert!(
+                found,
+                "Client {} is connected to an inexistent drone {}",
+                client.id, connected_node
+            );
         }
     }
 
@@ -181,12 +179,11 @@ fn validate_config(config: &Config) {
                 );
             }
 
-            
-                assert!(found,
-                    "Server {} is connected to an inexistent drone {}",
-                    server.id, connected_node
-                );
-   
+            assert!(
+                found,
+                "Server {} is connected to an inexistent drone {}",
+                server.id, connected_node
+            );
         }
     }
 }

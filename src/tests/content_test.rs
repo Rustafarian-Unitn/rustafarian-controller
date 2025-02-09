@@ -91,7 +91,6 @@ mod tests {
                 assert!(
                     matches!(server_type, ServerType::Text),
                     "Expected ServerType::Text, got {server_type:?}"
-                    
                 );
                 break;
             }
