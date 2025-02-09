@@ -43,9 +43,9 @@ mod tests {
             )) = response
             {
                 let mut nodes = topology.nodes().clone();
-                nodes.sort();
+                nodes.sort_unstable();
                 let mut expected_nodes = vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-                expected_nodes.sort();
+                expected_nodes.sort_unstable();
                 assert_eq!(nodes, expected_nodes);
                 println!("Client nodes: {:?}", topology.nodes());
                 break;
@@ -90,8 +90,8 @@ mod tests {
             {
                 assert!(
                     matches!(server_type, ServerType::Text),
-                    "Expected ServerType::Text, got {:?}",
-                    server_type
+                    "Expected ServerType::Text, got {server_type:?}"
+                    
                 );
                 break;
             }
@@ -176,7 +176,7 @@ mod tests {
                 text,
             )) = response
             {
-                println!("Il testo ricevuto è =>{}", text);
+                println!("Il testo ricevuto è =>{text}");
                 let file_content = fs::read_to_string("resources/files/0001.txt")
                     .expect("Failed to read file 0001.txt");
                 assert_eq!(text, file_content);
@@ -217,7 +217,7 @@ mod tests {
         let _res = client_command_channel
             .send(SimControllerCommand::RequestMediaFile(media_id, server_id));
 
-        for response in client_response_channel.iter() {
+        for response in &client_response_channel {
             if let SimControllerResponseWrapper::Message(SimControllerMessage::MediaFileResponse(
                 _,
                 media,
@@ -233,7 +233,7 @@ mod tests {
                         break;
                     }
                     Err(err) => {
-                        eprintln!("Error reading media {}", err);
+                        eprintln!("Error reading media {err}");
                     }
                 }
             }
@@ -292,7 +292,7 @@ mod tests {
                         break;
                     }
                     Err(err) => {
-                        eprintln!("Error reading media {}", err);
+                        eprintln!("Error reading media {err}");
                     }
                 }
             }
@@ -398,7 +398,7 @@ mod tests {
                     SimControllerMessage::ServerTypeResponse(server_id, server_type),
                 ) = response
                 {
-                    println!("TEST - Server type {:?}", server_type);
+                    println!("TEST - Server type {server_type:?}");
                     if server_id == content_server_id {
                         assert!(matches!(server_type, ServerType::Text));
                         break;
@@ -444,7 +444,7 @@ mod tests {
                     SimControllerMessage::FileListResponse(_, list),
                 ) = response.clone()
                 {
-                    println!("TEST - Message received {:?}", response);
+                    println!("TEST - Message received {response:?}");
                     assert!(
                         matches!(
                             response,
@@ -502,7 +502,7 @@ mod tests {
                 select! {
                     recv(client_response_channel) -> response => {
                         if let Ok(SimControllerResponseWrapper::Message(SimControllerMessage::TextFileResponse(_, _))) = response {
-                            println!("TEST - Message received {:?}", response);
+                            println!("TEST - Message received {response:?}");
                             let _expected_text = "test".to_string();
 
                             assert!(
@@ -564,7 +564,7 @@ mod tests {
                     SimControllerMessage::FileListResponse(_, _),
                 ) = message
                 {
-                    println!("TEST - Message received {:?}", message);
+                    println!("TEST - Message received {message:?}");
                     assert!(matches!(
                         message,
                         SimControllerResponseWrapper::Message(
@@ -615,7 +615,7 @@ mod tests {
                     SimControllerMessage::MediaFileResponse(_, _),
                 ) = message
                 {
-                    println!("TEST - Message received {:?}", message);
+                    println!("TEST - Message received {message:?}");
                     assert!(matches!(
                         message,
                         SimControllerResponseWrapper::Message(
@@ -666,7 +666,7 @@ mod tests {
                 select! {
                     recv(client_response_channel) -> response => {
                         if let Ok(SimControllerResponseWrapper::Message(SimControllerMessage::TextWithReferences(_, _, _))) = response {
-                            println!("TEST - Message received {:?}", response);
+                            println!("TEST - Message received {response:?}");
                             assert!(
                                 matches!(
                                     response.unwrap(),
@@ -695,7 +695,6 @@ mod tests {
                 "resources/files".to_string(),
                 DEBUG,
             );
-
             let client_id: u8 = 5;
             let server_id = 9;
 
@@ -727,7 +726,7 @@ mod tests {
                 select! {
                     recv(client_response_channel) -> response => {
                         if let Ok(SimControllerResponseWrapper::Message(SimControllerMessage::TextFileResponse{..})) = response {
-                            println!("TEST - Message received {:?}", response);
+                            println!("TEST - Message received {response:?}");
                             panic!("Server should not respond to invalid request");
                         }
                     }

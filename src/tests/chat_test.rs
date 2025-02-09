@@ -115,7 +115,7 @@ mod tests {
                 _,
             )) = response
             {
-                println!("TEST - Message received {:?}", response);
+                println!("TEST - Message received {response:?}");
                 let _expected_response = "Hello".to_string();
                 assert!(
                     matches!(
@@ -186,13 +186,13 @@ mod tests {
         thread::sleep(std::time::Duration::from_secs(2));
 
         // Ignore messages until ClientListResponse is received
-        for response in client_response_channel.iter() {
-            println!("TEST - Message received {:?}", response);
+        for response in &client_response_channel {
+            println!("TEST - Message received {response:?}");
             if let SimControllerResponseWrapper::Message(
                 SimControllerMessage::ClientListResponse(_, _),
             ) = response
             {
-                println!("TEST - Client list response {:?}", response);
+                println!("TEST - Client list response {response:?}");
                 let _expected_list = [6];
                 assert!(
                     matches!(
@@ -243,7 +243,7 @@ mod tests {
             if let SimControllerResponseWrapper::Message(SimControllerMessage::FloodResponse(_)) =
                 response
             {
-                println!("TEST - Flood response {:?}", response);
+                println!("TEST - Flood response {response:?}");
                 assert!(
                     matches!(
                         response,
@@ -292,7 +292,7 @@ mod tests {
             if let SimControllerResponseWrapper::Message(SimControllerMessage::KnownServers(_)) =
                 response
             {
-                println!("TEST - Known servers response {:?}", response);
+                println!("TEST - Known servers response {response:?}");
                 assert!(
                     matches!(
                         response,
@@ -521,7 +521,7 @@ mod tests {
             if let SimControllerResponseWrapper::Event(SimControllerEvent::FloodRequestSent) =
                 response.clone()
             {
-                println!("TEST - Flood response {:?}", response);
+                println!("TEST - Flood response {response:?}");
                 assert!(
                     matches!(
                         response,
@@ -569,7 +569,7 @@ mod tests {
                 topology,
             )) = response
             {
-                println!("TEST - Topology response {:?}", topology);
+                println!("TEST - Topology response {topology:?}");
                 let expected_response = vec![1, 2];
                 let expected_response: HashSet<_> = expected_response.into_iter().collect();
                 assert_eq!(topology.edges().get(&client_id), Some(&expected_response));

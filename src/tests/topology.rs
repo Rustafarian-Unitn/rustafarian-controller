@@ -30,7 +30,7 @@ fn test_simulation_controller_build_complex_topology() {
 
     // Check the topology
     let edges = controller.topology.edges();
-    println!("{:?}", edges);
+    println!("{edges:?}");
     assert_topology(edges);
 }
 
