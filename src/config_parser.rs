@@ -95,12 +95,11 @@ fn validate_config(config: &Config) {
                 }
             }
 
-            if !found {
-                panic!(
-                    "Drone {} is connected to an inexistent client {}",
-                    drone.id, connected_node
-                );
-            }
+            assert!(
+                found,
+                "Drone {} is connected to an inexistent client {}",
+                drone.id, connected_node,
+            );
         }
     }
 
@@ -138,12 +137,11 @@ fn validate_config(config: &Config) {
                 );
             }
 
-            if !found {
-                panic!(
-                    "Client {} is connected to an inexistent drone {}",
-                    client.id, connected_node
-                );
-            }
+            assert!(
+                found,
+                "Client {} is connected to an inexistent drone {}",
+                client.id, connected_node
+            );
         }
     }
 
@@ -181,12 +179,11 @@ fn validate_config(config: &Config) {
                 );
             }
 
-            if !found {
-                panic!(
-                    "Server {} is connected to an inexistent drone {}",
-                    server.id, connected_node
-                );
-            }
+            assert!(
+                found,
+                "Server {} is connected to an inexistent drone {}",
+                server.id, connected_node
+            );
         }
     }
 }
@@ -200,7 +197,7 @@ mod tests {
         let config_str = "src/tests/configurations/topology_1.toml";
 
         let config = parse_config(config_str);
-        println!("{:?}", config);
+        println!("{config:?}");
         assert_eq!(config.drone.len(), 5);
         assert_eq!(config.client.len(), 1);
         assert_eq!(config.server.len(), 1);

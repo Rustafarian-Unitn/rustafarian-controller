@@ -15,8 +15,8 @@ mod tests {
 
         let simulation_controller = SimulationController::build(
             "src/tests/configurations/topology_10_nodes.toml",
-            "resources/files".to_string(),
-            "resources/media".to_string(),
+            "resources/files",
+            "resources/media",
             false,
         );
 
@@ -41,7 +41,7 @@ mod tests {
         assert!(res.is_ok());
 
         // Listen for response
-        for response in client_response_channel.iter() {
+        for response in &client_response_channel {
             if let SimControllerResponseWrapper::Message(SimControllerMessage::KnownServers(
                 known_servers,
             )) = response
@@ -58,8 +58,8 @@ mod tests {
     fn test_message_from_client_to_server() {
         let controller = SimulationController::build(
             "src/tests/configurations/topology_10_nodes.toml",
-            "resources/files".to_string(),
-            "resources/media".to_string(),
+            "resources/files",
+            "resources/media",
             false,
         );
         let client_id: u8 = 4;
@@ -108,14 +108,14 @@ mod tests {
         assert!(res.is_ok());
 
         // ignore messages until message is received
-        for response in client_2_response_channel.iter() {
+        for response in &client_2_response_channel {
             if let SimControllerResponseWrapper::Message(SimControllerMessage::MessageReceived(
                 _,
                 _,
                 _,
             )) = response
             {
-                println!("TEST - Message received {:?}", response);
+                println!("TEST - Message received {response:?}");
                 let _expected_response = "Hello".to_string();
                 assert!(
                     matches!(
@@ -139,8 +139,8 @@ mod tests {
     fn test_client_list() {
         let simulation_controller = SimulationController::build(
             "src/tests/configurations/topology_10_nodes.toml",
-            "resources/files".to_string(),
-            "resources/media".to_string(),
+            "resources/files",
+            "resources/media",
             true,
         );
         let client_id: u8 = 4;
@@ -186,13 +186,13 @@ mod tests {
         thread::sleep(std::time::Duration::from_secs(2));
 
         // Ignore messages until ClientListResponse is received
-        for response in client_response_channel.iter() {
-            println!("TEST - Message received {:?}", response);
+        for response in &client_response_channel {
+            println!("TEST - Message received {response:?}");
             if let SimControllerResponseWrapper::Message(
                 SimControllerMessage::ClientListResponse(_, _),
             ) = response
             {
-                println!("TEST - Client list response {:?}", response);
+                println!("TEST - Client list response {response:?}");
                 let _expected_list = [6];
                 assert!(
                     matches!(
@@ -213,8 +213,8 @@ mod tests {
     fn test_flood_request() {
         let simulation_controller = SimulationController::build(
             "src/tests/configurations/topology_10_nodes.toml",
-            "resources/files".to_string(),
-            "resources/media".to_string(),
+            "resources/files",
+            "resources/media",
             false,
         );
 
@@ -239,11 +239,11 @@ mod tests {
         assert!(res.is_ok());
 
         // ignore messages until flood response is received
-        for response in controller_response_channel.iter() {
+        for response in &controller_response_channel {
             if let SimControllerResponseWrapper::Message(SimControllerMessage::FloodResponse(_)) =
                 response
             {
-                println!("TEST - Flood response {:?}", response);
+                println!("TEST - Flood response {response:?}");
                 assert!(
                     matches!(
                         response,
@@ -263,8 +263,8 @@ mod tests {
     fn test_known_servers() {
         let simulation_controller = SimulationController::build(
             "src/tests/configurations/topology_10_nodes.toml",
-            "resources/files".to_string(),
-            "resources/media".to_string(),
+            "resources/files",
+            "resources/media",
             false,
         );
         let client_id: u8 = 4;
@@ -288,11 +288,11 @@ mod tests {
         assert!(res.is_ok());
         // Listen for packets from client
         // Ignore messages until KnownServers Response is received
-        for response in controller_response_channel.iter() {
+        for response in &controller_response_channel {
             if let SimControllerResponseWrapper::Message(SimControllerMessage::KnownServers(_)) =
                 response
             {
-                println!("TEST - Known servers response {:?}", response);
+                println!("TEST - Known servers response {response:?}");
                 assert!(
                     matches!(
                         response,
@@ -312,8 +312,8 @@ mod tests {
     fn test_registered_servers() {
         let simulation_controller = SimulationController::build(
             "src/tests/configurations/topology_10_nodes.toml",
-            "resources/files".to_string(),
-            "resources/media".to_string(),
+            "resources/files",
+            "resources/media",
             false,
         );
         let client_id: u8 = 4;
@@ -346,7 +346,7 @@ mod tests {
         assert!(res.is_ok());
 
         // Ignore messages until RegisteredServersResponse is received
-        for response in client_response_channel.iter() {
+        for response in &client_response_channel {
             if let SimControllerResponseWrapper::Message(
                 SimControllerMessage::RegisteredServersResponse(_),
             ) = response
@@ -371,8 +371,8 @@ mod tests {
     fn test_client_remove_senders() {
         let simulation_controller = SimulationController::build(
             "src/tests/configurations/topology_10_nodes.toml",
-            "resources/files".to_string(),
-            "resources/media".to_string(),
+            "resources/files",
+            "resources/media",
             false,
         );
         let drone_1_id: u8 = 1;
@@ -414,7 +414,7 @@ mod tests {
         assert!(res.is_ok());
 
         // Listen for topology response
-        for response in client_response_channel.iter() {
+        for response in &client_response_channel {
             if let SimControllerResponseWrapper::Message(SimControllerMessage::TopologyResponse(
                 topology,
             )) = response
@@ -438,8 +438,8 @@ mod tests {
     fn test_server_remove_receivers() {
         let simulation_controller = SimulationController::build(
             "src/tests/configurations/topology_10_nodes.toml",
-            "resources/files".to_string(),
-            "resources/media".to_string(),
+            "resources/files",
+            "resources/media",
             false,
         );
 
@@ -517,11 +517,11 @@ mod tests {
         ));
         assert!(res.is_ok());
 
-        for response in server_response_channel.iter() {
+        for response in &server_response_channel {
             if let SimControllerResponseWrapper::Event(SimControllerEvent::FloodRequestSent) =
                 response.clone()
             {
-                println!("TEST - Flood response {:?}", response);
+                println!("TEST - Flood response {response:?}");
                 assert!(
                     matches!(
                         response,
@@ -538,8 +538,8 @@ mod tests {
     fn test_topology_using_config_file_setup() {
         let simulation_controller = SimulationController::build(
             "src/tests/configurations/topology_10_nodes.toml",
-            "resources/files".to_string(),
-            "resources/media".to_string(),
+            "resources/files",
+            "resources/media",
             false,
         );
 
@@ -564,12 +564,12 @@ mod tests {
         assert!(res.is_ok());
 
         // Listen for topology response
-        for response in client_response_channel.iter() {
+        for response in &client_response_channel {
             if let SimControllerResponseWrapper::Message(SimControllerMessage::TopologyResponse(
                 topology,
             )) = response
             {
-                println!("TEST - Topology response {:?}", topology);
+                println!("TEST - Topology response {topology:?}");
                 let expected_response = vec![1, 2];
                 let expected_response: HashSet<_> = expected_response.into_iter().collect();
                 assert_eq!(topology.edges().get(&client_id), Some(&expected_response));

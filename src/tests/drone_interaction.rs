@@ -13,8 +13,8 @@ mod drone_communication_tests {
     fn test_set_drone_pdr() {
         let simulation_controller = SimulationController::build(
             "src/tests/configurations/topology_10_nodes.toml",
-            "resources/files".to_string(),
-            "resources/media".to_string(),
+            "resources/files",
+            "resources/media",
             false,
         );
 
@@ -82,15 +82,14 @@ mod drone_communication_tests {
             select! {
                 recv(drone_event_channel) -> response => {
                     if let Ok(DroneEvent::PacketDropped(_)) = response{
-                        println!("TEST:received message {:?}", response);
+                        println!("TEST:received message {response:?}");
                         assert!(matches!(
                             response,
                            Ok(DroneEvent::PacketDropped(_))
                         ));
                         break;
-                    } else {
-                        println!("TEST:received unexpected message {:?}", response);
                     }
+                    println!("TEST:received unexpected message {response:?}");
                 }
                 default(timeout) => {
                     // Last message received should be an ack from the server. The server does not answer to the request
