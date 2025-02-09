@@ -139,15 +139,7 @@ impl SimulationController {
         self.logger
             .log("Destroying simulation controller...", LogLevel::INFO);
 
-        // Send shutdown message to all nodes
-        for (node_id, channels) in &mut self.nodes_channels {
-            self.logger.log(
-                &format!("Closing channels for node {node_id}"),
-                LogLevel::DEBUG,
-            );
-            let message = SimControllerCommand::Shutdown;
-            let _ = channels.send_command_channel.send(message);
-        }
+
 
         // Join threads with timeout
         for handle in &mut self.handles {

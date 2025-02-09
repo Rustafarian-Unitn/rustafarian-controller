@@ -275,7 +275,7 @@ dependencies = [
 [[package]]
 name = "common"
 version = "0.1.0"
-source = "git+https://github.com/Cpp-enjoyers/common.git#8ea1de22be4b1e0b3f98c7533dec17e2a10013d8"
+source = "git+https://github.com/Cpp-enjoyers/common.git#f91537858ed174f8b2465a441595634f1e288cf0"
 dependencies = [
  "bincode",
  "crossbeam-channel",
@@ -395,9 +395,9 @@ dependencies = [
 
 [[package]]
 name = "data-encoding"
-version = "2.7.0"
+version = "2.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0e60eed09d8c01d3cee5b7d30acb059b76614c918fa0f992e0dd6eeb10daad6f"
+checksum = "575f75dfd25738df5b91b8e43e14d44bda14637a58fae779fd2b064f8bf3e010"
 
 [[package]]
 name = "digest"
@@ -423,7 +423,7 @@ dependencies = [
 [[package]]
 name = "dr_ones"
 version = "0.1.0"
-source = "git+https://github.com/Dr-Ones/drone#5aad2b2307ec65766fd6681f6cd1d57f371738ba"
+source = "git+https://github.com/Dr-Ones/drone#30102d8c1d2d707e8e1216443d73d89b369cdd72"
 dependencies = [
  "crossbeam-channel",
  "network_node",
@@ -1142,7 +1142,7 @@ dependencies = [
 [[package]]
 name = "lockheedrustin-drone"
 version = "0.1.0"
-source = "git+https://github.com/Lockheed-Rustin/drone.git#8a2916f14f9f0de4e5246fd302bc210984781ba4"
+source = "git+https://github.com/Lockheed-Rustin/drone.git#e82cf49507cf6b64d0e9cf1c90c5c3f523c321c2"
 dependencies = [
  "crossbeam-channel",
  "rand 0.8.5",
@@ -1230,7 +1230,7 @@ dependencies = [
 [[package]]
 name = "network_node"
 version = "0.1.0"
-source = "git+https://github.com/Dr-Ones/common.git#b2bcd21bacb5099e7f75dd8dea5303f20568c4e0"
+source = "git+https://github.com/Dr-Ones/common.git#5478bcf94f34b56bfb4d979fede70a93d71ab0fd"
 dependencies = [
  "chrono",
  "crossbeam-channel",
@@ -1561,7 +1561,7 @@ dependencies = [
 [[package]]
 name = "rustafarian-content-server"
 version = "0.1.0"
-source = "git+https://github.com/Rustafarian-Unitn/rustafarian-content_server.git#88b0f34dea95ca9cadcd176e4f972bf6d0a5c4d4"
+source = "git+https://github.com/Rustafarian-Unitn/rustafarian-content_server.git#06afca955245c46999e89000018c2155de9f05aa"
 dependencies = [
  "chrono",
  "crossbeam",
@@ -1644,8 +1644,8 @@ dependencies = [
 
 [[package]]
 name = "rustafarian-shared"
-version = "0.1.1"
-source = "git+https://github.com/Rustafarian-Unitn/rustafarian-shared.git#087f04ba9389906c1a3acb2f71307f48f1a93046"
+version = "1.0.0"
+source = "git+https://github.com/Rustafarian-Unitn/rustafarian-shared.git#c4561dc0ec5482a1e78f3cd220dc8ecf432c4d5f"
 dependencies = [
  "crossbeam-channel",
  "rand 0.8.5",
