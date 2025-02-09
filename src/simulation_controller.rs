@@ -146,21 +146,21 @@ impl SimulationController {
         // Send shutdown signal
         if let Err(e) = self.shutdown_channel.0.send(()) {
             self.logger.log(
-                &format!("Failed to send shutdown signal: {}", e),
+                &format!("Failed to send shutdown signal: {e}"),
                 LogLevel::ERROR,
             );
         }
 
         // Join threads with timeout
-        for handle in self.handles.iter_mut() {
+        for handle in &mut self.handles {
             if let Some(h) = handle.take() {
                 match Self::join_with_timeout(h, Self::SHUTDOWN_TIMEOUT) {
-                    Ok(_) => self
+                    Ok(()) => self
                         .logger
                         .log("Thread joined successfully", LogLevel::INFO),
                     Err(e) => {
                         self.logger
-                            .log(&format!("Thread failed to join: {}", e), LogLevel::ERROR);
+                            .log(&format!("Thread failed to join: {e}"), LogLevel::ERROR);
                     }
                 }
             }
@@ -186,8 +186,8 @@ impl SimulationController {
     pub fn rebuild(
         &mut self,
         config: &str,
-        file_folder: String,
-        media_folder: String,
+        file_folder: &str,
+        media_folder: &str,
         debug_mode: bool,
     ) {
         self.destroy();
@@ -211,7 +211,7 @@ impl SimulationController {
 
         Self::init_channels(&config, &mut controller_config);
 
-        Self::init_drones(config.drone, &mut drone_factories, &mut controller_config);
+        Self::init_drones(&config.drone, &mut drone_factories, &mut controller_config);
 
         Self::init_clients(config.client, &mut controller_config);
 
@@ -236,8 +236,8 @@ impl SimulationController {
     /// A `SimulationController` instance with the network topology and channels set up.
     pub fn build(
         config: &str,
-        file_folder: String,
-        media_folder: String,
+        file_folder: &str,
+        media_folder: &str,
         debug_mode: bool,
     ) -> Self {
         let config = config_parser::parse_config(config);
@@ -245,7 +245,7 @@ impl SimulationController {
 
         logger.log("Building the simulation controller", LogLevel::INFO);
 
-        let (shutdown_sx, shutdown_rx) = unbounded::<()>();
+        let (shutdown_tx, shutdown_rx) = unbounded::<()>();
 
         // Create a factory function for the implementations
         let drone_factories = SimulationController::get_active_drone_factories();
@@ -262,7 +262,7 @@ impl SimulationController {
         let mut controller_config = ControllerConfig {
             nodes_channels: node_channels,
             drones_channels,
-            shutdown_channel: (shutdown_sx, shutdown_rx),
+            shutdown_channel: (shutdown_tx, shutdown_rx),
             handles,
             topology,
             logger,
@@ -271,7 +271,7 @@ impl SimulationController {
 
         Self::init_channels(&config, &mut controller_config);
 
-        Self::init_drones(config.drone, &mut drone_factories, &mut controller_config);
+        Self::init_drones(&config.drone, &mut drone_factories, &mut controller_config);
         Self::init_clients(config.client, &mut controller_config);
 
         Self::init_servers(
@@ -296,7 +296,7 @@ impl SimulationController {
         controller_config
             .logger
             .log("Drone channels", LogLevel::DEBUG);
-        for drone_config in config.drone.iter() {
+        for drone_config in &config.drone {
             controller_config.logger.log(
                 format!("Creating drone channels for node {}", drone_config.id).as_str(),
                 LogLevel::DEBUG,
@@ -341,7 +341,7 @@ impl SimulationController {
                 .set_node_type(drone_config.id, "drone".to_string());
         }
 
-        for client_config in config.client.iter() {
+        for client_config in &config.client {
             controller_config.logger.log(
                 format!("Creating client channels for node {}", client_config.id).as_str(),
                 LogLevel::DEBUG,
@@ -365,7 +365,7 @@ impl SimulationController {
             );
         }
 
-        for server_config in config.server.iter() {
+        for server_config in &config.server {
             controller_config.logger.log(
                 format!("Creating server channels for node {}", server_config.id).as_str(),
                 LogLevel::DEBUG,
@@ -400,7 +400,7 @@ impl SimulationController {
     /// # Returns
     /// A vector of thread handles for the drone instances
     fn init_drones(
-        drones_config: Vec<DroneConfig>,
+        drones_config: &[DroneConfig],
         drone_factories: &mut dyn Iterator<Item = DroneFactory>,
         controller_config: &mut ControllerConfig,
     ) {
@@ -409,7 +409,7 @@ impl SimulationController {
             .log("Initializing drones", LogLevel::INFO);
         // For each drone config pick the next factory in a circular fashion to generate a drone instance
 
-        for drone_config in drones_config.iter() {
+        for drone_config in drones_config {
             controller_config.logger.log(
                 format!("Creating drone {}", drone_config.id).as_str(),
                 LogLevel::DEBUG,
@@ -460,8 +460,8 @@ impl SimulationController {
                 let mut drone = drone;
                 loop {
                     match shutdown_rx.recv_timeout(Self::THREAD_SLEEP) {
-                        Ok(_) | Err(RecvTimeoutError::Disconnected) => {
-                            println!("Drone {} shutting down", drone_id);
+                        Ok(()) | Err(RecvTimeoutError::Disconnected) => {
+                            println!("Drone {drone_id} shutting down");
                             break;
                         }
                         Err(RecvTimeoutError::Timeout) => {
@@ -471,7 +471,7 @@ impl SimulationController {
                 }
             })));
             controller_config.logger.log(
-                format!("Drone {} started successfully", drone_id).as_str(),
+                format!("Drone {drone_id} started successfully").as_str(),
                 LogLevel::DEBUG,
             );
         }
@@ -581,8 +581,8 @@ impl SimulationController {
                     );
                     loop {
                         match shutdown_rx.recv_timeout(Self::THREAD_SLEEP) {
-                            Ok(_) | Err(RecvTimeoutError::Disconnected) => {
-                                println!("Chat client {} shutting down", client_id);
+                            Ok(()) | Err(RecvTimeoutError::Disconnected) => {
+                                println!("Chat client {client_id} shutting down");
                                 break;
                             }
                             Err(RecvTimeoutError::Timeout) => {
@@ -601,8 +601,8 @@ impl SimulationController {
                     );
                     loop {
                         match shutdown_rx.recv_timeout(Self::THREAD_SLEEP) {
-                            Ok(_) | Err(RecvTimeoutError::Disconnected) => {
-                                println!("Browser client {} shutting down", client_id);
+                            Ok(()) | Err(RecvTimeoutError::Disconnected) => {
+                                println!("Browser client {client_id} shutting down");
                                 break;
                             }
                             Err(RecvTimeoutError::Timeout) => {
@@ -614,7 +614,7 @@ impl SimulationController {
                 }
             })));
             controller_config.logger.log(
-                format!("Client {} started successfully", client_id).as_str(),
+                format!("Client {client_id} started successfully").as_str(),
                 LogLevel::DEBUG,
             );
         }
@@ -633,8 +633,8 @@ impl SimulationController {
     fn init_servers(
         servers_config: Vec<ServerConfig>,
         controller_config: &mut ControllerConfig,
-        file_folder: String,
-        media_folder: String,
+        file_folder: &str,
+        media_folder: &str,
     ) {
         controller_config
             .logger
@@ -645,8 +645,8 @@ impl SimulationController {
 
         // For each drone config pick the next factory in a circular fashion to generate a drone instance
         for server_config in servers_config {
-            let media_folder = media_folder.clone();
-            let file_folder = file_folder.clone();
+            let media_folder = media_folder.to_string();
+            let file_folder = file_folder.to_string();
 
             controller_config.logger.log(
                 format!("Creating server {}", server_config.id).as_str(),
@@ -746,8 +746,8 @@ impl SimulationController {
                     );
                     loop {
                         match shutdown_rx.recv_timeout(Self::THREAD_SLEEP) {
-                            Ok(_) | Err(RecvTimeoutError::Disconnected) => {
-                                println!("Chat server {} shutting down", server_id);
+                            Ok(()) | Err(RecvTimeoutError::Disconnected) => {
+                                println!("Chat server {server_id} shutting down");
                                 break;
                             }
                             Err(RecvTimeoutError::Timeout) => {
@@ -774,8 +774,8 @@ impl SimulationController {
                     );
                     loop {
                         match shutdown_rx.recv_timeout(Self::THREAD_SLEEP) {
-                            Ok(_) | Err(RecvTimeoutError::Disconnected) => {
-                                println!("Media server {} shutting down", server_id);
+                            Ok(()) | Err(RecvTimeoutError::Disconnected) => {
+                                println!("Media server {server_id} shutting down");
                                 break;
                             }
                             Err(RecvTimeoutError::Timeout) => {
@@ -802,8 +802,8 @@ impl SimulationController {
                     );
                     loop {
                         match shutdown_rx.recv_timeout(Self::THREAD_SLEEP) {
-                            Ok(_) | Err(RecvTimeoutError::Disconnected) => {
-                                println!("Text server {} shutting down", server_id);
+                            Ok(()) | Err(RecvTimeoutError::Disconnected) => {
+                                println!("Text server {server_id} shutting down");
                                 break;
                             }
                             Err(RecvTimeoutError::Timeout) => {
@@ -913,7 +913,6 @@ impl SimulationController {
             dr_one_drone,
             rust_do_it_drone,
             lockheed_rustin_drone,
-            //rustastic_drone,
             rust_busters_drone,
             rusty_drone,
             d_r_o_n_e_drone,
@@ -929,7 +928,7 @@ impl SimulationController {
         });
 
         match rx.recv_timeout(timeout) {
-            Ok(Ok(_)) => Ok(()),
+            Ok(Ok(())) => Ok(()),
             Ok(Err(_)) => Err("Thread panicked".to_string()),
             Err(_) => Err("Thread join timed out".to_string()),
         }
@@ -979,8 +978,8 @@ mod tests {
 
         let controller = SimulationController::build(
             config_str,
-            MEDIA_FOLDER.to_string(),
-            FILE_FOLDER.to_string(),
+            MEDIA_FOLDER,
+            FILE_FOLDER,
             false,
         );
 
@@ -1025,7 +1024,7 @@ mod tests {
         let drones_config = config.drone;
 
         SimulationController::init_drones(
-            drones_config,
+            &drones_config,
             &mut drone_factories,
             &mut controller_config,
         );
@@ -1086,8 +1085,8 @@ mod tests {
         SimulationController::init_servers(
             servers_config,
             &mut controller_config,
-            MEDIA_FOLDER.to_string(),
-            FILE_FOLDER.to_string(),
+            MEDIA_FOLDER,
+            FILE_FOLDER,
         );
 
         assert_eq!(controller_config.nodes_channels.len(), 2);
@@ -1501,15 +1500,15 @@ mod tests {
     fn test_shut_down_controller() {
         let mut controller = SimulationController::build(
             "src/tests/configurations/topology_1.toml",
-            FILE_FOLDER.to_string(),
-            MEDIA_FOLDER.to_string(),
+            FILE_FOLDER,
+            MEDIA_FOLDER,
             false,
         );
         thread::sleep(Duration::from_secs(1));
 
         controller.destroy();
 
-        for handle in controller.handles.iter() {
+        for handle in &controller.handles {
             assert!(handle.is_none());
         }
     }
@@ -1518,8 +1517,8 @@ mod tests {
     fn test_rebuild_controller() {
         let mut controller = SimulationController::build(
             "src/tests/configurations/topology_1.toml",
-            FILE_FOLDER.to_string(),
-            MEDIA_FOLDER.to_string(),
+            FILE_FOLDER,
+            MEDIA_FOLDER,
             false,
         );
 
@@ -1529,8 +1528,8 @@ mod tests {
 
         controller.rebuild(
             "src/tests/configurations/topology_1.toml",
-            FILE_FOLDER.to_string(),
-            MEDIA_FOLDER.to_string(),
+            FILE_FOLDER,
+            MEDIA_FOLDER,
             false,
         );
 
@@ -1542,7 +1541,7 @@ mod tests {
         assert_eq!(initial_drones, controller.drones_channels.len());
         println!("Drones {}\n", controller.handles.len());
 
-        for handle in controller.handles.iter() {
+        for handle in &controller.handles {
             assert!(handle.is_some());
         }
     }
@@ -1551,8 +1550,8 @@ mod tests {
     fn test_topology_after_build() {
         let controller = SimulationController::build(
             "src/tests/configurations/topology_1.toml",
-            FILE_FOLDER.to_string(),
-            MEDIA_FOLDER.to_string(),
+            FILE_FOLDER,
+            MEDIA_FOLDER,
             false,
         );
         let drone_1_id = 1;
@@ -1692,8 +1691,8 @@ mod tests {
     fn test_channels_after_build() {
         let controller = SimulationController::build(
             "src/tests/configurations/topology_1.toml",
-            FILE_FOLDER.to_string(),
-            MEDIA_FOLDER.to_string(),
+            FILE_FOLDER,
+            MEDIA_FOLDER,
             false,
         );
 

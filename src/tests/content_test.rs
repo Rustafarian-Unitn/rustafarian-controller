@@ -12,8 +12,8 @@ mod tests {
     fn initialization_content_test() {
         let simulation_controller = SimulationController::build(
             "src/tests/configurations/topology_10_nodes.toml",
-            "resources/files".to_string(),
-            "resources/media".to_string(),
+            "resources/files",
+            "resources/media",
             false,
         );
 
@@ -37,15 +37,15 @@ mod tests {
 
         let _res = client_command_channel.send(SimControllerCommand::Topology);
 
-        for response in client_response_channel.iter() {
+        for response in &client_response_channel {
             if let SimControllerResponseWrapper::Message(SimControllerMessage::TopologyResponse(
                 topology,
             )) = response
             {
                 let mut nodes = topology.nodes().clone();
-                nodes.sort();
+                nodes.sort_unstable();
                 let mut expected_nodes = vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-                expected_nodes.sort();
+                expected_nodes.sort_unstable();
                 assert_eq!(nodes, expected_nodes);
                 println!("Client nodes: {:?}", topology.nodes());
                 break;
@@ -57,8 +57,8 @@ mod tests {
     fn server_type_test() {
         let simulation_controller = SimulationController::build(
             "src/tests/configurations/topology_1.toml",
-            "resources/files".to_string(),
-            "resources/media".to_string(),
+            "resources/files",
+            "resources/media",
             false,
         );
 
@@ -83,15 +83,15 @@ mod tests {
 
         let _res = client_command_channel.send(SimControllerCommand::RequestServerType(server_id));
 
-        for response in client_response_channel.iter() {
+        for response in &client_response_channel {
             if let SimControllerResponseWrapper::Message(
                 SimControllerMessage::ServerTypeResponse(_, server_type),
             ) = response
             {
                 assert!(
                     matches!(server_type, ServerType::Text),
-                    "Expected ServerType::Text, got {:?}",
-                    server_type
+                    "Expected ServerType::Text, got {server_type:?}"
+                    
                 );
                 break;
             }
@@ -102,8 +102,8 @@ mod tests {
     fn file_list_test() {
         let simulation_controller = SimulationController::build(
             "src/tests/configurations/topology_1.toml",
-            "resources/files".to_string(),
-            "resources/media".to_string(),
+            "resources/files",
+            "resources/media",
             false,
         );
 
@@ -128,7 +128,7 @@ mod tests {
 
         let _res = client_command_channel.send(SimControllerCommand::RequestFileList(server_id));
 
-        for response in client_response_channel.iter() {
+        for response in &client_response_channel {
             if let SimControllerResponseWrapper::Message(SimControllerMessage::FileListResponse(
                 _,
                 file_ids,
@@ -144,8 +144,8 @@ mod tests {
     fn file_text_test() {
         let simulation_controller = SimulationController::build(
             "src/tests/configurations/topology_10_nodes.toml",
-            "resources/files".to_string(),
-            "resources/media".to_string(),
+            "resources/files",
+            "resources/media",
             false,
         );
 
@@ -170,13 +170,13 @@ mod tests {
 
         let _res = client_command_channel.send(SimControllerCommand::RequestTextFile(1, server_id));
 
-        for response in client_response_channel.iter() {
+        for response in &client_response_channel {
             if let SimControllerResponseWrapper::Message(SimControllerMessage::TextFileResponse(
                 _,
                 text,
             )) = response
             {
-                println!("Il testo ricevuto è =>{}", text);
+                println!("Il testo ricevuto è =>{text}");
                 let file_content = fs::read_to_string("resources/files/0001.txt")
                     .expect("Failed to read file 0001.txt");
                 assert_eq!(text, file_content);
@@ -189,8 +189,8 @@ mod tests {
     fn file_media_test() {
         let simulation_controller = SimulationController::build(
             "src/tests/configurations/topology_10_nodes.toml",
-            "resources/files".to_string(),
-            "resources/media".to_string(),
+            "resources/files",
+            "resources/media",
             false,
         );
 
@@ -217,7 +217,7 @@ mod tests {
         let _res = client_command_channel
             .send(SimControllerCommand::RequestMediaFile(media_id, server_id));
 
-        for response in client_response_channel.iter() {
+        for response in &client_response_channel {
             if let SimControllerResponseWrapper::Message(SimControllerMessage::MediaFileResponse(
                 _,
                 media,
@@ -233,7 +233,7 @@ mod tests {
                         break;
                     }
                     Err(err) => {
-                        eprintln!("Error reading media {}", err);
+                        eprintln!("Error reading media {err}");
                     }
                 }
             }
@@ -244,8 +244,8 @@ mod tests {
     fn file_text_media_test() {
         let simulation_controller = SimulationController::build(
             "src/tests/configurations/topology_10_nodes.toml",
-            "resources/files".to_string(),
-            "resources/media".to_string(),
+            "resources/files",
+            "resources/media",
             false,
         );
 
@@ -272,8 +272,8 @@ mod tests {
         let _res = client_command_channel
             .send(SimControllerCommand::RequestTextFile(text_id, server_1_id));
 
-        for response in client_response_channel.iter() {
-            println!("Response {:?}", response);
+        for response in &client_response_channel {
+            println!("Response {response:?}");
             if let SimControllerResponseWrapper::Message(
                 SimControllerMessage::TextWithReferences(_, text, media_files),
             ) = response
@@ -292,7 +292,7 @@ mod tests {
                         break;
                     }
                     Err(err) => {
-                        eprintln!("Error reading media {}", err);
+                        eprintln!("Error reading media {err}");
                     }
                 }
             }
@@ -307,8 +307,8 @@ mod tests {
         //set pdr=0.9
         let simulation_controller = SimulationController::build(
             "src/tests/configurations/topology_10_nodes.toml",
-            "resources/files".to_string(),
-            "resources/media".to_string(),
+            "resources/files",
+            "resources/media",
             false,
         );
 
@@ -332,13 +332,13 @@ mod tests {
         let _res = client_command_channel.send(SimControllerCommand::RequestTextFile(2, server_id));
         thread::sleep(std::time::Duration::from_secs(5));
 
-        for response in client_response_channel.iter() {
+        for response in &client_response_channel {
             if let SimControllerResponseWrapper::Message(SimControllerMessage::TextFileResponse(
                 _,
                 text,
             )) = response
             {
-                println!("Il testo ricevuto è =>{}", text);
+                println!("Il testo ricevuto è =>{text}");
                 let file_content: String = fs::read_to_string("resources/files/0002.txt")
                     .expect("Failed to read file 0002.txt");
                 assert_eq!(text, file_content);
@@ -363,8 +363,8 @@ mod tests {
         fn test_server_type_text() {
             let simulation_controller = SimulationController::build(
                 "src/tests/configurations/topology_10_nodes.toml",
-                "resources/files".to_string(),
-                "resources/media".to_string(),
+                "resources/files",
+                "resources/media",
                 true,
             );
             let content_server_id: u8 = 8;
@@ -393,12 +393,12 @@ mod tests {
             assert!(res.is_ok());
 
             // ignore messages until message is received
-            for response in client_response_channel.iter() {
+            for response in &client_response_channel {
                 if let SimControllerResponseWrapper::Message(
                     SimControllerMessage::ServerTypeResponse(server_id, server_type),
                 ) = response
                 {
-                    println!("TEST - Server type {:?}", server_type);
+                    println!("TEST - Server type {server_type:?}");
                     if server_id == content_server_id {
                         assert!(matches!(server_type, ServerType::Text));
                         break;
@@ -411,8 +411,8 @@ mod tests {
         fn test_file_list_from_to_server() {
             let simulation_controller = SimulationController::build(
                 "src/tests/configurations/topology_10_nodes.toml",
-                "resources/files".to_string(),
-                "resources/media".to_string(),
+                "resources/files",
+                "resources/media",
                 DEBUG,
             );
             let client_id: u8 = 5;
@@ -439,12 +439,12 @@ mod tests {
             assert!(res.is_ok());
 
             // ignore messages until message is received
-            for response in client_response_channel.iter() {
+            for response in &client_response_channel {
                 if let SimControllerResponseWrapper::Message(
                     SimControllerMessage::FileListResponse(_, list),
                 ) = response.clone()
                 {
-                    println!("TEST - Message received {:?}", response);
+                    println!("TEST - Message received {response:?}");
                     assert!(
                         matches!(
                             response,
@@ -466,8 +466,8 @@ mod tests {
         fn test_text_file_request() {
             let simulation_controller = SimulationController::build(
                 "src/tests/configurations/topology_10_nodes.toml",
-                "resources/files".to_string(),
-                "resources/media".to_string(),
+                "resources/files",
+                "resources/media",
                 DEBUG,
             );
 
@@ -502,7 +502,7 @@ mod tests {
                 select! {
                     recv(client_response_channel) -> response => {
                         if let Ok(SimControllerResponseWrapper::Message(SimControllerMessage::TextFileResponse(_, _))) = response {
-                            println!("TEST - Message received {:?}", response);
+                            println!("TEST - Message received {response:?}");
                             let _expected_text = "test".to_string();
 
                             assert!(
@@ -530,8 +530,8 @@ mod tests {
         fn test_file_list_request() {
             let simulation_controller = SimulationController::build(
                 "src/tests/configurations/topology_10_nodes.toml",
-                "resources/files".to_string(),
-                "resources/media".to_string(),
+                "resources/files",
+                "resources/media",
                 DEBUG,
             );
 
@@ -559,12 +559,12 @@ mod tests {
             assert!(res.is_ok());
 
             // Ignore all messages until FileListResponse is received
-            for message in client_response_channel.iter() {
+            for message in &client_response_channel {
                 if let SimControllerResponseWrapper::Message(
                     SimControllerMessage::FileListResponse(_, _),
                 ) = message
                 {
-                    println!("TEST - Message received {:?}", message);
+                    println!("TEST - Message received {message:?}");
                     assert!(matches!(
                         message,
                         SimControllerResponseWrapper::Message(
@@ -580,8 +580,8 @@ mod tests {
         fn test_media_file_request() {
             let simulation_controller = SimulationController::build(
                 "src/tests/configurations/topology_10_nodes.toml",
-                "resources/files".to_string(),
-                "resources/media".to_string(),
+                "resources/files",
+                "resources/media",
                 DEBUG,
             );
 
@@ -610,12 +610,12 @@ mod tests {
             assert!(res.is_ok());
 
             // Ignore all messages until MediaFileResponse is received
-            for message in client_response_channel.iter() {
+            for message in &client_response_channel {
                 if let SimControllerResponseWrapper::Message(
                     SimControllerMessage::MediaFileResponse(_, _),
                 ) = message
                 {
-                    println!("TEST - Message received {:?}", message);
+                    println!("TEST - Message received {message:?}");
                     assert!(matches!(
                         message,
                         SimControllerResponseWrapper::Message(
@@ -631,8 +631,8 @@ mod tests {
         fn test_text_file_with_references() {
             let simulation_controller = SimulationController::build(
                 "src/tests/configurations/topology_10_nodes.toml",
-                "resources/files".to_string(),
-                "resources/media".to_string(),
+                "resources/files",
+                "resources/media",
                 DEBUG,
             );
 
@@ -666,7 +666,7 @@ mod tests {
                 select! {
                     recv(client_response_channel) -> response => {
                         if let Ok(SimControllerResponseWrapper::Message(SimControllerMessage::TextWithReferences(_, _, _))) = response {
-                            println!("TEST - Message received {:?}", response);
+                            println!("TEST - Message received {response:?}");
                             assert!(
                                 matches!(
                                     response.unwrap(),
@@ -691,11 +691,10 @@ mod tests {
         fn test_request_invalid_server() {
             let simulation_controller = SimulationController::build(
                 "src/tests/configurations/topology_10_nodes.toml",
-                "resources/media".to_string(),
-                "resources/files".to_string(),
+                "resources/media",
+                "resources/files",
                 DEBUG,
             );
-
             let client_id: u8 = 5;
             let server_id = 9;
 
@@ -727,7 +726,7 @@ mod tests {
                 select! {
                     recv(client_response_channel) -> response => {
                         if let Ok(SimControllerResponseWrapper::Message(SimControllerMessage::TextFileResponse{..})) = response {
-                            println!("TEST - Message received {:?}", response);
+                            println!("TEST - Message received {response:?}");
                             panic!("Server should not respond to invalid request");
                         }
                     }

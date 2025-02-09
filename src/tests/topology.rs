@@ -17,8 +17,8 @@ fn test_simulation_controller_build_complex_topology() {
     );
     let controller = SimulationController::build(
         config_str,
-        "resources/files".to_string(),
-        "resources/media".to_string(),
+        "resources/files",
+        "resources/media",
         false,
     );
     thread::sleep(std::time::Duration::from_millis(500));
@@ -30,7 +30,7 @@ fn test_simulation_controller_build_complex_topology() {
 
     // Check the topology
     let edges = controller.topology.edges();
-    println!("{:?}", edges);
+    println!("{edges:?}");
     assert_topology(edges);
 }
 
@@ -43,8 +43,8 @@ fn test_client_topology() {
     );
     let controller = SimulationController::build(
         config_str,
-        "resources/files".to_string(),
-        "resources/media".to_string(),
+        "resources/files",
+        "resources/media",
         false,
     );
 
@@ -58,7 +58,7 @@ fn test_client_topology() {
     assert!(command.is_ok());
 
     // Wait for the response
-    for response in client_channels.receive_response_channel.iter() {
+    for response in &client_channels.receive_response_channel {
         if let SimControllerResponseWrapper::Message(SimControllerMessage::TopologyResponse(
             topology,
         )) = response
