@@ -26,4 +26,4 @@ rusty_drones = { git = "https://github.com/rusty-drone-2024/rusty-drone.git" }
 dr_ones = { git = "https://github.com/Dr-Ones/drone" }
 rustastic-drone = { git = "https://github.com/Rustastic/RustasticDrone.git" }
 lockheedrustin-drone = { git = "https://github.com/Lockheed-Rustin/drone.git" }
-getdroned = { git = "https://github.com/GetDroned/Drone.git", features = ["log"] }
+getdroned = { git = "https://github.com/GetDroned/Drone.git"}
